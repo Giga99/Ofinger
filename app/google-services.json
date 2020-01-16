@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "776629233948",
+    "firebase_url": "https://ofinger-cd666.firebaseio.com",
+    "project_id": "ofinger-cd666",
+    "storage_bucket": "ofinger-cd666.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776629233948:android:6a6d425ea822738aad72d9",
+        "android_client_info": {
+          "package_name": "com.example.ofinger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "776629233948-dovij7adnogf5kopda9mcjnitgoburm6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ofinger",
+            "certificate_hash": "493a97f876fefdf7d6c44acf32d7cd25eb5cd5f5"
+          }
+        },
+        {
+          "client_id": "776629233948-7ev16nlbkstjm4r311gtups5gin6eema.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFCKJAU1hRQfJZ7OepjzhmOvsd4tN21Rw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "776629233948-7ev16nlbkstjm4r311gtups5gin6eema.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

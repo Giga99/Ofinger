@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nameUp"
+        android:title="Po abecednom redu od pocetka"/>
+
+    <item
+        android:id="@+id/nameDown"
+        android:title="Po abecednom redu od kraja"/>
+
+    <item
+        android:id="@+id/priceUp"
+        android:title="Po ceni rastuce"/>
+
+    <item
+        android:id="@+id/priceDown"
+        android:title="Po ceni opadajuce"/>
+
+</menu>
