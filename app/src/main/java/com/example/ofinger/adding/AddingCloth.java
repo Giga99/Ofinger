@@ -1,11 +1,14 @@
 package com.example.ofinger.adding;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,19 +24,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
-import com.example.ofinger.CustomDialogs.CustomDialogWish;
-import com.example.ofinger.CustomDialogs.CustomDialogZoomImage;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adapters.ImageAdapter;
+import com.example.ofinger.customDialogs.CustomDialogWish;
 import com.example.ofinger.info.ClothInfo;
 import com.example.ofinger.mainActivities.GuestFragment;
 import com.example.ofinger.mainActivities.MainActivity;
@@ -63,7 +67,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemClicked2, ClothAdapter.ItemClicked {
+public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemClicked {
+    private static final int REQUEST_CODE_ADD = 1;
+    private static final int REQUEST_CODE_TAKE = 2;
+
     private View mProgressView;
     private View mLoginFormView;
     private TextView tvLoad;
@@ -75,9 +82,8 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
     EditText etName, etPrice, etDescription;
 
     List<Image> images;
-    RecyclerView list2;
+    ViewPager viewpagerImages;
     ImageAdapter adapter;
-    GridLayoutManager layoutManager;
 
     Button btnAddImage, btnFinish;
 
@@ -197,12 +203,9 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
         tvLoad = findViewById(R.id.tvLoad);
 
         images = new ArrayList<>();
-        list2 = findViewById(R.id.list2);
-        list2.setHasFixedSize(true);
+        viewpagerImages = findViewById(R.id.viewpagerImages);
         adapter = new ImageAdapter(this, images);
-        list2.setAdapter(adapter);
-        layoutManager = new GridLayoutManager(this, 2, GridLayoutManager.HORIZONTAL, false);
-        list2.setLayoutManager(layoutManager);
+        viewpagerImages.setAdapter(adapter);
 
         btnAddImage = findViewById(R.id.btnAddImage);
         btnFinish = findViewById(R.id.btnFinish);
@@ -231,7 +234,13 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
         btnAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity().setAspectRatio(1, 1).start(AddingCloth.this);
+                if(ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
+                } else if (ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
+                } else {
+                    CropImage.activity().setAspectRatio(1, 1).start(AddingCloth.this);
+                }
             }
         });
 
@@ -246,8 +255,10 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
                  */
                 if(etName.getText().toString().isEmpty() || etPrice.getText().toString().isEmpty() || etDescription.getText().toString().isEmpty()){
                     Toast.makeText(AddingCloth.this, "Unesite sve podatke!", Toast.LENGTH_SHORT).show();
-                } else if(etDescription.getText().toString().length() < 30){
+                } else if(etDescription.getText().toString().length() < 30) {
                     Toast.makeText(AddingCloth.this, "Opis mora imati vise od 30 karaktera!", Toast.LENGTH_SHORT).show();
+                } else if(images.size() == 0){
+                    Toast.makeText(AddingCloth.this, "Morate dodati barem jednu sliku!", Toast.LENGTH_SHORT).show();
                 } else {
                     showProgress(true);
                     tvLoad.setText("Molim vas sacekajte...");
@@ -382,6 +393,9 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        /**
+         * Obrada uzete slike i postavljanje na server
+         */
        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
            CropImage.ActivityResult result = CropImage.getActivityResult(data);
            imageUri = result.getUri();
@@ -393,6 +407,47 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
 
            uploadImage();
        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            /**
+             * Dozvoljen je pristup i onda se uzima slika
+             */
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                CropImage.activity().setAspectRatio(1, 1).start(AddingCloth.this);
+            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
+                /**
+                 * Nije dozvoljen pristup i onda se ponovo trazi dozvola sa objasnjenjem zasto je potrebna
+                 */
+                if(ActivityCompat.shouldShowRequestPermissionRationale(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Ova dozvola je potrebna kako bi dodali sliku u aplikaciju. Molim vas dozvolite!").setTitle("Zahtev za vaznu dozvolu!");
+
+                    builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
+                        }
+                    });
+
+                    builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(AddingCloth.this, "Ne moze se dodati!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    builder.show();
+                } else {
+                    Toast.makeText(AddingCloth.this, "Nikad vas vise necemo pitati!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     @Override
@@ -465,13 +520,6 @@ public class AddingCloth extends AppCompatActivity implements ImageAdapter.ItemC
                 tvLoad.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
-    }
-
-    @Override
-    public void onItemClicked2(int index) {
-        ApplicationClass.currentImage = images.get(index);
-        CustomDialogZoomImage customDialogZoomImage = new CustomDialogZoomImage(AddingCloth.this);
-        customDialogZoomImage.show();
     }
 
     @Override

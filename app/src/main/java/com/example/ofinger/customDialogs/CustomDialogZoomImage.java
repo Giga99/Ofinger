@@ -1,4 +1,4 @@
-package com.example.ofinger.CustomDialogs;
+package com.example.ofinger.customDialogs;
 
 import android.app.Activity;
 import android.app.Dialog;

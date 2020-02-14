@@ -14,7 +14,6 @@
         card_view:cardElevation="5dp"
         card_view:cardUseCompatPadding="false">
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,7 +24,7 @@
                 android:layout_width="150dp"
                 android:layout_height="60dp"
                 android:layout_weight="1"
-                card_view:srcCompat="@drawable/photo" />
+                card_view:srcCompat="@drawable/photo"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"

@@ -18,14 +18,15 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
-import com.example.ofinger.CustomDialogs.CustomDialogWish;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adding.AddingCloth;
+import com.example.ofinger.customDialogs.CustomDialogWish;
 import com.example.ofinger.info.ClothInfo;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Message;
 import com.example.ofinger.models.User;
+import com.example.ofinger.notifications.Token;
 import com.example.ofinger.startActivities.StartActivity;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,11 +47,14 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ClothAdapter.ItemClicked {
+    private static long REFRESH_DELAY = 1000;
+
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private ActionBarDrawerToggle toggle;
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
+    private PullToRefreshView pullToRefreshView;
 
     private CircleImageView ivProfileImage, navHeaderProfileImage;
     private TextView tvUsername;
@@ -117,6 +123,19 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         tvUsername = findViewById(R.id.tvUsername);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        pullToRefreshView = findViewById(R.id.pullView);
+
+        pullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                pullToRefreshView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pullToRefreshView.setRefreshing(false);
+                    }
+                }, REFRESH_DELAY);
+            }
+        });
 
         /**
          * Brojanje neprocitanih poruka
@@ -226,6 +245,17 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
             selectedFragment = new HomeFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
         }
+
+        /**
+         * Apdejtovanje Tokena
+         */
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
+
+    public void updateToken(String t){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token = new Token(t);
+        databaseReference.child(ApplicationClass.currentUser.getUid()).setValue(token);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {

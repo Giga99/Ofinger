@@ -1,67 +1,48 @@
 package com.example.ofinger.adapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.PagerAdapter;
 
-import com.example.ofinger.R;
 import com.example.ofinger.models.Image;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
+public class ImageAdapter extends PagerAdapter {
     private List<Image> images;
-    ItemClicked2 activity;
-
-    public interface ItemClicked2{
-        void onItemClicked2(int index);
-    }
+    Context context;
 
     public ImageAdapter(Context context, List<Image> list){
         images = list;
-        activity = (ItemClicked2) context;
+        this.context = context;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView ivPref;
+    @Override
+    public int getCount() {
+        return images.size();
+    }
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            ivPref = itemView.findViewById(R.id.ivPref);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    activity.onItemClicked2(images.indexOf((Image) v.getTag()));
-                }
-            });
-        }
+    @Override
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+        return view == object;
     }
 
     @NonNull
     @Override
-    public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_image_layout, parent, false);
-
-        return new ViewHolder(view);
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        ImageView iv = new ImageView(context);
+        Picasso.get().load(images.get(position).getInfo()).into(iv);
+        container.addView(iv);
+        return iv;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ImageAdapter.ViewHolder holder, int position) {
-        holder.itemView.setTag(images.get(position));
-
-        Picasso.get().load(images.get(position).getInfo()).into(holder.ivPref);
-    }
-
-    @Override
-    public int getItemCount() {
-        return images.size();
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        container.removeView((ImageView) object);
     }
 }

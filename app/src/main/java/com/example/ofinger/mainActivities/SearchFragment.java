@@ -30,6 +30,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +50,9 @@ public class SearchFragment extends Fragment {
     private List<User> users;
 
     private EditText etSearch;
-    private ImageButton ivSearchCloth, ivSearchUsers, sort;
+    private ImageButton ivSearchCloth, ivSearchUsers;
+
+    private SpeedDialView speedDial;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -63,7 +67,8 @@ public class SearchFragment extends Fragment {
         etSearch = view.findViewById(R.id.etSearch);
         ivSearchCloth = view.findViewById(R.id.ivSearchCloth);
         ivSearchUsers = view.findViewById(R.id.ivSearchUsers);
-        sort = view.findViewById(R.id.sort);
+
+        speedDial = view.findViewById(R.id.speedDial);
 
         searchClothList = view.findViewById(R.id.searchClothList);
         searchClothList.setHasFixedSize(true);
@@ -134,34 +139,44 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        sort.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(SearchFragment.this.getContext(), v);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()){
-                            case R.id.priceDown:
-                                readCloth(false, false, false, true);
-                                return true;
-                            case R.id.priceUp:
-                                readCloth(false, false, true, false);
-                                return true;
-                            case R.id.nameUp:
-                                readCloth(true, false, false, false);
-                                return true;
-                            case R.id.nameDown:
-                                readCloth(false, true, false, false);
-                                return true;
-                            default:
-                                return false;
+        speedDial.addActionItem(new SpeedDialActionItem.Builder(R.id.sort, R.drawable.sort).create());
+        speedDial.addActionItem(new SpeedDialActionItem.Builder(R.id.category, R.drawable.category).create());
 
-                        }
-                    }
-                });
-                popupMenu.inflate(R.menu.sort_menu);
-                popupMenu.show();
+        speedDial.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
+            @Override
+            public boolean onActionSelected(SpeedDialActionItem actionItem) {
+                switch (actionItem.getId()){
+                    case R.id.sort:
+                        PopupMenu popupMenu = new PopupMenu(SearchFragment.this.getContext(), getView().findViewById(actionItem.getId()));
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()){
+                                    case R.id.priceDown:
+                                        readCloth(false, false, false, true);
+                                        return true;
+                                    case R.id.priceUp:
+                                        readCloth(false, false, true, false);
+                                        return true;
+                                    case R.id.nameUp:
+                                        readCloth(true, false, false, false);
+                                        return true;
+                                    case R.id.nameDown:
+                                        readCloth(false, true, false, false);
+                                        return true;
+                                    default:
+                                        return false;
+
+                                }
+                            }
+                        });
+                        popupMenu.inflate(R.menu.sort_menu);
+                        popupMenu.show();
+                        break;
+                    case R.id.category:
+                        break;
+                }
+                return true;
             }
         });
 

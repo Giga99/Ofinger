@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,28 +24,32 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
-import com.example.ofinger.CustomDialogs.CustomDialogWish;
-import com.example.ofinger.CustomDialogs.CustomDialogZoomImage;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adapters.ImageAdapter;
+import com.example.ofinger.adapters.ReviewAdapter;
+import com.example.ofinger.customDialogs.CustomDialogWish;
 import com.example.ofinger.mainActivities.GuestFragment;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.messaging.ChatActivity;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Image;
+import com.example.ofinger.models.Review;
 import com.example.ofinger.models.User;
 import com.example.ofinger.startActivities.StartActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,7 +66,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemClicked2, ClothAdapter.ItemClicked {
+public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemClicked {
     private View mProgressView;
     private View mLoginFormView;
     private TextView tvLoad;
@@ -71,14 +75,15 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
     private NavigationView navView;
     private ActionBarDrawerToggle toggle;
 
-    TextView tvClothName, tvOwnerName, tvClothDescription, tvPrice;
+    TextView tvClothName, tvOwnerName, tvClothDescription, tvPrice, reviewHeader;
     ImageView ivBack, ivEdit, ivDelete, ivSold, ivNotSold;
     MaterialEditText etClothName, etClothDescription, etPrice;
-    Button btnSubmit;
-    LinearLayout editField;
-    RelativeLayout userRating;
-    ImageButton firstUserStar, secondUserStar, thirdUserStar, fourthUserStar, fifthUserStar;
-    ImageView firstOverallStar, secondOverallStar, thirdOverallStar, fourthOverallStar, fifthOverallStar;
+    Button btnSubmit, btnReview;
+    LinearLayout editField, userRating;
+    RatingBar ratingBarUser, ratingBarOverall;
+    EditText etReview;
+
+    MaterialTextView header3;
 
     BottomNavigationView bottomNavigationView;
 
@@ -86,13 +91,16 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
     TextView tvUsername;
 
     List<Image> images;
-    RecyclerView listClothImage;
+    ViewPager viewpagerImages;
     ImageAdapter adapter;
-    GridLayoutManager layoutManager;
+
+    RecyclerView clothReviewsList;
+    LinearLayoutManager linearLayoutManager;
+    ReviewAdapter adapterReview;
+    List<Review> reviews;
 
     boolean edit = false;
     int INDEX;
-    long starsUser;
     float starsOverall;
 
     @Override
@@ -206,18 +214,15 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
         etClothDescription = findViewById(R.id.etClothDescription);
         etPrice = findViewById(R.id.etPrice);
 
-        userRating = findViewById(R.id.userRating);
-        firstUserStar = findViewById(R.id.firstUserStar);
-        secondUserStar = findViewById(R.id.secondUserStar);
-        thirdUserStar = findViewById(R.id.thirdUserStar);
-        fourthUserStar = findViewById(R.id.fourthUserStar);
-        fifthUserStar = findViewById(R.id.fifthUserStar);
+        viewpagerImages = findViewById(R.id.viewpagerImages);
 
-        firstOverallStar = findViewById(R.id.firstOverallStar);
-        secondOverallStar = findViewById(R.id.secondOverallStar);
-        thirdOverallStar = findViewById(R.id.thirdOverallStar);
-        fourthOverallStar = findViewById(R.id.fourthOverallStar);
-        fifthOverallStar = findViewById(R.id.fifthOverallStar);
+        userRating = findViewById(R.id.userRating);
+        ratingBarUser = findViewById(R.id.ratingBarUser);
+        ratingBarOverall = findViewById(R.id.ratingBarOverall);
+        reviewHeader = findViewById(R.id.reviewHeader);
+
+        btnReview = findViewById(R.id.btnReview);
+        etReview = findViewById(R.id.etReview);
 
         editField = findViewById(R.id.editField);
 
@@ -273,12 +278,8 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
                     images.add(image);
                 }
 
-                listClothImage = findViewById(R.id.listClothImage);
-                listClothImage.setHasFixedSize(true);
                 adapter = new ImageAdapter(ClothInfo.this, images);
-                listClothImage.setAdapter(adapter);
-                layoutManager = new GridLayoutManager(ClothInfo.this, 2, GridLayoutManager.HORIZONTAL, false);
-                listClothImage.setLayoutManager(layoutManager);
+                viewpagerImages.setAdapter(adapter);
             }
 
             @Override
@@ -299,6 +300,44 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
         etClothName.setText(ApplicationClass.mainCloths.get(INDEX).getName());
         etClothDescription.setText(ApplicationClass.mainCloths.get(INDEX).getDescription());
         etPrice.setText("" + ApplicationClass.mainCloths.get(INDEX).getPrice());
+
+        reviews = new ArrayList<>();
+        clothReviewsList = findViewById(R.id.clothReviewsList);
+        linearLayoutManager = new LinearLayoutManager(this);
+        clothReviewsList.setLayoutManager(linearLayoutManager);
+        adapterReview = new ReviewAdapter(this, reviews);
+        clothReviewsList.setAdapter(adapterReview);
+        header3 = findViewById(R.id.header3);
+
+        /**
+         * Pravljenje liste utisaka
+         */
+        DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
+        databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                reviews.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Review review = snapshot.getValue(Review.class);
+                    reviews.add(review);
+                }
+
+                adapterReview.notifyDataSetChanged();
+
+                if(reviews.size() == 0){
+                    header3.setVisibility(View.GONE);
+                    clothReviewsList.setVisibility(View.GONE);
+                } else {
+                    header3.setVisibility(View.VISIBLE);
+                    clothReviewsList.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         /**
          * Odlazak na profil vlasnika odela
@@ -529,43 +568,40 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
         /**
          * Ocenjivanje zvezdicama
          */
-        firstUserStar.setOnClickListener(new View.OnClickListener() {
+        ratingBarUser.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child(ApplicationClass.currentUser.getUid()).setValue(1);
-                calculateOverall();
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                ratingBarUser.setRating(rating);
             }
         });
 
-        secondUserStar.setOnClickListener(new View.OnClickListener() {
+        btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child(ApplicationClass.currentUser.getUid()).setValue(2);
-                calculateOverall();
-            }
-        });
+                showProgress(true);
+                tvLoad.setText("Ocenjivanje odece...");
+                Review review = new Review();
+                review.setStars(ratingBarUser.getRating());
+                review.setText(etReview.getText().toString());
+                review.setUserId(ApplicationClass.currentUser.getUid());
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
+                String id = databaseReference.push().getKey();
 
-        thirdUserStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child(ApplicationClass.currentUser.getUid()).setValue(3);
-                calculateOverall();
-            }
-        });
+                databaseReference.child(id).setValue(review)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                showProgress(false);
+                                Toast.makeText(ClothInfo.this, "Uspesno ocenjeno!", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                showProgress(false);
+                                Toast.makeText(ClothInfo.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-        fourthUserStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child(ApplicationClass.currentUser.getUid()).setValue(4);
-                calculateOverall();
-            }
-        });
-
-        fifthUserStar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child(ApplicationClass.currentUser.getUid()).setValue(5);
-                calculateOverall();
             }
         });
 
@@ -576,27 +612,20 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
      * Provera da li je ocenjeno
      */
     private void calculateUser() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsCloth")
-                .child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child(ApplicationClass.currentUser.getUid());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) starsUser = (long) dataSnapshot.getValue();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Review review = snapshot.getValue(Review.class);
 
-                if(starsUser >= 1) firstUserStar.setImageResource(R.drawable.starfull);
-                else firstUserStar.setImageResource(R.drawable.starempty);
-
-                if(starsUser >= 2) secondUserStar.setImageResource(R.drawable.starfull);
-                else secondUserStar.setImageResource(R.drawable.starempty);
-
-                if(starsUser >= 3) thirdUserStar.setImageResource(R.drawable.starfull);
-                else thirdUserStar.setImageResource(R.drawable.starempty);
-
-                if(starsUser >= 4) fourthUserStar.setImageResource(R.drawable.starfull);
-                else fourthUserStar.setImageResource(R.drawable.starempty);
-
-                if(starsUser == 5) fifthUserStar.setImageResource(R.drawable.starfull);
-                else fifthUserStar.setImageResource(R.drawable.starempty);
+                    if(review.getUserId().equals(ApplicationClass.currentUser.getUid())){
+                        etReview.setVisibility(View.GONE);
+                        btnReview.setVisibility(View.GONE);
+                        ratingBarUser.setVisibility(View.GONE);
+                        reviewHeader.setText("Hvala na ocenjivanju odece!");
+                    }
+                }
             }
 
             @Override
@@ -614,31 +643,14 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long sum = 0;
+                float sum = 0;
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    sum += (long) snapshot.getValue();
+                    Review review = snapshot.getValue(Review.class);
+                    sum += review.getStars();
                 }
-                starsOverall = (float) sum / (float) dataSnapshot.getChildrenCount();
+                starsOverall = sum / (float) dataSnapshot.getChildrenCount();
 
-                if(starsOverall >= 1) firstOverallStar.setImageResource(R.drawable.starfull);
-                else if(starsOverall >= 0.5 && starsOverall < 1) firstOverallStar.setImageResource(R.drawable.starhalf);
-                else firstOverallStar.setImageResource(R.drawable.starempty);
-
-                if(starsOverall >= 2) secondOverallStar.setImageResource(R.drawable.starfull);
-                else if(starsOverall >= 1.5 && starsOverall < 2) secondOverallStar.setImageResource(R.drawable.starhalf);
-                else secondOverallStar.setImageResource(R.drawable.starempty);
-
-                if(starsOverall >= 3) thirdOverallStar.setImageResource(R.drawable.starfull);
-                else if(starsOverall >= 2.5 && starsOverall < 3) thirdOverallStar.setImageResource(R.drawable.starhalf);
-                else thirdOverallStar.setImageResource(R.drawable.starempty);
-
-                if(starsOverall >= 4) fourthOverallStar.setImageResource(R.drawable.starfull);
-                else if(starsOverall >= 3.5 && starsOverall < 4) fourthOverallStar.setImageResource(R.drawable.starhalf);
-                else fourthOverallStar.setImageResource(R.drawable.starempty);
-
-                if(starsOverall >= 5) fifthOverallStar.setImageResource(R.drawable.starfull);
-                else if(starsOverall >= 4.5 && starsOverall < 5) fifthOverallStar.setImageResource(R.drawable.starhalf);
-                else fifthOverallStar.setImageResource(R.drawable.starempty);
+                ratingBarOverall.setRating(starsOverall);
             }
 
             @Override
@@ -748,13 +760,6 @@ public class ClothInfo extends AppCompatActivity implements ImageAdapter.ItemCli
                 tvLoad.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
-    }
-
-    @Override
-    public void onItemClicked2(int index) {
-        ApplicationClass.currentImage = images.get(index);
-        CustomDialogZoomImage customDialogZoomImage = new CustomDialogZoomImage(ClothInfo.this);
-        customDialogZoomImage.show();
     }
 
     @Override

@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
-import com.example.ofinger.CustomDialogs.CustomDialogWish;
+import com.example.ofinger.customDialogs.CustomDialogWish;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adapters.MessageAdapter;
@@ -30,6 +30,12 @@ import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Message;
 import com.example.ofinger.models.User;
+import com.example.ofinger.notifications.APIService;
+import com.example.ofinger.notifications.Client;
+import com.example.ofinger.notifications.Data;
+import com.example.ofinger.notifications.Response;
+import com.example.ofinger.notifications.Sender;
+import com.example.ofinger.notifications.Token;
 import com.example.ofinger.startActivities.StartActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,6 +43,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -45,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ChatActivity extends AppCompatActivity implements ClothAdapter.ItemClicked {
     ImageView ivBack;
@@ -67,6 +76,9 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
     DatabaseReference reference;
 
     ValueEventListener seenListener;
+
+    APIService apiService;
+    boolean notify = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +148,8 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
         linearLayoutManager.setStackFromEnd(true);
         messagesList.setLayoutManager(linearLayoutManager);
 
+        apiService = Client.getRetrofit("https://fcm.googleapis.com/").create(APIService.class);
+
         etSend = findViewById(R.id.etSend);
         btnSend = findViewById(R.id.btnSend);
 
@@ -145,11 +159,12 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                notify = true;
                 String msg = etSend.getText().toString();
                 if(!msg.equals("")){
                     sendMessage(ApplicationClass.currentUser.getUid(), userid, msg);
                 } else {
-                    Toast.makeText(ChatActivity.this, "You can't send empty message!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, "Ne mozete da posaljete praznu poruku!", Toast.LENGTH_SHORT).show();
                 }
 
                 etSend.setText("");
@@ -250,7 +265,7 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
      * @param receiver
      * @param message
      */
-    private void sendMessage(final String sender, final String receiver, String message){
+    private void sendMessage(final String sender, final String receiver, final String message){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -282,6 +297,63 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.exists()){
                     chatRef2.child("id").setValue(sender);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(sender);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                if(notify){
+                    sendNotification(receiver, user.getUsername(), message);
+                }
+
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * Slanje notifikacije
+     * @param receiver
+     * @param username
+     * @param message
+     */
+    private void sendNotification(final String receiver, final String username, final String message) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(ApplicationClass.currentUser.getUid(), username + ":" + message, "Nova poruka", receiver, R.drawable.ic_launcher_background);
+
+                    Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender).enqueue(new Callback<Response>() {
+                        @Override
+                        public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                            Toast.makeText(ChatActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Response> call, Throwable t) {
+
+                        }
+                    });
                 }
             }
 

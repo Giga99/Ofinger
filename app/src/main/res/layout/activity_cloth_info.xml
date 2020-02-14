@@ -106,23 +106,23 @@
                     android:id="@+id/tvOwnerName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_below="@id/tvClothName"
                     android:clickable="true"
                     android:text="TextView"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/tvClothDescription"
-                    android:layout_width="match_parent"
+                    android:layout_width="368dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tvOwnerName"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:text="TextView" />
 
                 <TextView
@@ -131,218 +131,183 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tvClothDescription"
                     android:layout_alignParentStart="true"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="13dp"
-                    android:layout_marginRight="10dp"
                     android:text="TextView" />
 
-                <LinearLayout
+                <RatingBar
+                    android:id="@+id/ratingBarOverall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_below="@+id/tvClothDescription"
-                    android:layout_alignParentEnd="true">
+                    style="?android:attr/ratingBarStyleIndicator"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/tvClothDescription"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"/>
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/firstOverallStar"
-                        android:src="@drawable/starempty"
-                        android:background="@color/white"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/secondOverallStar"
-                        android:src="@drawable/starempty"
-                        android:background="@color/white"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/thirdOverallStar"
-                        android:src="@drawable/starempty"
-                        android:background="@color/white"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/fourthOverallStar"
-                        android:src="@drawable/starempty"
-                        android:background="@color/white"/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/fifthOverallStar"
-                        android:src="@drawable/starempty"
-                        android:background="@color/white"/>
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listClothImage"
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/viewpagerImages"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="300dp"
                     android:layout_below="@id/tvPrice"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginRight="10dp" />
+                    android:layout_margin="20dp"/>
 
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/layoutBottom"
+                    android:layout_below="@id/viewpagerImages"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/listClothImage"
-                    android:id="@+id/userRating"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginStart="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ocenite ovo odelo:"
-                        android:textSize="20sp"
-                        android:layout_marginTop="7dp"
-                        android:layout_alignParentStart="true"/>
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:id="@+id/userRating"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_alignParentEnd="true">
+                        android:layout_margin="20dp"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
 
-                        <ImageButton
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:id="@+id/firstUserStar"
-                            android:src="@drawable/starempty"
-                            android:background="@color/white"/>
+                        <TextView
+                            android:id="@+id/reviewHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:text="Ocenite ovo odelo:"
+                            android:textSize="20sp" />
 
-                        <ImageButton
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:id="@+id/secondUserStar"
-                            android:src="@drawable/starempty"
-                            android:background="@color/white"/>
+                        <RatingBar
+                            android:id="@+id/ratingBarUser"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" />
 
-                        <ImageButton
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:id="@+id/thirdUserStar"
-                            android:src="@drawable/starempty"
-                            android:background="@color/white"/>
+                        <EditText
+                            android:id="@+id/etReview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:ems="10"
+                            android:gravity="start|top"
+                            android:inputType="textMultiLine" />
 
-                        <ImageButton
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:id="@+id/fourthUserStar"
-                            android:src="@drawable/starempty"
-                            android:background="@color/white"/>
-
-                        <ImageButton
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:id="@+id/fifthUserStar"
-                            android:src="@drawable/starempty"
-                            android:background="@color/white"/>
+                        <Button
+                            android:id="@+id/btnReview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Potvrdite" />
 
                     </LinearLayout>
 
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:id="@+id/buttons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/listClothImage"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginRight="10dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ivSold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        app:srcCompat="@drawable/soldlist" />
-
-                    <ImageView
-                        android:id="@+id/ivUncheckedSold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        app:srcCompat="@drawable/uncheckedsold" />
-
-                    <ImageView
-                        android:id="@+id/ivEdit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        app:srcCompat="@drawable/edit" />
-
-                    <ImageView
-                        android:id="@+id/ivDelete"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_weight="1"
-                        android:clickable="true"
-                        app:srcCompat="@drawable/delete" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginRight="10dp"
-                    android:id="@+id/editField"
-                    android:layout_below="@id/buttons">
-
-                    <com.rengwuxian.materialedittext.MaterialEditText
-                        android:id="@+id/etClothName"
+                    <LinearLayout
+                        android:id="@+id/buttons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="unesite novo ime odece"
-                        android:inputType="textPersonName" />
-
-                    <com.rengwuxian.materialedittext.MaterialEditText
-                        android:id="@+id/etClothDescription"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:ems="10"
-                        android:gravity="start|top"
-                        android:hint="unesite novi opis odece"
-                        android:inputType="textMultiLine" />
-
-                    <com.rengwuxian.materialedittext.MaterialEditText
-                        android:id="@+id/etPrice"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:ems="10"
-                        android:hint="unesite novu cenu odece"
-                        android:inputType="number" />
-
-                    <Button
-                        android:id="@+id/btnSubmit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginTop="30dp"
-                        android:background="@drawable/buttons"
-                        android:text="Promeni" />
+                        android:layout_marginRight="10dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/ivSold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            app:srcCompat="@drawable/soldlist" />
+
+                        <ImageView
+                            android:id="@+id/ivUncheckedSold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            app:srcCompat="@drawable/uncheckedsold" />
+
+                        <ImageView
+                            android:id="@+id/ivEdit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            app:srcCompat="@drawable/edit" />
+
+                        <ImageView
+                            android:id="@+id/ivDelete"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            app:srcCompat="@drawable/delete" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/editField">
+
+                        <com.rengwuxian.materialedittext.MaterialEditText
+                            android:id="@+id/etClothName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="unesite novo ime odece"
+                            android:inputType="textPersonName" />
+
+                        <com.rengwuxian.materialedittext.MaterialEditText
+                            android:id="@+id/etClothDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:ems="10"
+                            android:gravity="start|top"
+                            android:hint="unesite novi opis odece"
+                            android:inputType="textMultiLine" />
+
+                        <com.rengwuxian.materialedittext.MaterialEditText
+                            android:id="@+id/etPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:ems="10"
+                            android:hint="unesite novu cenu odece"
+                            android:inputType="number" />
+
+                        <Button
+                            android:id="@+id/btnSubmit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
+                            android:background="@drawable/buttons"
+                            android:text="Promeni" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/header3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layoutBottom"
+                    android:layout_marginTop="10dp"
+                    android:textSize="20sp"
+                    android:text="Ocene i utisci odece"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/clothReviewsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/header3"
+                    android:layout_margin="20dp"/>
 
             </RelativeLayout>
 
