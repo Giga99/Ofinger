@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,6 +18,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.ofinger.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,13 +31,13 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity {
-
     private View mProgressView;
     private View mLoginFormView;
     private TextView tvLoad;
 
-    MaterialEditText etUsername, etEmail, etPassword, etReEnterPassword;
+    MaterialEditText etUsername, etEmail, etPassword, etReEnterPassword, etBio;
     Button btnRegister;
+    TextView tvLog;
 
     FirebaseAuth auth;
     DatabaseReference reference;
@@ -58,8 +61,20 @@ public class RegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etReEnterPassword = findViewById(R.id.etReEnterPassword);
         btnRegister = findViewById(R.id.btnRegister);
+        tvLog = findViewById(R.id.tvLog);
+        etBio = findViewById(R.id.etBio);
 
         auth = FirebaseAuth.getInstance();
+
+        /**
+         * Odlazak na Login
+         */
+        tvLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            }
+        });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,10 +82,14 @@ public class RegisterActivity extends AppCompatActivity {
                 /**
                  * Sva polja moraju biti popunjena
                  */
-                if(etUsername.getText().toString().isEmpty() || etEmail.getText().toString().isEmpty() || etPassword.getText().toString().isEmpty() || etReEnterPassword.getText().toString().isEmpty()){
+                if(etUsername.getText().toString().isEmpty() || etEmail.getText().toString().isEmpty() || etPassword.getText().toString().isEmpty() || etReEnterPassword.getText().toString().isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Molim vas, unesite sve podatke!", Toast.LENGTH_SHORT).show();
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(etEmail.getText().toString().trim()).matches()){
+                    etEmail.setError("Mejl nije dobar!");
+                    etEmail.setFocusable(true);
                 } else if(etPassword.length() < 6) {
-                    Toast.makeText(RegisterActivity.this, "Sifra mora da ima makar 6 karaktera!", Toast.LENGTH_SHORT).show();
+                    etPassword.setError("Sifra mora biti duza od 6 karaktera!");
+                    etPassword.setFocusable(true);
                 } else {
                     /**
                      * Sifre moraju da se podudaraju
@@ -79,6 +98,9 @@ public class RegisterActivity extends AppCompatActivity {
                         final String username = etUsername.getText().toString().trim();
                         final String email = etEmail.getText().toString().trim();
                         String password = etPassword.getText().toString().trim();
+                        final String bio;
+                        if(etBio.getText().toString().isEmpty()) bio = "";
+                        else bio = etBio.getText().toString().trim();
 
                         showProgress(true);
                         tvLoad.setText("Registrovanje...");
@@ -92,43 +114,70 @@ public class RegisterActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     final FirebaseUser firebaseUser = auth.getCurrentUser();
                                     assert firebaseUser != null;
-                                    String userId = firebaseUser.getUid();
 
-                                    reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
-
-                                    HashMap<String, String> hashMap = new HashMap<>();
-                                    hashMap.put("id", userId);
-                                    hashMap.put("username", username);
-                                    hashMap.put("email", email);
-                                    hashMap.put("imageURL", "default");
-                                    hashMap.put("status", "offline");
-                                    hashMap.put("searchName", username.toLowerCase());
-
-                                    reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    firebaseUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                //TODO confirmation mail
-                                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                finish();
-                                            }
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(RegisterActivity.this, "Uspesno poslat mejl!", Toast.LENGTH_SHORT).show();
+                                            String userId = firebaseUser.getUid();
+
+                                            reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+
+                                            HashMap<String, String> hashMap = new HashMap<>();
+                                            hashMap.put("id", userId);
+                                            hashMap.put("username", username);
+                                            hashMap.put("email", email);
+                                            hashMap.put("bio", bio);
+                                            hashMap.put("imageURL", "default");
+                                            hashMap.put("status", "offline");
+                                            hashMap.put("typingTo", "noOne");
+                                            hashMap.put("searchName", username.toLowerCase());
+
+                                            reference.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    showProgress(false);
+                                                    Intent intent = new Intent(RegisterActivity.this, EmailVerificationActivity.class);
+                                                    intent.putExtra("id", "register");
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    showProgress(false);
+                                                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            showProgress(false);
+                                            Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
-                                } else {
+                                } else{
                                     showProgress(false);
                                     Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
-
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Proverite da li su sifre iste!", Toast.LENGTH_SHORT).show();
+                        etPassword.setError("Sifre nisu iste!");
+                        etReEnterPassword.setError("Sifre nisu iste!");
+                        etReEnterPassword.setFocusable(true);
+                        etPassword.setFocusable(true);
                     }
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     /**

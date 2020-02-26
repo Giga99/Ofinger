@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/serbia"
+        android:title="RSD"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/bosnia"
+        android:title="KM"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/croatia"
+        android:title="HRK"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/macedonia"
+        android:title="MKD"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/europe"
+        android:title="EUR"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/usa"
+        android:title="USD"
+        app:showAsAction="never"/>
+
+</menu>

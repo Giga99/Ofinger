@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".settings.EditEmailActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/bar_layout"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="50dp">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Unesite novi mejl"
+            android:inputType="textEmailAddress"
+            app:met_floatingLabel="normal"
+            android:id="@+id/newEmail"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Unesite sifru"
+            android:id="@+id/pass"
+            android:layout_below="@+id/newEmail"
+            android:inputType="textPassword"
+            app:met_floatingLabel="normal"
+            android:layout_marginTop="10dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirmNewEmail"
+            android:layout_below="@+id/pass"
+            android:text="Potvrdi"
+            android:layout_marginTop="10dp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

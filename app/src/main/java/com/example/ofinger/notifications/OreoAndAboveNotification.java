@@ -25,7 +25,7 @@ public class OreoAndAboveNotification extends ContextWrapper {
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannel(){
-        NotificationChannel notificationChannel = new NotificationChannel(ID, NAME, NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel notificationChannel = new NotificationChannel(ID, NAME, NotificationManager.IMPORTANCE_HIGH);
         notificationChannel.enableLights(true);
         notificationChannel.enableVibration(true);
         notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);

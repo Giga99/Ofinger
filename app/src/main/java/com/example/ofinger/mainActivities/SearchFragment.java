@@ -35,6 +35,7 @@ import com.leinardi.android.speeddial.SpeedDialView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -183,16 +184,16 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-    private void searchCloth(String s){
-        Query query = FirebaseDatabase.getInstance().getReference("Cloth").orderByChild("searchName").startAt(s).endAt(s + "\uf8ff");
+    private void searchCloth(final String s){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Cloth");
 
-        query.addValueEventListener(new ValueEventListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 cloths.clear();
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Cloth cloth = snapshot.getValue(Cloth.class);
-                    cloths.add(cloth);
+                    if(cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
                 }
 
                 clothAdapter.notifyDataSetChanged();
@@ -284,4 +285,48 @@ public class SearchFragment extends Fragment {
             }
         });
     }
+
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
+    }
+
+    private void status(String status){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        status("online");
+        checkTypingStatus("noOne");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+
 }

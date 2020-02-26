@@ -1,18 +1,27 @@
 package com.example.ofinger.notifications;
 
 public class Data {
-    private String user, body, title, sent;
+    private String user, body, title, sent, type;
     private Integer icon;
 
     public Data() {
     }
 
-    public Data(String user, String body, String title, String sent, Integer icon) {
+    public Data(String user, String body, String title, String sent, Integer icon, String type) {
         this.user = user;
         this.body = body;
         this.title = title;
         this.sent = sent;
         this.icon = icon;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getUser() {

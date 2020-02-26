@@ -8,13 +8,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
-import com.example.ofinger.SwipeToDelete;
 import com.example.ofinger.adapters.ChatAdapter;
 import com.example.ofinger.models.ChatList;
 import com.example.ofinger.models.User;
@@ -96,7 +94,6 @@ public class ChatFragment extends Fragment {
 
                 chatAdapter = new ChatAdapter(ChatFragment.this.getContext(), users, true);
                 messagesList.setAdapter(chatAdapter);
-                if(isAdded()) new ItemTouchHelper(new SwipeToDelete(ChatFragment.this.getContext(), chatAdapter)).attachToRecyclerView(messagesList);
             }
 
             @Override
@@ -104,6 +101,12 @@ public class ChatFragment extends Fragment {
 
             }
         });
+    }
+
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
     }
 
     private void status(String status){
@@ -117,6 +120,7 @@ public class ChatFragment extends Fragment {
         super.onResume();
 
         status("online");
+        checkTypingStatus("noOne");
     }
 
     @Override
@@ -124,7 +128,20 @@ public class ChatFragment extends Fragment {
         super.onPause();
 
         if(!ApplicationClass.currentUser.isAnonymous()) {
-            status("offline");
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
         }
     }
 }

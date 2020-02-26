@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,14 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
-
     private View mProgressView;
     private View mLoginFormView;
     private TextView tvLoad;
 
     EditText etMail, etPassword;
     Button btnLogin;
-    TextView tvReset;
+    TextView tvReset, tvReg;
 
     FirebaseAuth auth;
     DatabaseReference reference, reference2;
@@ -67,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvReset = findViewById(R.id.tvReset);
+        tvReg = findViewById(R.id.tvReg);
 
         auth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference("Cloth");
@@ -74,10 +75,23 @@ public class LoginActivity extends AppCompatActivity {
         cloths = new ArrayList<>();
         images = new ArrayList<>();
 
+        /**
+         * Resetovanje sifre
+         */
         tvReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
+            }
+        });
+
+        /**
+         * Odlazak na Register
+         */
+        tvReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
         });
 
@@ -90,10 +104,12 @@ public class LoginActivity extends AppCompatActivity {
                 /**
                  * Moraju svi podaci da se unesu
                  */
-                if(etMail.getText().toString().isEmpty() || etPassword.getText().toString().isEmpty()){
+                if(etMail.getText().toString().isEmpty() || etPassword.getText().toString().isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Molim vas, unesite sve podatke!", Toast.LENGTH_SHORT).show();
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(etMail.getText().toString().trim()).matches()){
+                    etMail.setError("Mejl nije dobar!");
+                    etMail.setFocusable(true);
                 } else {
-
                     String email = etMail.getText().toString().trim();
                     String password = etPassword.getText().toString().trim();
 
@@ -107,34 +123,38 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
-                                ApplicationClass.currentUser = auth.getCurrentUser();
-                                ApplicationClass.currentUserReference = FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid());
+                                if(auth.getCurrentUser().isEmailVerified() || !auth.getCurrentUser().isEmailVerified()) {
+                                    ApplicationClass.currentUser = auth.getCurrentUser();
+                                    ApplicationClass.currentUserReference = FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid());
 
-                                /**
-                                 * Pravljenje liste odece
-                                 */
-                                reference.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        cloths.clear();
-                                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                            Cloth cloth = snapshot.getValue(Cloth.class);
-                                            cloths.add(cloth);
+                                    /**
+                                     * Pravljenje liste odece
+                                     */
+                                    reference.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            cloths.clear();
+                                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                Cloth cloth = snapshot.getValue(Cloth.class);
+                                                cloths.add(cloth);
+                                            }
+
+                                            ApplicationClass.mainCloths = cloths;
                                         }
 
-                                        ApplicationClass.mainCloths = cloths;
-                                    }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            Toast.makeText(LoginActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        Toast.makeText(LoginActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                finish();
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "Molim vas verifikujte mejl!", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
                                 showProgress(false);
                                 Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -144,6 +164,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     /**

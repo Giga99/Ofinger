@@ -68,7 +68,16 @@
             android:inputType="textEmailAddress"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
-            android:hint="Imejl"/>
+            android:hint="Mejl"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/etBio"
+            android:inputType="textMultiLine"
+            android:layout_marginTop="10dp"
+            app:met_floatingLabel="normal"
+            android:hint="Biografija"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:layout_width="match_parent"
@@ -96,6 +105,18 @@
             android:background="@drawable/buttons"
             android:layout_marginTop="20dp"
             android:textColor="#fff"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Imate nalog? Kliknite ovde."
+            android:layout_marginTop="10dp"
+            android:layout_gravity="end"
+            android:clickable="true"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:id="@+id/tvLog"/>
 
     </LinearLayout>
 

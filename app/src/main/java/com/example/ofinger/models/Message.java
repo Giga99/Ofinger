@@ -1,8 +1,24 @@
 package com.example.ofinger.models;
 
 public class Message {
-    private String sender, receiver, text, objectId;
+    private String sender, receiver, text, objectId, timestamp, type;
     private boolean isseen;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getObjectId() {
         return objectId;

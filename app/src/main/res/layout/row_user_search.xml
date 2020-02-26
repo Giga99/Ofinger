@@ -9,7 +9,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="5dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@drawable/profimage" />
 
     <TextView
         android:id="@+id/tvUsername"

@@ -1,7 +1,6 @@
 package com.example.ofinger.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -39,32 +37,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.mContext = mContext;
         this.mUsers = mUsers;
         this.ischat = ischat;
-    }
-
-    public void deleteItem(final int position){
-        final User deletedItem = mUsers.get(position);
-
-        final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-        alert.setMessage("Da li ste sigurni da zelite da izbrisete ove poruke?");
-
-        alert.setPositiveButton("DA", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                FirebaseDatabase.getInstance().getReference("Chatlist").child(ApplicationClass.currentUser.getUid()).child(deletedItem.getId()).removeValue();
-
-                mUsers.remove(deletedItem);
-                notifyItemRemoved(position);
-            }
-        });
-
-        alert.setNegativeButton("NE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        alert.show();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -99,7 +71,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         holder.tvUsername.setText(user.getUsername());
         if(user.getImageURL().equals("default")){
-            holder.profileImage.setImageResource(R.mipmap.ic_launcher);
+            holder.profileImage.setImageResource(R.drawable.profimage);
         } else {
             Glide.with(mContext).load(user.getImageURL()).into(holder.profileImage);
         }
@@ -174,7 +146,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     Message chat = snapshot.getValue(Message.class);
                     if(chat.getReceiver().equals(ApplicationClass.currentUser.getUid()) && chat.getSender().equals(userid) ||
                             chat.getSender().equals(ApplicationClass.currentUser.getUid()) && chat.getReceiver().equals(userid)){
-                        theLastMessage = chat.getText();
+                        if(chat.getType().equals("image")){
+                            theLastMessage = "Poslata slika";
+                        } else if(chat.getType().equals("text")) {
+                            theLastMessage = chat.getText();
+                        }
                     }
                 }
 

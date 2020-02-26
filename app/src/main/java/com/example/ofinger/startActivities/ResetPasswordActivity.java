@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,8 +62,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                 String email = etEmail.getText().toString().trim();
 
-                if(email.equals("")){
-                    Toast.makeText(ResetPasswordActivity.this, "Sva polja moraju da se popune!", Toast.LENGTH_SHORT).show();
+                if (email.equals("")) {
+                    etEmail.setError("Unesite mejl!");
+                    etEmail.setFocusable(true);
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    etEmail.setError("Mejl nije dobar!");
+                    etEmail.setFocusable(true);
                 } else {
                     firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -71,6 +76,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 showProgress(false);
                                 tvInstruction.setText("Proverite vas mejl");
                                 startActivity(new Intent(ResetPasswordActivity.this, LoginActivity.class));
+                                finish();
                             } else{
                                 showProgress(false);
                                 String error = task.getException().getMessage();
@@ -81,6 +87,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     /**

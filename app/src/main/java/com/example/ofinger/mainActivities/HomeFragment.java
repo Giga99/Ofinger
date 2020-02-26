@@ -179,6 +179,12 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
+    }
+
     private void status(String status){
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
@@ -188,7 +194,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         status("online");
+        checkTypingStatus("noOne");
     }
 
     @Override
@@ -196,7 +204,20 @@ public class HomeFragment extends Fragment {
         super.onPause();
 
         if(!ApplicationClass.currentUser.isAnonymous()) {
-            status("offline");
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
         }
     }
 }

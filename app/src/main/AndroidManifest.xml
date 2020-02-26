@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".ApplicationClass"
@@ -14,6 +17,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".settings.EditEmailActivity"></activity>
+        <activity android:name=".startActivities.EmailVerificationActivity" />
+        <activity android:name=".settings.EditProfileActivity" />
+        <activity android:name=".settings.EditPassActivity" />
+        <activity android:name=".settings.SettingsActivity" />
+
         <service
             android:name=".notifications.NotificationService"
             android:enabled="true"
@@ -45,26 +54,23 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="com.example.ofinger.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_path" />
+                android:resource="@xml/paths" />
         </provider>
 
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_launcher_background" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />

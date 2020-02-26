@@ -1,103 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    tools:context=".mainActivities.MainActivity"
-    android:id="@+id/drawerLayout">
+    tools:context=".messaging.ChatActivity">
 
-    <RelativeLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".messaging.ChatActivity">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+            android:background="@color/colorPrimaryDark"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:popupTheme="@style/MenuStyle">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivProfileImageToolbar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/profimage" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryDark"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark"
-                app:popupTheme="@style/MenuStyle">
+                android:orientation="vertical"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp">
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/back"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="true"
-                    android:id="@+id/ivBack"/>
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/ivProfileImageToolbar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp" />
-
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tvUsernameToolbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
                     android:clickable="true"
                     android:text="username"
                     android:textColor="#fff"
                     android:textStyle="bold" />
 
-            </androidx.appcompat.widget.Toolbar>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvStatusToolbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Online"
+                    android:textColor="#fff"
+                    android:textStyle="bold"/>
 
-        </com.google.android.material.appbar.AppBarLayout>
+            </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/messagesList"
-            android:layout_below="@id/appBarLayout"
-            android:layout_above="@id/bottom"/>
+        </androidx.appcompat.widget.Toolbar>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:padding="5dp"
-            android:id="@+id/bottom"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/messagesList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom"
+        android:layout_below="@id/appBarLayout" />
+
+    <RelativeLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#fff"
+        android:padding="5dp">
+
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/ibMore"
+            android:layout_alignParentStart="true"
             android:background="#fff"
-            android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content">
+            android:layout_centerVertical="true"
+            android:src="@drawable/add2"/>
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etSend"
-                android:background="@android:color/transparent"
-                android:hint="Ukucajte poruku..."
-                android:layout_toStartOf="@id/btnSend"
-                android:layout_centerVertical="true"/>
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/etSend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/btnSend"
+            android:background="@android:color/transparent"
+            android:layout_toEndOf="@id/ibMore"
+            android:hint="Ukucajte poruku..." />
 
-            <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/ic_action_name"
-                android:id="@+id/btnSend"
-                android:layout_alignParentEnd="true"/>
-
-        </RelativeLayout>
+        <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_action_name" />
 
     </RelativeLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:headerLayout="@layout/nav_header"
-        android:background="@color/colorPrimary"
-        app:itemTextColor="@color/white"
-        app:itemIconTint="@color/white"
-        android:layout_gravity="start"
-        app:menu="@menu/nav_drawer_menu"/>
-
-</androidx.drawerlayout.widget.DrawerLayout>
+</RelativeLayout>

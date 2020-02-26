@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,12 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -32,30 +31,27 @@ import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
-import com.example.ofinger.adapters.ImageAdapter;
+import com.example.ofinger.adapters.ImageVideoAdapter;
 import com.example.ofinger.adapters.ReviewAdapter;
-import com.example.ofinger.customDialogs.CustomDialogWish;
-import com.example.ofinger.mainActivities.GuestFragment;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.messaging.ChatActivity;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Image;
 import com.example.ofinger.models.Review;
 import com.example.ofinger.models.User;
-import com.example.ofinger.startActivities.StartActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textview.MaterialTextView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.NumberFormat;
@@ -71,12 +67,8 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
     private View mLoginFormView;
     private TextView tvLoad;
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navView;
-    private ActionBarDrawerToggle toggle;
-
     TextView tvClothName, tvOwnerName, tvClothDescription, tvPrice, reviewHeader;
-    ImageView ivBack, ivEdit, ivDelete, ivSold, ivNotSold;
+    ImageView ivEdit, ivDelete, ivSold, ivNotSold;
     MaterialEditText etClothName, etClothDescription, etPrice;
     Button btnSubmit, btnReview;
     LinearLayout editField, userRating;
@@ -87,12 +79,12 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
 
     BottomNavigationView bottomNavigationView;
 
-    CircleImageView ivProfileImage, navHeaderProfileImage;
+    CircleImageView ivProfileImage;
     TextView tvUsername;
 
     List<Image> images;
     ViewPager viewpagerImages;
-    ImageAdapter adapter;
+    ImageVideoAdapter adapter;
 
     RecyclerView clothReviewsList;
     LinearLayoutManager linearLayoutManager;
@@ -111,59 +103,13 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-
-        drawerLayout = findViewById(R.id.drawerLayout);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
-        drawerLayout.addDrawerListener(toggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-        navView = findViewById(R.id.navView);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.wishList:
-                        CustomDialogWish customDialogWish = new CustomDialogWish(ClothInfo.this);
-                        customDialogWish.show();
-                        break;
-                    case R.id.logout:
-                        if (ApplicationClass.currentUser.isAnonymous()) {
-                            ApplicationClass.currentUserReference.removeValue(new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    ApplicationClass.currentUser.delete();
-                                    FirebaseAuth.getInstance().signOut();
-                                    startActivity(new Intent(ClothInfo.this, StartActivity.class));
-                                    ClothInfo.this.finish();
-                                }
-                            });
-                        } else {
-                            FirebaseAuth.getInstance().signOut();
-                            startActivity(new Intent(ClothInfo.this, StartActivity.class));
-                            ClothInfo.this.finish();
-                        }
-                        break;
-
-                    case R.id.settings:
-                        if(ApplicationClass.currentUser.isAnonymous()){
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GuestFragment()).commit();
-                        } else {
-                            //TODO podesavanja
-                            Toast.makeText(ClothInfo.this, "Settings!", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
         ivProfileImage = findViewById(R.id.ivProfileImage);
-        View hView = navView.getHeaderView(0);
-        navHeaderProfileImage = hView.findViewById(R.id.navHeaderProfileImage);
         tvUsername = findViewById(R.id.tvUsername);
 
         /**
@@ -171,7 +117,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
          */
         if(ApplicationClass.currentUser.isAnonymous()){
             tvUsername.setText("Guest");
-            ivProfileImage.setImageResource(R.mipmap.ic_launcher);
+            ivProfileImage.setImageResource(R.drawable.profimage);
         } else {
             ApplicationClass.currentUserReference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -181,10 +127,9 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
 
                         tvUsername.setText(user.getUsername());
                         if (user.getImageURL().equals("default")) {
-                            ivProfileImage.setImageResource(R.mipmap.ic_launcher);
+                            ivProfileImage.setImageResource(R.drawable.profimage);
                         } else {
                             Glide.with(ClothInfo.this).load(user.getImageURL()).into(ivProfileImage);
-                            Glide.with(ClothInfo.this).load(user.getImageURL()).into(navHeaderProfileImage);
                         }
                     }
                 }
@@ -207,7 +152,6 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
 
         ivEdit = findViewById(R.id.ivEdit);
         ivDelete = findViewById(R.id.ivDelete);
-        ivBack = findViewById(R.id.ivBack);
         ivSold = findViewById(R.id.ivSold);
         ivNotSold = findViewById(R.id.ivUncheckedSold);
         etClothName = findViewById(R.id.etClothName);
@@ -278,7 +222,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                     images.add(image);
                 }
 
-                adapter = new ImageAdapter(ClothInfo.this, images);
+                adapter = new ImageVideoAdapter(ClothInfo.this, images);
                 viewpagerImages.setAdapter(adapter);
             }
 
@@ -305,7 +249,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         clothReviewsList = findViewById(R.id.clothReviewsList);
         linearLayoutManager = new LinearLayoutManager(this);
         clothReviewsList.setLayoutManager(linearLayoutManager);
-        adapterReview = new ReviewAdapter(this, reviews);
+        adapterReview = new ReviewAdapter(this, reviews, "cloth", INDEX, null);
         clothReviewsList.setAdapter(adapterReview);
         header3 = findViewById(R.id.header3);
 
@@ -323,6 +267,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                 }
 
                 adapterReview.notifyDataSetChanged();
+                calculateUser();
 
                 if(reviews.size() == 0){
                     header3.setVisibility(View.GONE);
@@ -383,6 +328,25 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                     public void onClick(DialogInterface dialog, int which) {
                         showProgress(true);
                         tvLoad.setText("Brisanje odece...");
+
+                        /**
+                         * Brisanje slika
+                         */
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Cloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child("urls");
+                        databaseReference.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                    StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(snapshot.getValue(String.class));
+                                    storageReference.delete();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
 
                         /**
                          * Brisanje odela sa servera
@@ -474,12 +438,6 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         /**
          * Povratak na prethodnu aktivnost
          */
-        ivBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         /**
          * Premestanje u sekciju neprodatih stvari
@@ -575,6 +533,9 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
             }
         });
 
+        /**
+         * Ocenjivanje
+         */
         btnReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -584,11 +545,11 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                 review.setStars(ratingBarUser.getRating());
                 review.setText(etReview.getText().toString());
                 review.setUserId(ApplicationClass.currentUser.getUid());
+
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
                 String id = databaseReference.push().getKey();
 
-                databaseReference.child(id).setValue(review)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                databaseReference.child(id).setValue(review).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 showProgress(false);
@@ -606,6 +567,31 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         });
 
         calculateOverall();
+
+        isWish();
+    }
+
+    private void isWish() {
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).exists()){
+                    Drawable img = ClothInfo.this.getResources().getDrawable( R.drawable.wishlist );
+                    bottomNavigationView.getMenu().getItem(1).setIcon(img);
+                    bottomNavigationView.getMenu().getItem(1).setTitle("wish");
+                } else {
+                    Drawable img = ClothInfo.this.getResources().getDrawable( R.drawable.notwishlist );
+                    bottomNavigationView.getMenu().getItem(1).setIcon(img);
+                    bottomNavigationView.getMenu().getItem(1).setTitle("notwish");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -624,6 +610,11 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                         btnReview.setVisibility(View.GONE);
                         ratingBarUser.setVisibility(View.GONE);
                         reviewHeader.setText("Hvala na ocenjivanju odece!");
+                    } else {
+                        etReview.setVisibility(View.VISIBLE);
+                        btnReview.setVisibility(View.VISIBLE);
+                        ratingBarUser.setVisibility(View.VISIBLE);
+                        reviewHeader.setText("Ocenite ovo odelo:");
                     }
                 }
             }
@@ -684,23 +675,44 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                     intent2.putExtra("userId", ApplicationClass.otherUser.getId());
                     startActivity(intent2);
                     break;
+
+                case R.id.nav_wish:
+                    if (item.getTitle().toString().equals("wish")) {
+                        FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid()).child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).removeValue();
+                    } else if (item.getTitle().toString().equals("notwish")) {
+                        FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid()).child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).setValue(true);
+                    }
+                    break;
+
+                case R.id.nav_share:
+                    String name = tvClothName.getText().toString().trim();
+                    String price = tvPrice.getText().toString().trim();
+
+                    shareCloth(name, price);
+
+                    break;
             }
             return true;
         }
     };
 
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        toggle.syncState();
+    private void shareCloth(String name, String price) {
+        String shareBody = name + "\n" + price;
+        Uri uri = Uri.parse(images.get(0).getInfo());
+
+        Intent sIntent = new Intent(Intent.ACTION_SEND);
+        sIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+        sIntent.setType("image/png");
+        startActivity(Intent.createChooser(sIntent, "Podeli preko"));
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(toggle.onOptionsItemSelected(item)) return true;
-        return super.onOptionsItemSelected(item);
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
     }
-
 
     private void status(String status){
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -712,6 +724,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
     protected void onPostResume() {
         super.onPostResume();
 
+        checkTypingStatus("noOne");
         status("online");
     }
 
@@ -720,7 +733,20 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         super.onPause();
 
         if(!ApplicationClass.currentUser.isAnonymous()) {
-            status("offline");
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
         }
     }
 
@@ -774,5 +800,11 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         Intent intent = new Intent(ClothInfo.this, ClothInfo.class);
         intent.putExtra("index", i);
         startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

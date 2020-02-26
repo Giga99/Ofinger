@@ -1,7 +1,23 @@
 package com.example.ofinger.models;
 
 public class User {
-    private String id, username, imageURL, status, email;
+    private String id, username, imageURL, status, email, currency, bio;
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public String getEmail() {
         return email;

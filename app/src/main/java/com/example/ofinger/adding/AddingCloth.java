@@ -12,45 +12,36 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
-import com.example.ofinger.adapters.ImageAdapter;
-import com.example.ofinger.customDialogs.CustomDialogWish;
+import com.example.ofinger.adapters.ImageVideoAdapter;
 import com.example.ofinger.info.ClothInfo;
-import com.example.ofinger.mainActivities.GuestFragment;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Image;
 import com.example.ofinger.models.User;
-import com.example.ofinger.startActivities.StartActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,21 +66,16 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
     private View mLoginFormView;
     private TextView tvLoad;
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navView;
-    private ActionBarDrawerToggle toggle;
-
     EditText etName, etPrice, etDescription;
 
     List<Image> images;
     ViewPager viewpagerImages;
-    ImageAdapter adapter;
+    ImageVideoAdapter adapter;
 
     Button btnAddImage, btnFinish;
 
-    CircleImageView ivProfileImage, navHeaderProfileImage;
+    CircleImageView ivProfileImage;
     TextView tvUsername;
-    ImageView ivBack;
 
     String username;
 
@@ -111,58 +97,11 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-
-        drawerLayout = findViewById(R.id.drawerLayout);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
-        drawerLayout.addDrawerListener(toggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        navView = findViewById(R.id.navView);
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    case R.id.wishList:
-                        CustomDialogWish customDialogWish = new CustomDialogWish(AddingCloth.this);
-                        customDialogWish.show();
-                        break;
-                    case R.id.logout:
-                        if (ApplicationClass.currentUser.isAnonymous()) {
-                            ApplicationClass.currentUserReference.removeValue(new DatabaseReference.CompletionListener() {
-                                @Override
-                                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    ApplicationClass.currentUser.delete();
-                                    FirebaseAuth.getInstance().signOut();
-                                    startActivity(new Intent(AddingCloth.this, StartActivity.class));
-                                    AddingCloth.this.finish();
-                                }
-                            });
-                        } else {
-                            FirebaseAuth.getInstance().signOut();
-                            startActivity(new Intent(AddingCloth.this, StartActivity.class));
-                            AddingCloth.this.finish();
-                        }
-                        break;
-
-                    case R.id.settings:
-                        if(ApplicationClass.currentUser.isAnonymous()){
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GuestFragment()).commit();
-                        } else {
-                            //TODO podesavanja
-                            Toast.makeText(AddingCloth.this, "Settings!", Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                }
-                return true;
-            }
-        });
-
         ivProfileImage = findViewById(R.id.ivProfileImage);
-        View hView = navView.getHeaderView(0);
-        navHeaderProfileImage = hView.findViewById(R.id.navHeaderProfileImage);
         tvUsername = findViewById(R.id.tvUsername);
-        ivBack = findViewById(R.id.ivBack);
 
         storageReference = FirebaseStorage.getInstance().getReference("images");
         urls = new ArrayList<>();
@@ -184,10 +123,9 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
                     username = user.getUsername();
                     tvUsername.setText(user.getUsername());
                     if (user.getImageURL().equals("default")) {
-                        ivProfileImage.setImageResource(R.mipmap.ic_launcher);
+                        ivProfileImage.setImageResource(R.drawable.profimage);
                     } else {
                         Glide.with(AddingCloth.this).load(user.getImageURL()).into(ivProfileImage);
-                        Glide.with(AddingCloth.this).load(user.getImageURL()).into(navHeaderProfileImage);
                     }
                 }
             }
@@ -204,7 +142,7 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
 
         images = new ArrayList<>();
         viewpagerImages = findViewById(R.id.viewpagerImages);
-        adapter = new ImageAdapter(this, images);
+        adapter = new ImageVideoAdapter(this, images);
         viewpagerImages.setAdapter(adapter);
 
         btnAddImage = findViewById(R.id.btnAddImage);
@@ -219,22 +157,16 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
         etDescription = findViewById(R.id.etDescription);
 
         /**
-         * Povratak na prethodnu aktivnost
-         */
-        ivBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        /**
          * Dodavanje slike
          */
         btnAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                if(ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                        && ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
+                    ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
+                } else if(ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
                 } else if (ContextCompat.checkSelfPermission(AddingCloth.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
@@ -263,6 +195,8 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
                     showProgress(true);
                     tvLoad.setText("Molim vas sacekajte...");
 
+                    String timestamp = String.valueOf(System.currentTimeMillis());
+
                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Cloth");
 
                     /**
@@ -278,6 +212,7 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
                     cloth.setSearchName(etName.getText().toString().trim().toLowerCase());
                     cloth.setSold(false);
                     cloth.setUrls(urls);
+                    cloth.setTimestamp(timestamp);
                     String id = reference.push().getKey();
                     cloth.setObjectId(id);
 
@@ -355,7 +290,7 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
         progressDialog.show();
 
         if(imageUri != null){
-            final StorageReference filereferance = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            final StorageReference filereferance = storageReference.child(System.currentTimeMillis() + ApplicationClass.currentUser.getUid() + "." + getFileExtension(imageUri));
 
             uploadTask = filereferance.putFile(imageUri);
             uploadTask.continueWithTask(new Continuation() {
@@ -417,9 +352,10 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
             /**
              * Dozvoljen je pristup i onda se uzima slika
              */
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if((CropImage.hasPermissionInManifest(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE))
+            && (CropImage.hasPermissionInManifest(AddingCloth.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))){
                 CropImage.activity().setAspectRatio(1, 1).start(AddingCloth.this);
-            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
+            } else if(!CropImage.hasPermissionInManifest(AddingCloth.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
                 /**
                  * Nije dozvoljen pristup i onda se ponovo trazi dozvola sa objasnjenjem zasto je potrebna
                  */
@@ -446,20 +382,41 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
                 } else {
                     Toast.makeText(AddingCloth.this, "Nikad vas vise necemo pitati!", Toast.LENGTH_SHORT).show();
                 }
+            } else if(!CropImage.hasPermissionInManifest(AddingCloth.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                /**
+                 * Nije dozvoljen pristup i onda se ponovo trazi dozvola sa objasnjenjem zasto je potrebna
+                 */
+                if(ActivityCompat.shouldShowRequestPermissionRationale(AddingCloth.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Ova dozvola je potrebna kako bi dodali sliku u aplikaciju. Molim vas dozvolite!").setTitle("Zahtev za vaznu dozvolu!");
+
+                    builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(AddingCloth.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
+                        }
+                    });
+
+                    builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(AddingCloth.this, "Ne moze se dodati!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    builder.show();
+                } else {
+                    Toast.makeText(AddingCloth.this, "Nikad vas vise necemo pitati!", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        toggle.syncState();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(toggle.onOptionsItemSelected(item)) return true;
-        return super.onOptionsItemSelected(item);
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
     }
 
     private void status(String status){
@@ -472,6 +429,7 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
     protected void onPostResume() {
         super.onPostResume();
 
+        checkTypingStatus("noOne");
         status("online");
     }
 
@@ -480,7 +438,20 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
         super.onPause();
 
         if(!ApplicationClass.currentUser.isAnonymous()) {
-            status("offline");
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
         }
     }
 
@@ -534,5 +505,11 @@ public class AddingCloth extends AppCompatActivity implements ClothAdapter.ItemC
         Intent intent = new Intent(AddingCloth.this, ClothInfo.class);
         intent.putExtra("index", i);
         startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

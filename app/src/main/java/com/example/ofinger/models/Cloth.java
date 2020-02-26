@@ -3,10 +3,18 @@ package com.example.ofinger.models;
 import java.util.List;
 
 public class Cloth {
-    private String name, description, objectId, ownerID, ownerUsername, searchName;
+    private String name, description, objectId, ownerID, ownerUsername, searchName, timestamp;
     private long price;
     private List<String> urls;
     private boolean sold;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public boolean isSold() {
         return sold;

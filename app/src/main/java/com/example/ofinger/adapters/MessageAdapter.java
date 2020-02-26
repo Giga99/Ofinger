@@ -1,12 +1,18 @@
 package com.example.ofinger.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,8 +22,18 @@ import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.models.Message;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
     public static final int MSG_TYPE_LEFT = 0;
@@ -33,10 +49,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.imageURL = imageURL;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView showMessage;
-        public ImageView profileImageMessage;
-        public TextView txtSeen;
+    class ViewHolder extends RecyclerView.ViewHolder{
+        TextView showMessage, tvTime;
+        ImageView profileImageMessage, messageIv;
+        TextView txtSeen;
+        RelativeLayout messageLayout;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -44,6 +62,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             showMessage = itemView.findViewById(R.id.showMessage);
             profileImageMessage = itemView.findViewById(R.id.profileImageMessage);
             txtSeen = itemView.findViewById(R.id.txtSeen);
+            tvTime = itemView.findViewById(R.id.tvTime);
+            messageLayout = itemView.findViewById(R.id.messageLayout);
+            messageIv = itemView.findViewById(R.id.messageIv);
         }
     }
 
@@ -61,13 +82,26 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, final int position) {
         Message chat = messages.get(position);
 
-        holder.showMessage.setText(chat.getText());
+        String time = chat.getTimestamp();
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(Long.parseLong(time));
+        String datetime = DateFormat.format("dd/MM/yyyy hh:mm aa", cal).toString();
+
+        if(chat.getType().equals("text")){
+            holder.showMessage.setText(chat.getText());
+            holder.messageIv.setVisibility(View.GONE);
+        } else {
+            holder.showMessage.setVisibility(View.GONE);
+            Picasso.get().load(chat.getText()).into(holder.messageIv);
+        }
+
+        holder.tvTime.setText(datetime);
 
         if(imageURL.equals("default")){
-            holder.profileImageMessage.setImageResource(R.mipmap.ic_launcher);
+            holder.profileImageMessage.setImageResource(R.drawable.profimage);
         } else {
             Glide.with(mContext).load(imageURL).into(holder.profileImageMessage);
         }
@@ -91,6 +125,68 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         } else {
             holder.txtSeen.setVisibility(View.GONE);
         }
+
+        holder.messageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Brisanje poruke");
+                builder.setMessage("Da li ste sigurni da zelite da izbrisete poruku?");
+
+                builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteMessage(position);
+                    }
+                });
+
+                builder.setNegativeButton("Ne", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create().show();
+            }
+        });
+
+        if(holder.showMessage.getText().toString().equals("Ova poruka je obrisana...")) {
+            holder.showMessage.setBackgroundColor(Color.WHITE);
+            holder.showMessage.setTextColor(Color.BLACK);
+            holder.tvTime.setVisibility(View.GONE);
+        }
+    }
+
+    private void deleteMessage(int position) {
+        String msgTimeStamp = messages.get(position).getTimestamp();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
+        Query query = databaseReference.orderByChild("timestamp").equalTo(msgTimeStamp);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    if(ApplicationClass.currentUser.getUid().equals(snapshot.child("sender").getValue())){
+                        //brisanje
+                        //snapshot.getRef().removeValue();
+
+                        //promena teksta
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("text", "Ova poruka je obrisana...");
+                        hashMap.put("type", "text");
+                        snapshot.getRef().updateChildren(hashMap);
+                        Toast.makeText(mContext, "Poruka izbrisana!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "Mozete samo vase poruke da obrisete!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".settings.EditProfileActivity">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/bar_layout"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_margin="20dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/profimage"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/usernameLayout"
+            android:orientation="horizontal"
+            android:layout_below="@id/ivProfileImage"
+            android:layout_marginTop="40dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Korisnicko ime:"
+                android:textSize="17sp"
+                android:layout_weight="1"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/etNewUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:layout_weight="30"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bioLayout"
+            android:orientation="vertical"
+            android:layout_below="@id/usernameLayout"
+            android:layout_marginTop="20dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Biografija:"
+                android:textSize="17sp" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/etNewBio"
+                android:inputType="textMultiLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bioLayout"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+            android:text="Sacuvaj izmene"
+            android:textSize="16sp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

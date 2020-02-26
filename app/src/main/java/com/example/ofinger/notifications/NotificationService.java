@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.ofinger.ApplicationClass;
+import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.messaging.ChatActivity;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,11 +46,17 @@ public class NotificationService extends FirebaseMessagingService {
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        String type = remoteMessage.getData().get("type");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
 
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = null;
+        if(type.equals("message")){
+            intent = new Intent(this, ChatActivity.class);
+        } else if(type.equals("follow")){
+            intent = new Intent(this, MainActivity.class);
+        }
         intent.putExtra("userId", user);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -76,11 +83,17 @@ public class NotificationService extends FirebaseMessagingService {
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        String type = remoteMessage.getData().get("type");
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
 
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = null;
+        if(type.equals("message")){
+            intent = new Intent(this, ChatActivity.class);
+        } else if(type.equals("follow")){
+            intent = new Intent(this, MainActivity.class);
+        }
         intent.putExtra("userId", user);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);

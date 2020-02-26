@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/messageImage"
+        android:title="Slika"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/messageVideo"
+        android:title="Video"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/messageTemplate"
+        android:title="Sablon za posiljku"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/messageVoice"
+        android:title="Glasovna Poruka"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/messageLocation"
+        android:title="Lokacija"
+        app:showAsAction="never"/>
+
+</menu>

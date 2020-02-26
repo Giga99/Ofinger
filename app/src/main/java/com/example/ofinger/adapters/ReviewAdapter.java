@@ -1,6 +1,8 @@
 package com.example.ofinger.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.models.Review;
@@ -28,10 +31,15 @@ import java.util.List;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
     private List<Review> reviews;
     Activity context;
+    String type, id;
+    int index;
 
-    public ReviewAdapter(Activity context, List<Review> list){
+    public ReviewAdapter(Activity context, List<Review> list, String type, int index, String id){
         reviews = list;
         this.context = context;
+        this.type = type;
+        this.index = index;
+        this.id = id;
     }
 
     @NonNull
@@ -54,10 +62,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     User user = snapshot.getValue(User.class);
-                    if(user.getId().equals(reviews.get(position).getUserId())) {
-                        holder.ownerUsername.setText(user.getUsername());
-                        if(!context.isDestroyed()) Glide.with(context).load(user.getImageURL()).into(holder.ivUserImage);
-                        break;
+                    if(getItemCount() > 0) {
+                        if (user.getId().equals(reviews.get(position).getUserId())) {
+                            holder.ownerUsername.setText(user.getUsername());
+                            if (!context.isDestroyed() && !user.getImageURL().equals("default")) Glide.with(context).load(user.getImageURL()).into(holder.ivUserImage);
+                            break;
+                        }
                     }
                 }
             }
@@ -87,6 +97,67 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                 context.startActivity(intent);
             }
         });
+
+        if(!reviews.get(position).getUserId().equals(ApplicationClass.currentUser.getUid())) holder.deleteReview.setVisibility(View.GONE);
+
+        holder.deleteReview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Brisanje ocene");
+                builder.setMessage("Da li ste sigurni da zelite da izbrisete ovu ocenu?");
+
+                builder.setPositiveButton("Da", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(type.equals("cloth")) {
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(index).getObjectId());
+                            reference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        Review review = snapshot.getValue(Review.class);
+                                        if (review.getUserId().equals(ApplicationClass.currentUser.getUid())) snapshot.getRef().removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else if (type.equals("user")){
+                            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("StarsUsers").child(id);
+                            reference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        Review review = snapshot.getValue(Review.class);
+                                        if (review.getUserId().equals(ApplicationClass.currentUser.getUid())) {
+                                            snapshot.getRef().removeValue();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                });
+
+                builder.setNegativeButton("Ne", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create().show();
+            }
+        });
     }
 
     @Override
@@ -96,12 +167,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView ownerUsername, ownerReview;
-        ImageView ivUserImage;
+        ImageView ivUserImage, deleteReview;
         RatingBar ownerStars;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
 
+            deleteReview = itemView.findViewById(R.id.deleteReview);
             ownerUsername = itemView.findViewById(R.id.ownerUsername);
             ownerReview = itemView.findViewById(R.id.ownerReview);
             ivUserImage = itemView.findViewById(R.id.ivUserImage);

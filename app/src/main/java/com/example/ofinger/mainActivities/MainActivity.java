@@ -27,6 +27,7 @@ import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Message;
 import com.example.ofinger.models.User;
 import com.example.ofinger.notifications.Token;
+import com.example.ofinger.settings.SettingsActivity;
 import com.example.ofinger.startActivities.StartActivity;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,7 +39,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.yalantis.phoenix.PullToRefreshView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,14 +47,11 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements ClothAdapter.ItemClicked {
-    private static long REFRESH_DELAY = 1000;
-
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private ActionBarDrawerToggle toggle;
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
-    private PullToRefreshView pullToRefreshView;
 
     private CircleImageView ivProfileImage, navHeaderProfileImage;
     private TextView tvUsername;
@@ -108,8 +105,7 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
                         if(ApplicationClass.currentUser.isAnonymous()){
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GuestFragment()).commit();
                         } else {
-                            //TODO podesavanja
-                            Toast.makeText(MainActivity.this, "Settings!", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         }
                         break;
                 }
@@ -123,19 +119,6 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         tvUsername = findViewById(R.id.tvUsername);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        pullToRefreshView = findViewById(R.id.pullView);
-
-        pullToRefreshView.setOnRefreshListener(new PullToRefreshView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                pullToRefreshView.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pullToRefreshView.setRefreshing(false);
-                    }
-                }, REFRESH_DELAY);
-            }
-        });
 
         /**
          * Brojanje neprocitanih poruka
@@ -172,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
          */
         if(ApplicationClass.currentUser.isAnonymous()){
             tvUsername.setText("Gost");
-            ivProfileImage.setImageResource(R.mipmap.ic_launcher);
+            ivProfileImage.setImageResource(R.drawable.profimage);
         } else {
             ApplicationClass.currentUserReference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -181,10 +164,12 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
 
                     tvUsername.setText(user.getUsername());
                     if (user.getImageURL().equals("default")) {
-                        ivProfileImage.setImageResource(R.mipmap.ic_launcher);
+                        ivProfileImage.setImageResource(R.drawable.profimage);
                     } else {
-                        Glide.with(MainActivity.this).load(user.getImageURL()).into(ivProfileImage);
-                        Glide.with(MainActivity.this).load(user.getImageURL()).into(navHeaderProfileImage);
+                        if(!isDestroyed()) {
+                            Glide.with(MainActivity.this).load(user.getImageURL()).into(ivProfileImage);
+                            Glide.with(MainActivity.this).load(user.getImageURL()).into(navHeaderProfileImage);
+                        }
                     }
                 }
 
@@ -369,6 +354,12 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         return super.onOptionsItemSelected(item);
     }
 
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
+    }
+
     private void status(String status){
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
@@ -380,6 +371,7 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         super.onPostResume();
 
         status("online");
+        checkTypingStatus("noOne");
     }
 
     @Override
@@ -387,7 +379,20 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         super.onPause();
 
         if(!ApplicationClass.currentUser.isAnonymous()) {
-            status("offline");
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
         }
     }
 }

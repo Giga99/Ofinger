@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,6 +31,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
@@ -40,6 +46,9 @@ import com.example.ofinger.messaging.ChatActivity;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Review;
 import com.example.ofinger.models.User;
+import com.example.ofinger.notifications.Data;
+import com.example.ofinger.notifications.Sender;
+import com.example.ofinger.notifications.Token;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -49,16 +58,22 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+import com.google.gson.Gson;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -69,8 +84,8 @@ public class ProfileFragment extends Fragment {
     private static final int REQUEST_CODE_TAKE = 2;
 
     private CircleImageView ivProfileImageUser;
-    private TextView tvEmail, tvUsername, header, header2, reviewHeader;
-    private Button btnMessage, btnFollowing, btnSettings;
+    private MaterialTextView tvEmail, tvUsername, header, header2, reviewHeader, tvBio;
+    private Button btnMessage, btnFollowing;
     private ImageButton ivUserPosts, ivSoldList;
     private RatingBar userOverallRating, userRating;
 
@@ -100,18 +115,21 @@ public class ProfileFragment extends Fragment {
 
     float starsOverall;
 
+    private RequestQueue requestQueue;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        requestQueue = Volley.newRequestQueue(ProfileFragment.this.getActivity().getApplicationContext());
+
         ivProfileImageUser = view.findViewById(R.id.ivProfileImageUser);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvUsername = view.findViewById(R.id.tvUsername);
         btnFollowing = view.findViewById(R.id.btnFollowing);
         btnMessage = view.findViewById(R.id.btnMessage);
-        btnSettings = view.findViewById(R.id.btnSettings);
         header = view.findViewById(R.id.header);
         header2 = view.findViewById(R.id.header2);
         ivUserPosts = view.findViewById(R.id.ivUserPosts);
@@ -123,7 +141,7 @@ public class ProfileFragment extends Fragment {
         reviewHeader = view.findViewById(R.id.reviewHeader);
         btnReview = view.findViewById(R.id.btnReview);
         etReview = view.findViewById(R.id.etReview);
-
+        tvBio = view.findViewById(R.id.tvBio);
 
         list = view.findViewById(R.id.listProfile);
         list.setHasFixedSize(true);
@@ -131,6 +149,7 @@ public class ProfileFragment extends Fragment {
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
         list.setLayoutManager(manager);
+
 
         listSold = view.findViewById(R.id.listProfileSold);
         listSold.setHasFixedSize(true);
@@ -141,6 +160,11 @@ public class ProfileFragment extends Fragment {
         reference = FirebaseDatabase.getInstance().getReference("Cloth");
         userCloths = new ArrayList<>();
         soldCloths = new ArrayList<>();
+
+        adapter = new ClothAdapter(getContext(), userCloths);
+        adapterSold = new ClothAdapter(getContext(), soldCloths);
+        list.setAdapter(adapter);
+        listSold.setAdapter(adapterSold);
 
         SharedPreferences prefs = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE);
         profileid = prefs.getString("profileid", "none");
@@ -155,9 +179,10 @@ public class ProfileFragment extends Fragment {
                         if (user.getId().equals(profileid)) {
                             ApplicationClass.otherUser = user;
                             tvUsername.setText("Korisnicko ime: " + user.getUsername());
-                            tvEmail.setText("Imejl: " + user.getEmail());
+                            tvEmail.setText("Mejl: " + user.getEmail());
+                            tvBio.setText(user.getBio());
                             if (user.getImageURL().equals("default")) {
-                                ivProfileImageUser.setImageResource(R.mipmap.ic_launcher);
+                                ivProfileImageUser.setImageResource(R.drawable.profimage);
                             } else {
                                 Glide.with(getContext()).load(user.getImageURL()).into(ivProfileImageUser);
                             }
@@ -166,7 +191,6 @@ public class ProfileFragment extends Fragment {
                                 header.setText("Profil Korisnika");
                                 header2.setText("Odeca Korisnika:");
                                 tvEmail.setVisibility(View.GONE);
-                                btnSettings.setVisibility(View.GONE);
                                 btnMessage.setVisibility(View.VISIBLE);
                                 btnFollowing.setVisibility(View.VISIBLE);
                             } else {
@@ -193,10 +217,8 @@ public class ProfileFragment extends Fragment {
                                         ApplicationClass.userCloths = userCloths;
                                     ApplicationClass.profileCloth = userCloths;
                                     ApplicationClass.soldCloths = soldCloths;
-                                    adapter = new ClothAdapter(getContext(), userCloths);
-                                    adapterSold = new ClothAdapter(getContext(), soldCloths);
-                                    list.setAdapter(adapter);
-                                    listSold.setAdapter(adapterSold);
+                                    adapter.notifyDataSetChanged();
+                                    adapterSold.notifyDataSetChanged();
                                 }
 
                                 @Override
@@ -237,7 +259,7 @@ public class ProfileFragment extends Fragment {
         userReviewsList = view.findViewById(R.id.userReviewsList);
         linearLayoutManager = new LinearLayoutManager(ProfileFragment.this.getContext());
         userReviewsList.setLayoutManager(linearLayoutManager);
-        adapterReview = new ReviewAdapter(ProfileFragment.this.getActivity(), reviews);
+        adapterReview = new ReviewAdapter(ProfileFragment.this.getActivity(), reviews, "user", -1, profileid);
         userReviewsList.setAdapter(adapterReview);
         header3 = view.findViewById(R.id.header3);
 
@@ -255,6 +277,7 @@ public class ProfileFragment extends Fragment {
                 }
 
                 adapterReview.notifyDataSetChanged();
+                calculateUser();
 
                 if(reviews.size() == 0){
                     header3.setVisibility(View.GONE);
@@ -272,17 +295,6 @@ public class ProfileFragment extends Fragment {
         });
 
         /**
-         * Odlazak na opcije
-         */
-        btnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO podesavanja
-                Toast.makeText(ProfileFragment.this.getContext(), "Podesavanja", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        /**
          * Zapratiti ili otpratiti korisnika
          */
         btnFollowing.setOnClickListener(new View.OnClickListener() {
@@ -291,6 +303,21 @@ public class ProfileFragment extends Fragment {
                 if(btnFollowing.getText().toString().equals("Zapratite")){
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following").child(ApplicationClass.otherUser.getId()).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.otherUser.getId()).child("followers").child(ApplicationClass.currentUser.getUid()).setValue(true);
+
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid());
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+
+                            sendNotification(ApplicationClass.otherUser.getId(), user.getUsername());
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 } else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(ProfileFragment.this.getContext());
                     dialog.setTitle("Jeste sigurni da zelite da otpratite korinsika?");
@@ -421,6 +448,62 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
+     * Slanje notifikacije za pracenje
+     * @param receiver
+     * @param username
+     */
+    private void sendNotification(final String receiver, final String username) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(ApplicationClass.currentUser.getUid(), username + " vas je zapratio!", "Novo pracenje", receiver, R.drawable.ic_launcher_background, "follow");
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send",
+                                senderJsonObj, new com.android.volley.Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d("JSON_RESPONSE", "onResponse: " + response.toString());
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("JSON_RESPONSE", "onResponse: " + error.toString());
+                            }
+                        }){
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=AAAAtNK1qRw:APA91bHJLg399DpOkV6U_EU2OPkC3Uu1L3NM9Lbn4C79ogYXvPQYjNoP6twQ5kVjF9WcsESShq-kFKFpcL-HoMnuvi_7iww6095qHb2NEm3NtOjMrb_n5He8fm-Z3rujPOQuMfibrpvI");
+
+                                return headers;
+                            }
+                        };
+
+                        requestQueue.add(jsonObjectRequest);
+
+                    } catch (JSONException e) {
+                        Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
      * Provera da li je ocenjeno
      */
     private void calculateUser(){
@@ -434,8 +517,13 @@ public class ProfileFragment extends Fragment {
                     if(review.getUserId().equals(ApplicationClass.currentUser.getUid())){
                         etReview.setVisibility(View.GONE);
                         btnReview.setVisibility(View.GONE);
-                        rateUser.setVisibility(View.GONE);
-                        reviewHeader.setText("Hvala na ocenjivanju odece!");
+                        userRating.setVisibility(View.GONE);
+                        reviewHeader.setText("Hvala na ocenjivanju korisnika!");
+                    } else {
+                        etReview.setVisibility(View.VISIBLE);
+                        btnReview.setVisibility(View.VISIBLE);
+                        userRating.setVisibility(View.VISIBLE);
+                        reviewHeader.setText("Ocenite ovog korisnika:");
                     }
                 }
             }
@@ -484,7 +572,7 @@ public class ProfileFragment extends Fragment {
         pd.show();
 
         if(mImageUri != null){
-            final StorageReference filereference = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(mImageUri));
+            final StorageReference filereference = storageReference.child(System.currentTimeMillis() + ApplicationClass.currentUser.getUid() + "." + getFileExtension(mImageUri));
 
             uploadTask = filereference.putFile(mImageUri);
             uploadTask.continueWithTask(new Continuation() {
@@ -578,6 +666,12 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    private void checkTypingStatus (String typing){
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typingTo", typing);
+        ApplicationClass.currentUserReference.updateChildren(hashMap);
+    }
+
     private void status(String status){
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
@@ -587,7 +681,9 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         status("online");
+        checkTypingStatus("noOne");
     }
 
     @Override
@@ -595,7 +691,20 @@ public class ProfileFragment extends Fragment {
         super.onPause();
 
         if(!ApplicationClass.currentUser.isAnonymous()) {
-            status("offline");
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if(!ApplicationClass.currentUser.isAnonymous()) {
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            status(timestamp);
+            checkTypingStatus("noOne");
         }
     }
 }

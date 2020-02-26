@@ -3,19 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".mainActivities.ProfileFragment">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/appBarLayout">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -36,10 +36,11 @@
                 android:layout_marginEnd="10dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
                     android:id="@+id/ivProfileImageUser"
                     android:layout_marginStart="15dp"
+                    android:src="@drawable/profimage"
                     android:clickable="true"
                     android:layout_marginTop="15dp"/>
 
@@ -52,15 +53,16 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvUsername"
+                        android:textSize="18sp"
                         android:layout_marginBottom="10dp"
                         android:layout_marginStart="5dp"
                         android:text="Username"/>
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -102,19 +104,21 @@
                             android:layout_gravity="center_vertical"
                             android:visibility="gone"/>
 
-                        <Button
-                            android:id="@+id/btnSettings"
-                            android:layout_width="160dp"
-                            android:layout_height="50dp"
-                            android:text="Podesavanja"
-                            android:textSize="13sp"
-                            android:layout_gravity="center_horizontal" />
-
                     </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="20dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -149,7 +153,7 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
@@ -181,7 +185,7 @@
                 android:orientation="vertical"
                 android:id="@+id/rateUser">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/reviewHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -219,7 +223,7 @@
                 android:id="@+id/header3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:textSize="20sp"
                 android:text="Ocene i utisci odece"
                 android:layout_gravity="center_horizontal"
@@ -229,7 +233,7 @@
                 android:id="@+id/userReviewsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"/>
+                android:layout_margin="10dp"/>
 
         </LinearLayout>
 
