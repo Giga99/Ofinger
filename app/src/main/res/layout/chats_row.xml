@@ -91,6 +91,17 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="15dp"
             android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/ivBlocked"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:src="@drawable/blocked"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

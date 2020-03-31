@@ -27,42 +27,56 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
-import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adapters.ImageVideoAdapter;
 import com.example.ofinger.adapters.ReviewAdapter;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.messaging.ChatActivity;
-import com.example.ofinger.models.Cloth;
-import com.example.ofinger.models.Image;
+import com.example.ofinger.models.ImageVideo;
 import com.example.ofinger.models.Review;
 import com.example.ofinger.models.User;
+import com.example.ofinger.notifications.Data;
+import com.example.ofinger.notifications.Sender;
+import com.example.ofinger.notifications.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemClicked {
+public class ClothInfo extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private TextView tvLoad;
@@ -82,14 +96,15 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
     CircleImageView ivProfileImage;
     TextView tvUsername;
 
-    List<Image> images;
     ViewPager viewpagerImages;
-    ImageVideoAdapter adapter;
+    TabLayout tabLayout;
 
     RecyclerView clothReviewsList;
     LinearLayoutManager linearLayoutManager;
     ReviewAdapter adapterReview;
     List<Review> reviews;
+
+    private RequestQueue requestQueue;
 
     boolean edit = false;
     int INDEX;
@@ -106,11 +121,15 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        requestQueue = Volley.newRequestQueue(getApplicationContext());
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
         ivProfileImage = findViewById(R.id.ivProfileImage);
         tvUsername = findViewById(R.id.tvUsername);
+
+        ApplicationClass.currentActivityZoomImage = "clothInfo";
 
         /**
          * Ispisivanje imena u zavisnosti da li je gost ili ne
@@ -159,6 +178,8 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         etPrice = findViewById(R.id.etPrice);
 
         viewpagerImages = findViewById(R.id.viewpagerImages);
+        tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewpagerImages, true);
 
         userRating = findViewById(R.id.userRating);
         ratingBarUser = findViewById(R.id.ratingBarUser);
@@ -176,61 +197,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
 
         INDEX = getIntent().getIntExtra("index", 0);
 
-        /**
-         * Utvrdjivanje da li je vlasnik odela trenutni korisnik ili neki drugi
-         */
-        ApplicationClass.allUsers.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    User user = snapshot.getValue(User.class);
-                    if(ApplicationClass.mainCloths.get(INDEX).getOwnerID().equals(user.getId())){
-                        ApplicationClass.otherUser = user;
-                        if(!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())){
-                            ivEdit.setVisibility(View.GONE);
-                            ivDelete.setVisibility(View.GONE);
-                            ivSold.setVisibility(View.GONE);
-                            ivNotSold.setVisibility(View.GONE);
-                        } else {
-                            bottomNavigationView.setVisibility(View.GONE);
-                            if(ApplicationClass.mainCloths.get(INDEX).isSold()) ivNotSold.setVisibility(View.GONE);
-                            else ivSold.setVisibility(View.GONE);
-                            userRating.setVisibility(View.GONE);
-                        }
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ClothInfo.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        /**
-         * Dodavanje svih slika koji su za izabrano odelo u listu
-         */
-        images = new ArrayList<>();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Cloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child("urls");
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Image image = new Image();
-                    image.setInfo(snapshot.getValue().toString());
-                    images.add(image);
-                }
-
-                adapter = new ImageVideoAdapter(ClothInfo.this, images);
-                viewpagerImages.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        clothInfo();
 
         tvClothName.setText(ApplicationClass.mainCloths.get(INDEX).getName());
         tvOwnerName.setText(ApplicationClass.mainCloths.get(INDEX).getOwnerUsername());
@@ -254,37 +221,6 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         header3 = findViewById(R.id.header3);
 
         /**
-         * Pravljenje liste utisaka
-         */
-        DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
-        databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                reviews.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Review review = snapshot.getValue(Review.class);
-                    reviews.add(review);
-                }
-
-                adapterReview.notifyDataSetChanged();
-                calculateUser();
-
-                if(reviews.size() == 0){
-                    header3.setVisibility(View.GONE);
-                    clothReviewsList.setVisibility(View.GONE);
-                } else {
-                    header3.setVisibility(View.VISIBLE);
-                    clothReviewsList.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        /**
          * Odlazak na profil vlasnika odela
          */
         tvOwnerName.setOnClickListener(new View.OnClickListener() {
@@ -306,7 +242,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
             public void onClick(View v) {
                 edit = !edit;
 
-                if(edit){
+                if (edit) {
                     editField.setVisibility(View.VISIBLE);
                 } else {
                     editField.setVisibility(View.GONE);
@@ -351,8 +287,7 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                         /**
                          * Brisanje odela sa servera
                          */
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Cloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
-                        reference.removeValue();
+                        FirebaseDatabase.getInstance().getReference("Cloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).removeValue();
 
                         for(int j = 0; j < ApplicationClass.mainCloths.size(); j++){
                             /**
@@ -367,6 +302,22 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                          * Brisanje iz liste korisnicke odece
                          */
                         ApplicationClass.mainCloths.remove(INDEX);
+
+                        /**
+                         * Brisanje utisaka odela
+                         */
+                        FirebaseDatabase.getInstance().getReference("StarsCloth").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).exists())
+                                    dataSnapshot.child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).getRef().removeValue();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
 
                         setResult(RESULT_OK);
                         ClothInfo.this.finish();
@@ -434,10 +385,6 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                 }
             }
         });
-
-        /**
-         * Povratak na prethodnu aktivnost
-         */
 
         /**
          * Premestanje u sekciju neprodatih stvari
@@ -549,11 +496,14 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
                 String id = databaseReference.push().getKey();
 
+                review.setReviewId(id);
+
                 databaseReference.child(id).setValue(review).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 showProgress(false);
                                 Toast.makeText(ClothInfo.this, "Uspesno ocenjeno!", Toast.LENGTH_SHORT).show();
+                                ratingBarUser.setRating(0);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -569,6 +519,113 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         calculateOverall();
 
         isWish();
+    }
+
+    private void clothInfo() {
+        /**
+         * Utvrdjivanje da li je vlasnik odela trenutni korisnik ili neki drugi
+         */
+        ApplicationClass.allUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    User user = snapshot.getValue(User.class);
+                    if(ApplicationClass.mainCloths.get(INDEX).getOwnerID().equals(user.getId())){
+                        ApplicationClass.otherUser = user;
+                        if(!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())){
+                            ApplicationClass.currentUserCloth = false;
+                            ivEdit.setVisibility(View.GONE);
+                            ivDelete.setVisibility(View.GONE);
+                            ivSold.setVisibility(View.GONE);
+                            ivNotSold.setVisibility(View.GONE);
+                        } else {
+                            ApplicationClass.currentUserCloth = true;
+                            bottomNavigationView.setVisibility(View.GONE);
+                            if(ApplicationClass.mainCloths.get(INDEX).isSold()) ivNotSold.setVisibility(View.GONE);
+                            else ivSold.setVisibility(View.GONE);
+                            userRating.setVisibility(View.GONE);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ClothInfo.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        /**
+         * Dodavanje svih slika koji su za izabrano odelo u listu
+         */
+        ApplicationClass.imageVideosClothInfo = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Cloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).child("urls");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    ImageVideo imageVideo = new ImageVideo();
+                    imageVideo.setInfo(snapshot.getValue().toString());
+                    imageVideo.setType("image");
+                    ApplicationClass.imageVideosClothInfo.add(imageVideo);
+                }
+
+                ApplicationClass.lastImage = ApplicationClass.imageVideosClothInfo.size() <= 1;
+
+                ApplicationClass.adapterClothInfoImageVideo = new ImageVideoAdapter(ClothInfo.this, ApplicationClass.imageVideosClothInfo);
+                viewpagerImages.setAdapter(ApplicationClass.adapterClothInfoImageVideo);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        /**
+         * Pravljenje liste utisaka
+         */
+        DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(INDEX).getObjectId());
+        databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                reviews.clear();
+                boolean myReview = false;
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Review review = snapshot.getValue(Review.class);
+                    if(review.getUserId().equals(ApplicationClass.currentUser.getUid())) myReview = true;
+                    reviews.add(review);
+                }
+
+                if(myReview){
+                    etReview.setVisibility(View.GONE);
+                    btnReview.setVisibility(View.GONE);
+                    userRating.setVisibility(View.GONE);
+                    reviewHeader.setText("Hvala na ocenjivanju korisnika!");
+                } else {
+                    etReview.setVisibility(View.VISIBLE);
+                    btnReview.setVisibility(View.VISIBLE);
+                    userRating.setVisibility(View.VISIBLE);
+                    reviewHeader.setText("Ocenite ovog korisnika:");
+                }
+
+                adapterReview.notifyDataSetChanged();
+
+                if(reviews.size() == 0){
+                    header3.setVisibility(View.GONE);
+                    clothReviewsList.setVisibility(View.GONE);
+                } else {
+                    header3.setVisibility(View.VISIBLE);
+                    clothReviewsList.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void isWish() {
@@ -679,6 +736,58 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
                 case R.id.nav_wish:
                     if (item.getTitle().toString().equals("wish")) {
                         FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid()).child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).removeValue();
+
+                        final String timestamp = String.valueOf(System.currentTimeMillis());
+
+                        FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid())
+                                .addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        final User user = dataSnapshot.getValue(User.class);
+
+                                        FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid()).child("notifications")
+                                                .addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if(dataSnapshot.child("wish").getValue().equals(true))
+                                                            sendNotification(ApplicationClass.mainCloths.get(INDEX).getOwnerID(), user.getUsername(), ApplicationClass.mainCloths.get(INDEX).getObjectId());
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                        HashMap<String, Object> hashMap = new HashMap<>();
+                                        hashMap.put("pId", ApplicationClass.mainCloths.get(INDEX).getObjectId());
+                                        hashMap.put("timestamp", timestamp);
+                                        hashMap.put("sUid", user.getId());
+                                        hashMap.put("pUid", ApplicationClass.mainCloths.get(INDEX).getOwnerID());
+                                        hashMap.put("notification", user.getUsername() + " je dodao vase odelo u korpu");
+                                        hashMap.put("sName", user.getUsername());
+                                        hashMap.put("sImage", user.getImageURL());
+                                        hashMap.put("type", "post");
+
+                                        String idNotification = FirebaseDatabase
+                                                .getInstance().getReference("Notifications").push().getKey();
+
+                                        FirebaseDatabase.getInstance().getReference("Notifications").child(idNotification)
+                                                .setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()) Toast.makeText(ClothInfo.this, "Uspesno poslata notifikacija!", Toast.LENGTH_SHORT).show();
+                                                else Toast.makeText(ClothInfo.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
                     } else if (item.getTitle().toString().equals("notwish")) {
                         FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid()).child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).setValue(true);
                     }
@@ -696,9 +805,65 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         }
     };
 
+    /**
+     * Slanje notifikacije za pracenje
+     * @param receiver
+     * @param username
+     */
+    private void sendNotification(final String receiver, final String username, final String postId) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(postId, username + " je dodao vasu odecu u korpu!!", "Novo odelo u korpi", receiver, R.drawable.ic_launcher_background, "wish");
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send",
+                                senderJsonObj, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }){
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=AAAAtNK1qRw:APA91bHJLg399DpOkV6U_EU2OPkC3Uu1L3NM9Lbn4C79ogYXvPQYjNoP6twQ5kVjF9WcsESShq-kFKFpcL-HoMnuvi_7iww6095qHb2NEm3NtOjMrb_n5He8fm-Z3rujPOQuMfibrpvI");
+
+                                return headers;
+                            }
+                        };
+
+                        requestQueue.add(jsonObjectRequest);
+
+                    } catch (JSONException e) {
+                        Toast.makeText(ClothInfo.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void shareCloth(String name, String price) {
         String shareBody = name + "\n" + price;
-        Uri uri = Uri.parse(images.get(0).getInfo());
+        Uri uri = Uri.parse(ApplicationClass.imageVideosClothInfo.get(0).getInfo()); //TODO mora da se promeni kad dodje video
 
         Intent sIntent = new Intent(Intent.ACTION_SEND);
         sIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -788,20 +953,9 @@ public class ClothInfo extends AppCompatActivity implements ClothAdapter.ItemCli
         });
     }
 
-    @Override
-    public void onItemClicked(int index) {
-        int i = 0;
-        for (Cloth cloth : ApplicationClass.mainCloths) {
-            if (ApplicationClass.wish) {
-                if (cloth.getObjectId().equals(ApplicationClass.wishCloths.get(index).getObjectId())) break;
-            }
-            i++;
-        }
-        Intent intent = new Intent(ClothInfo.this, ClothInfo.class);
-        intent.putExtra("index", i);
-        startActivityForResult(intent, 1);
-    }
-
+    /**
+     * Povratak na prethodnu aktivnost
+     */
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();

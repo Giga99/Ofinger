@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/block"
+        android:title="Blokiraj"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/report"
+        android:title="Prijavi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/mute"
+        android:title="Ne primaj poruke od korisnika"
+        app:showAsAction="never"/>
+
+</menu>

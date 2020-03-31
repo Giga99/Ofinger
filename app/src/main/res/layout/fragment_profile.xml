@@ -15,16 +15,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.material.textview.MaterialTextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/header"
-                android:text="Vas Profil"
-                android:textStyle="bold"
-                android:textSize="30sp"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center_horizontal">
 
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/header"
+                    android:text="Vas Profil"
+                    android:textStyle="bold"
+                    android:textSize="30sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"/>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/ivMore"
+                    android:src="@drawable/more"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -35,22 +51,76 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:id="@+id/ivProfileImageUser"
-                    android:layout_marginStart="15dp"
-                    android:src="@drawable/profimage"
-                    android:clickable="true"
-                    android:layout_marginTop="15dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="15dp">
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:id="@+id/ivProfileImageUser"
+                        android:src="@drawable/profimage"
+                        android:clickable="true"
+                        android:layout_gravity="center_horizontal"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:layout_gravity="center_horizontal"
+                                android:id="@+id/numOfCloth"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Broj odece"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="10dp"
+                            android:id="@+id/listOfFollowers">
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:layout_gravity="center_horizontal"
+                                android:id="@+id/numOfFollowers"/>
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pratioci"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="15dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="5dp"
                     android:layout_marginEnd="10dp">
 
                     <com.google.android.material.textview.MaterialTextView
@@ -74,7 +144,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginStart="5dp"
                         style="?android:attr/ratingBarStyleIndicator"/>
 
                     <LinearLayout
@@ -85,22 +154,21 @@
                         android:layout_gravity="center_horizontal">
 
                         <Button
-                            android:layout_width="120dp"
+                            android:layout_width="80dp"
                             android:layout_height="50dp"
                             android:id="@+id/btnMessage"
                             android:text="Posalji poruku"
-                            android:textSize="11sp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_marginStart="10dp"
+                            android:textSize="12sp"
+                            android:layout_marginEnd="5dp"
                             android:layout_gravity="center_vertical"
                             android:visibility="gone"/>
 
                         <Button
-                            android:layout_width="100dp"
+                            android:layout_width="80dp"
                             android:layout_height="50dp"
                             android:id="@+id/btnFollowing"
                             android:text="Zapratite"
-                            android:textSize="11sp"
+                            android:textSize="12sp"
                             android:layout_gravity="center_vertical"
                             android:visibility="gone"/>
 
@@ -112,17 +180,17 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvBio"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:textSize="16sp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginTop="20dp"/>
+                android:inputType="textMultiLine"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="20dp"
@@ -219,15 +287,45 @@
 
             </LinearLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/header3"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:textSize="20sp"
-                android:text="Ocene i utisci odece"
+                android:orientation="horizontal"
                 android:layout_gravity="center_horizontal"
-                android:textStyle="bold"/>
+                android:layout_marginTop="20dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/header3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="Ocene i utisci odece"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"/>
+
+                <LinearLayout
+                    android:id="@+id/layoutNumOfReviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_alignParentEnd="true">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:layout_gravity="center_horizontal"
+                        android:id="@+id/numOfReviews"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Broj utisaka"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/userReviewsList"

@@ -3,10 +3,34 @@ package com.example.ofinger.models;
 import java.util.List;
 
 public class Cloth {
-    private String name, description, objectId, ownerID, ownerUsername, searchName, timestamp;
+    private String name, description, objectId, ownerID, ownerUsername, searchName, timestamp, clothProfile, category, subcategory;
     private long price;
     private List<String> urls;
     private boolean sold;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    public String getClothProfile() {
+        return clothProfile;
+    }
+
+    public void setClothProfile(String clothProfile) {
+        this.clothProfile = clothProfile;
+    }
 
     public String getTimestamp() {
         return timestamp;

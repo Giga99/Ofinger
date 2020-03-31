@@ -15,7 +15,7 @@ import com.example.ofinger.R;
 import java.util.HashMap;
 
 public class SettingsActivity extends AppCompatActivity {
-    LinearLayout editProfInfo, editPassword, about, editEmail;
+    LinearLayout editProfInfo, editPassword, about, editEmail, editNotifications, help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,9 @@ public class SettingsActivity extends AppCompatActivity {
         editProfInfo = findViewById(R.id.editProfInfo);
         editPassword = findViewById(R.id.editPassword);
         editEmail = findViewById(R.id.editEmail);
+        editNotifications = findViewById(R.id.editNotifications);
         about = findViewById(R.id.about);
+        help = findViewById(R.id.help);
 
         editProfInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +58,23 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        editNotifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!ApplicationClass.currentUser.isAnonymous()) startActivity(new Intent(SettingsActivity.this, EditNotificationsActivity.class));
+                else Toast.makeText(SettingsActivity.this, "Napravite profil prvo!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!ApplicationClass.currentUser.isAnonymous()) startActivity(new Intent(SettingsActivity.this, AboutActivity.class));
+                else Toast.makeText(SettingsActivity.this, "Napravite profil prvo!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

@@ -81,6 +81,15 @@
             android:layout_centerVertical="true"
             android:src="@drawable/add2"/>
 
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/audioRecord"
+            android:layout_toEndOf="@id/ibMore"
+            android:background="#fff"
+            android:layout_centerVertical="true"
+            android:src="@drawable/audiorecorder"/>
+
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/etSend"
             android:layout_width="match_parent"
@@ -88,7 +97,7 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/btnSend"
             android:background="@android:color/transparent"
-            android:layout_toEndOf="@id/ibMore"
+            android:layout_toEndOf="@id/audioRecord"
             android:hint="Ukucajte poruku..." />
 
         <ImageButton

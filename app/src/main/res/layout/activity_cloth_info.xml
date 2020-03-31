@@ -137,13 +137,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_below="@id/tvPrice"
-                android:layout_margin="20dp" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"/>
+
+            <com.google.android.material.tabs.TabLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tabLayout"
+                android:layout_below="@id/viewpagerImages"
+                app:tabBackground="@drawable/tab_selector"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                app:tabMaxWidth="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"/>
 
             <LinearLayout
                 android:id="@+id/layoutBottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/viewpagerImages"
+                android:layout_below="@id/tabLayout"
                 android:layout_margin="10dp"
                 android:orientation="vertical">
 

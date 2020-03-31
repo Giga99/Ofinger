@@ -21,7 +21,7 @@ import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.models.Cloth;
-import com.example.ofinger.models.Image;
+import com.example.ofinger.models.ImageVideo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth auth;
     DatabaseReference reference, reference2;
     List<Cloth> cloths;
-    List<Image> images;
+    List<ImageVideo> imageVideos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference("Cloth");
         reference2 = FirebaseDatabase.getInstance().getReference("Images");
         cloths = new ArrayList<>();
-        images = new ArrayList<>();
+        imageVideos = new ArrayList<>();
 
         /**
          * Resetovanje sifre

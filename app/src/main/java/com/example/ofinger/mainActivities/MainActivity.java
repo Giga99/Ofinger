@@ -21,14 +21,16 @@ import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adding.AddingCloth;
-import com.example.ofinger.customDialogs.CustomDialogWish;
 import com.example.ofinger.info.ClothInfo;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Message;
 import com.example.ofinger.models.User;
+import com.example.ofinger.navigationActivities.NotificationActivity;
 import com.example.ofinger.notifications.Token;
 import com.example.ofinger.settings.SettingsActivity;
 import com.example.ofinger.startActivities.StartActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
@@ -80,18 +82,23 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.wishList:
-                        CustomDialogWish customDialogWish = new CustomDialogWish(MainActivity.this);
-                        customDialogWish.show();
+                        startActivity(new Intent(MainActivity.this, WishListActivity.class));
+                        break;
+                    case R.id.notificationsList:
+                        startActivity(new Intent(MainActivity.this, NotificationActivity.class));
                         break;
                     case R.id.logout:
                         if (ApplicationClass.currentUser.isAnonymous()) {
                             ApplicationClass.currentUserReference.removeValue(new DatabaseReference.CompletionListener() {
                                 @Override
                                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                    ApplicationClass.currentUser.delete();
-                                    FirebaseAuth.getInstance().signOut();
-                                    startActivity(new Intent(MainActivity.this, StartActivity.class));
-                                    MainActivity.this.finish();
+                                    ApplicationClass.currentUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            startActivity(new Intent(MainActivity.this, StartActivity.class));
+                                            MainActivity.this.finish();
+                                        }
+                                    });
                                 }
                             });
                         } else {
@@ -251,8 +258,13 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
                  * Odlazak na home ili following stranicu
                  */
                 case R.id.nav_home:
-                    selectedFragment = new HomeFragment();
-                    break;
+                    if(ApplicationClass.currentUser.isAnonymous()){
+                        selectedFragment = new GuestFragment();
+                        break;
+                    } else {
+                        selectedFragment = new HomeFragment();
+                        break;
+                    }
 
                 /**
                  * Odlazak na search stranicu
@@ -313,33 +325,24 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         int i = 0;
         if(selectedFragment.getClass().equals(SearchFragment.class)){
             for(Cloth cloth : ApplicationClass.mainCloths){
-                if(cloth.getObjectId().equals(ApplicationClass.searchCloth.get(index).getObjectId()) && !ApplicationClass.wish) break;
-                else if(ApplicationClass.wish) {
-                    if(cloth.getObjectId().equals(ApplicationClass.wishCloths.get(index).getObjectId())) break;
-                }
+                if(cloth.getObjectId().equals(ApplicationClass.searchCloth.get(index).getObjectId())) break;
                 i++;
             }
         } else if(selectedFragment.getClass().equals(HomeFragment.class)){
             for(Cloth cloth : ApplicationClass.mainCloths){
-                if(cloth.getObjectId().equals(ApplicationClass.followingCloth.get(index).getObjectId()) && !ApplicationClass.wish) break;
-                else if(ApplicationClass.wish) {
-                    if(cloth.getObjectId().equals(ApplicationClass.wishCloths.get(index).getObjectId())) break;
-                }
+                if(cloth.getObjectId().equals(ApplicationClass.followingCloth.get(index).getObjectId())) break;
                 i++;
             }
         } else if(selectedFragment.getClass().equals(ProfileFragment.class)){
             for(Cloth cloth : ApplicationClass.mainCloths){
-                if(cloth.getObjectId().equals(ApplicationClass.profileCloth.get(index).getObjectId()) && !ApplicationClass.sold && !ApplicationClass.wish) break;
-                else if (cloth.getObjectId().equals(ApplicationClass.soldCloths.get(index).getObjectId()) && ApplicationClass.sold && !ApplicationClass.wish) break;
-                else if(ApplicationClass.wish) {
-                    if(cloth.getObjectId().equals(ApplicationClass.wishCloths.get(index).getObjectId())) break;
-                }
+                if(!ApplicationClass.sold && cloth.getObjectId().equals(ApplicationClass.profileCloth.get(index).getObjectId())) break;
+                else if (cloth.getObjectId().equals(ApplicationClass.soldCloths.get(index).getObjectId())) break;
                 i++;
             }
         }
         Intent intent = new Intent(MainActivity.this, ClothInfo.class);
         intent.putExtra("index", i);
-        startActivityForResult(intent, 1);
+        startActivity(intent);
     }
 
     @Override

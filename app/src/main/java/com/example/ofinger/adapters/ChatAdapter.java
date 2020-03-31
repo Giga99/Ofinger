@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         public CircleImageView profileImage;
         private CircleImageView imgOn, imgOff, imgNotSeen;
         private TextView tvLastMsg;
+        ImageView ivBlocked;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -55,6 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             tvLastMsg = itemView.findViewById(R.id.tvLastMsg);
             numOfMess = itemView.findViewById(R.id.numOfMess);
             imgNotSeen = itemView.findViewById(R.id.imgNotSeen);
+            ivBlocked = itemView.findViewById(R.id.ivBlocked);
         }
     }
 
@@ -69,48 +72,35 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ChatAdapter.ViewHolder holder, int position) {
         final User user = mUsers.get(position);
 
-        holder.tvUsername.setText(user.getUsername());
-        if(user.getImageURL().equals("default")){
-            holder.profileImage.setImageResource(R.drawable.profimage);
-        } else {
-            Glide.with(mContext).load(user.getImageURL()).into(holder.profileImage);
-        }
-
-        if(ischat){
-            lastMessage(user.getId(), holder.tvLastMsg);
-        } else {
-            holder.tvLastMsg.setVisibility(View.GONE);
-        }
-
-        if(ischat){
-            if(user.getStatus().equals("online")){
-                holder.imgOn.setVisibility(View.VISIBLE);
-                holder.imgOff.setVisibility(View.GONE);
-            } else {
-                holder.imgOff.setVisibility(View.VISIBLE);
-                holder.imgOn.setVisibility(View.GONE);
-            }
-        } else {
-            holder.imgOff.setVisibility(View.GONE);
-            holder.imgOn.setVisibility(View.GONE);
-        }
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
-        reference.addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int num = 0;
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Message message = snapshot.getValue(Message.class);
-
-                    if(message.getReceiver().equals(ApplicationClass.currentUser.getUid()) && !message.isIsseen()) num++;
-                }
-
-                if(num > 0) {
-                    holder.numOfMess.setText("" + num);
-                    holder.imgNotSeen.setVisibility(View.VISIBLE);
-                } else {
+                if(dataSnapshot.child(user.getId()).exists()) {
+                    user.setBlocked(true);
+                    holder.ivBlocked.setVisibility(View.VISIBLE);
+                    holder.numOfMess.setVisibility(View.GONE);
                     holder.imgNotSeen.setVisibility(View.GONE);
+                } else {
+                    user.setBlocked(false);
+
+                    if(ischat){
+                        lastMessage(user.getId(), holder.tvLastMsg);
+                    } else {
+                        holder.tvLastMsg.setVisibility(View.GONE);
+                    }
+
+                    if(ischat){
+                        if(user.getStatus().equals("online")){
+                            holder.imgOn.setVisibility(View.VISIBLE);
+                            holder.imgOff.setVisibility(View.GONE);
+                        } else {
+                            holder.imgOff.setVisibility(View.VISIBLE);
+                            holder.imgOn.setVisibility(View.GONE);
+                        }
+                    } else {
+                        holder.imgOff.setVisibility(View.GONE);
+                        holder.imgOn.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -120,14 +110,49 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             }
         });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, ChatActivity.class);
-                intent.putExtra("userId", user.getId());
-                mContext.startActivity(intent);
-            }
-        });
+        holder.tvUsername.setText(user.getUsername());
+        if(user.getImageURL().equals("default")){
+            holder.profileImage.setImageResource(R.drawable.profimage);
+        } else {
+            Glide.with(mContext).load(user.getImageURL()).into(holder.profileImage);
+        }
+
+        if(!user.isBlocked()) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int num = 0;
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Message message = snapshot.getValue(Message.class);
+
+                        if (message.getReceiver().equals(ApplicationClass.currentUser.getUid()) && message.getSender().equals(user.getId()) && !message.isIsseen())
+                            num++;
+                    }
+
+                    if (num > 0) {
+                        holder.numOfMess.setText("" + num);
+                        holder.imgNotSeen.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.imgNotSeen.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, ChatActivity.class);
+                    intent.putExtra("userId", user.getId());
+                    mContext.startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

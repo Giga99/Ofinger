@@ -1,31 +1,35 @@
 package com.example.ofinger.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.example.ofinger.models.Image;
+import com.example.ofinger.ApplicationClass;
+import com.example.ofinger.customDialogs.CustomDialogZoomImage;
+import com.example.ofinger.models.ImageVideo;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class ImageVideoAdapter extends PagerAdapter {
-    private List<Image> images;
-    Context context;
+    private List<ImageVideo> imageVideos;
+    private Context context;
+    private Activity activity;
 
-    public ImageVideoAdapter(Context context, List<Image> list){
-        images = list;
+    public ImageVideoAdapter(Activity context, List<ImageVideo> list){
+        imageVideos = list;
         this.context = context;
+        this.activity = context;
     }
 
     @Override
     public int getCount() {
-        return images.size();
+        return imageVideos.size();
     }
 
     @Override
@@ -35,13 +39,27 @@ public class ImageVideoAdapter extends PagerAdapter {
 
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        VideoView vv = new VideoView(context);
+    public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
+        final ImageVideo imageVideo = imageVideos.get(position);
+
         ImageView iv = new ImageView(context);
-        Picasso.get().load(images.get(position).getInfo()).into(iv);
+        Picasso.get().load(imageVideo.getInfo()).into(iv);
         container.addView(iv);
+
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ApplicationClass.position = position;
+                ApplicationClass.currentImageVideo = imageVideo;
+                CustomDialogZoomImage customDialogZoomImage = new CustomDialogZoomImage(activity);
+                customDialogZoomImage.show();
+            }
+        });
+
         return iv;
     }
+
+
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {

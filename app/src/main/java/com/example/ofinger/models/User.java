@@ -1,7 +1,43 @@
 package com.example.ofinger.models;
 
+import java.util.HashMap;
+
 public class User {
-    private String id, username, imageURL, status, email, currency, bio;
+    private String id, username, imageURL, status, email, currency, bio, typingTo, searchName;
+    private HashMap<String, Boolean> notifications;
+    private boolean isBlocked = false;
+
+    public HashMap<String, Boolean> getHashMap() {
+        return notifications;
+    }
+
+    public void setHashMap(HashMap<String, Boolean> notifications) {
+        this.notifications = notifications;
+    }
+
+    public String getSearchName() {
+        return searchName;
+    }
+
+    public void setSearchName(String searchName) {
+        this.searchName = searchName;
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        isBlocked = blocked;
+    }
+
+    public String getTypingTo() {
+        return typingTo;
+    }
+
+    public void setTypingTo(String typingTo) {
+        this.typingTo = typingTo;
+    }
 
     public String getBio() {
         return bio;

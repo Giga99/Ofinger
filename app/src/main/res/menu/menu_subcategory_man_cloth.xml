@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/subcategoryTshirt"
+        android:title="Majice"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryTracksuit"
+        android:title="Trenerke"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryJeans"
+        android:title="Dzins"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryPants"
+        android:title="Pantalone"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryHoodies"
+        android:title="Duksevi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryShorts"
+        android:title="Sorcevi i Bermude"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryJackets"
+        android:title="Jakne"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryShirting"
+        android:title="Kosulje"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySweaters"
+        android:title="Dzemperi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryCoat"
+        android:title="Kaputi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySports"
+        android:title="Sportska oprema"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySuit"
+        android:title="Odela i sakoi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryVest"
+        android:title="Prsluci"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryUnderwear"
+        android:title="Donji ves i carape"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryTrunks"
+        android:title="Kupace gace"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryPajamas"
+        android:title="Pidzame"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryOther"
+        android:title="Ostalo"
+        app:showAsAction="never"/>
+
+</menu>

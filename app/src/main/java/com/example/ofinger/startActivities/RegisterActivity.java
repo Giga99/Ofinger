@@ -123,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                             reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
 
-                                            HashMap<String, String> hashMap = new HashMap<>();
+                                            HashMap<String, Object> hashMap = new HashMap<>();
                                             hashMap.put("id", userId);
                                             hashMap.put("username", username);
                                             hashMap.put("email", email);
@@ -132,6 +132,13 @@ public class RegisterActivity extends AppCompatActivity {
                                             hashMap.put("status", "offline");
                                             hashMap.put("typingTo", "noOne");
                                             hashMap.put("searchName", username.toLowerCase());
+
+                                            HashMap<String, Object> hashMap2 = new HashMap<>();
+                                            hashMap2.put("message", false);
+                                            hashMap2.put("follow", false);
+                                            hashMap2.put("wish", false);
+
+                                            hashMap.put("notifications", hashMap2);
 
                                             reference.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override

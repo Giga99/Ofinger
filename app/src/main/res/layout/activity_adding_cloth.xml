@@ -74,7 +74,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -133,6 +133,69 @@
                 android:hint="unesite opis odece"
                 android:inputType="textMultiLine" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:baselineAligned="false">
+
+                <RelativeLayout
+                    android:id="@+id/expandCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/material_on_primary_emphasis_high_type"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/tvCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Kategorija"
+                        android:textSize="20sp" />
+
+                    <ImageView
+                        android:id="@+id/ivCategory"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:clickable="true"
+                        android:src="@drawable/expandmore" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/expandSubCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:background="@color/material_on_primary_emphasis_high_type">
+
+                    <TextView
+                        android:id="@+id/tvSubCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Potkategorija"
+                        android:textSize="20sp"/>
+
+                    <ImageView
+                        android:id="@+id/ivSubCategory"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:clickable="true"
+                        android:src="@drawable/expandmore"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
@@ -150,15 +213,14 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btnAddImage"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/buttons"
+                    android:layout_marginEnd="10dp"
                     android:text="Dodaj sliku" />
 
             </LinearLayout>
@@ -167,7 +229,20 @@
                 android:id="@+id/viewpagerImages"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_margin="20dp" />
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"/>
+            
+            <com.google.android.material.tabs.TabLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tabLayout"
+                app:tabBackground="@drawable/tab_selector"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                app:tabMaxWidth="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"/>
 
             <Button
                 android:id="@+id/btnFinish"
@@ -176,7 +251,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/buttons"
+                android:layout_marginBottom="20dp"
                 android:text="Zavrsi sa ubacivanjem odece" />
 
         </LinearLayout>

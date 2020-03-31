@@ -81,7 +81,7 @@
         app:headerLayout="@layout/nav_header"
         android:background="@color/colorPrimary"
         app:itemTextColor="@color/white"
-        app:itemIconTint="@color/white"
+        app:itemIconTint="@color/selector"
         android:layout_gravity="start"
         app:menu="@menu/nav_drawer_menu"/>
 

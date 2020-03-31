@@ -28,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
@@ -159,6 +161,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     private void deleteMessage(int position) {
+        if(messages.get(position).getType().equals("image")){
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(messages.get(position).getText());
+            storageReference.delete();
+        }
+
         String msgTimeStamp = messages.get(position).getTimestamp();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
         Query query = databaseReference.orderByChild("timestamp").equalTo(msgTimeStamp);

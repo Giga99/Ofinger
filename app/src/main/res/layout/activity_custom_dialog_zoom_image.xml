@@ -8,6 +8,13 @@
     android:orientation="vertical">
 
     <ImageButton
+        android:id="@+id/deleteImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/delete"
+        android:background="@color/white"/>
+
+    <ImageButton
         android:id="@+id/ivClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +23,7 @@
         android:background="@color/white"/>
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/imageVideo"
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_margin="10dp"

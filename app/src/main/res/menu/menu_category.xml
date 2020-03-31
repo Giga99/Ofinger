@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/manCloth"
+        android:title="Muska odeca"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/womanCloth"
+        android:title="Zenska odeca"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/manShoes"
+        android:title="Muska obuca"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/womanShoes"
+        android:title="Zenska obuca"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/accessories"
+        android:title="Modni detalji"
+        app:showAsAction="never"/>
+
+</menu>

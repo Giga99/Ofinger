@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/subcategorySneakers"
+        android:title="Patike"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryShoes"
+        android:title="Cipele"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryBoots"
+        android:title="Cizme"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySlippers"
+        android:title="Papuce"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySandals"
+        android:title="Sandale"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryBallet"
+        android:title="Baletanke"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryOther"
+        android:title="Ostalo"
+        app:showAsAction="never"/>
+
+</menu>

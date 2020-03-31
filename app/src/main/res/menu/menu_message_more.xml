@@ -18,11 +18,6 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/messageVoice"
-        android:title="Glasovna Poruka"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/messageLocation"
         android:title="Lokacija"
         app:showAsAction="never"/>

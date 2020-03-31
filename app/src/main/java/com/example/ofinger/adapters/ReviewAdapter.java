@@ -117,7 +117,11 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         Review review = snapshot.getValue(Review.class);
-                                        if (review.getUserId().equals(ApplicationClass.currentUser.getUid())) snapshot.getRef().removeValue();
+                                        if (review.getUserId().equals(ApplicationClass.currentUser.getUid())) {
+                                            snapshot.getRef().removeValue();
+                                            notifyDataSetChanged();
+                                            reviews.remove(position);
+                                        }
                                     }
                                 }
 
@@ -135,6 +139,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
                                         Review review = snapshot.getValue(Review.class);
                                         if (review.getUserId().equals(ApplicationClass.currentUser.getUid())) {
                                             snapshot.getRef().removeValue();
+                                            notifyDataSetChanged();
+                                            reviews.remove(position);
                                         }
                                     }
                                 }

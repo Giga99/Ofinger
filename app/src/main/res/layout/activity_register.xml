@@ -36,88 +36,94 @@
         android:textStyle="bold"
         android:visibility="gone"/>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:id="@+id/login_form"
-        android:layout_marginTop="50dp"
-        android:padding="30dp">
+        android:layout_below="@+id/toolbar">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Napravite novi nalog"
-            android:textSize="30sp"
-            android:textStyle="bold"/>
-
-        <com.rengwuxian.materialedittext.MaterialEditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etUsername"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Korisnicko ime"/>
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:id="@+id/login_form"
+            android:layout_marginTop="50dp"
+            android:padding="30dp">
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/etEmail"
-            android:inputType="textEmailAddress"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Mejl"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Napravite novi nalog"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/etBio"
-            android:inputType="textMultiLine"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Biografija"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etUsername"
+                android:layout_marginTop="10dp"
+                app:met_floatingLabel="normal"
+                android:hint="Korisnicko ime"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/etPassword"
-            android:inputType="textPassword"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Sifra"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etEmail"
+                android:inputType="textEmailAddress"
+                android:layout_marginTop="10dp"
+                app:met_floatingLabel="normal"
+                android:hint="Mejl"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/etReEnterPassword"
-            android:inputType="textPassword"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Ponovo Sifra"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etBio"
+                android:inputType="textMultiLine"
+                android:layout_marginTop="10dp"
+                app:met_floatingLabel="normal"
+                android:hint="Biografija"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Registruj se"
-            android:id="@+id/btnRegister"
-            android:background="@drawable/buttons"
-            android:layout_marginTop="20dp"
-            android:textColor="#fff"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etPassword"
+                android:inputType="textPassword"
+                android:layout_marginTop="10dp"
+                app:met_floatingLabel="normal"
+                android:hint="Sifra"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Imate nalog? Kliknite ovde."
-            android:layout_marginTop="10dp"
-            android:layout_gravity="end"
-            android:clickable="true"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:id="@+id/tvLog"/>
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/etReEnterPassword"
+                android:inputType="textPassword"
+                android:layout_marginTop="10dp"
+                app:met_floatingLabel="normal"
+                android:hint="Ponovo Sifra"/>
 
-    </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Registruj se"
+                android:id="@+id/btnRegister"
+                android:background="@drawable/buttons"
+                android:layout_marginTop="20dp"
+                android:textColor="#fff"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Imate nalog? Kliknite ovde."
+                android:layout_marginTop="10dp"
+                android:layout_gravity="end"
+                android:clickable="true"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:id="@+id/tvLog"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </RelativeLayout>

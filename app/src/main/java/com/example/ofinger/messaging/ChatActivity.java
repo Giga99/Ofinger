@@ -1,28 +1,29 @@
 package com.example.ofinger.messaging;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -39,12 +40,9 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
-import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adapters.MessageAdapter;
-import com.example.ofinger.info.ClothInfo;
 import com.example.ofinger.mainActivities.MainActivity;
-import com.example.ofinger.models.Cloth;
-import com.example.ofinger.models.Image;
+import com.example.ofinger.models.ImageVideo;
 import com.example.ofinger.models.Message;
 import com.example.ofinger.models.User;
 import com.example.ofinger.notifications.Data;
@@ -55,6 +53,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,6 +70,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -80,9 +80,11 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatActivity extends AppCompatActivity implements ClothAdapter.ItemClicked {
-    private static final int REQUEST_CODE_ADD = 1;
-    private static final int REQUEST_CODE_TAKE = 2;
+public class ChatActivity extends AppCompatActivity {
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int VIDEO_REQUEST_CODE = 200;
+    private static final int AUDIO_REQUEST_CODE = 300;
+    String[] cameraPermissions, audioPermissions;
 
     CircleImageView ivProfileImageToolbar;
     TextView tvUsernameToolbar, tvStatusToolbar;
@@ -92,7 +94,7 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
     RecyclerView messagesList;
 
     MaterialEditText etSend;
-    ImageButton btnSend, ibMore;
+    ImageButton btnSend, ibMore, audioRecord;
 
     Intent intent;
     String userid;
@@ -109,6 +111,8 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
     StorageTask uploadTask;
     StorageReference storageReference;
 
+    private MediaRecorder mediaRecorder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +123,9 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        cameraPermissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        cameraPermissions = new String[] {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         storageReference = FirebaseStorage.getInstance().getReference("messageImages");
 
@@ -137,6 +144,7 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
         etSend = findViewById(R.id.etSend);
         btnSend = findViewById(R.id.btnSend);
         ibMore = findViewById(R.id.ibMore);
+        audioRecord = findViewById(R.id.audioRecord);
 
         intent = getIntent();
         userid = intent.getStringExtra("userId");
@@ -238,6 +246,13 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
 
             }
         });
+
+        audioRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ChatActivity.this, "Govorna!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private PopupMenu.OnMenuItemClickListener menuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
@@ -245,14 +260,8 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()){
                 case R.id.messageImage:
-                    if(ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                            && ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                        ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                        ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
-                    } else if(ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                        ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                    } else if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
+                    if(!checkCameraPermission()){
+                        requestCameraPermission();
                     } else {
                         notify = true;
                         CropImage.activity().setAspectRatio(1, 1).start(ChatActivity.this);
@@ -262,10 +271,7 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
                     Toast.makeText(ChatActivity.this, "Video!", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.messageTemplate:
-                    Toast.makeText(ChatActivity.this, "Sablon!", Toast.LENGTH_SHORT).show();
-                    break;
-                case R.id.messageVoice:
-                    Toast.makeText(ChatActivity.this, "Govorna!", Toast.LENGTH_SHORT).show();
+                    sendTemplate();
                     break;
                 case R.id.messageLocation:
                     Toast.makeText(ChatActivity.this, "Lokacija!", Toast.LENGTH_SHORT).show();
@@ -275,6 +281,102 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
             return true;
         }
     };
+
+    private boolean checkCameraPermission(){
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        return result1 && result2;
+    }
+
+    private void requestCameraPermission(){
+        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    private boolean checkAudioPermission(){
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        return result1 && result2;
+    }
+
+    private void requestAudioPermission(){
+        ActivityCompat.requestPermissions(this, audioPermissions, AUDIO_REQUEST_CODE);
+    }
+
+    private void stopRecording() {
+        if(mediaRecorder != null){
+            mediaRecorder.stop();
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+    }
+
+    private void startRecording() {
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        //mediaRecorder.setOutputFile(outputPath);
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        mediaRecorder.start();
+    }
+
+    private void sendTemplate() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_send_message_template, null);
+        final MaterialTextView tvName = view.findViewById(R.id.tvName);
+        final MaterialEditText etName = view.findViewById(R.id.etName);
+        final MaterialTextView tvNumber = view.findViewById(R.id.tvNumber);
+        final MaterialEditText etNumber = view.findViewById(R.id.etNumber);
+        final MaterialTextView tvCity = view.findViewById(R.id.tvCity);
+        final MaterialEditText etCity = view.findViewById(R.id.etCity);
+        final MaterialTextView tvPostNumber = view.findViewById(R.id.tvPostNumber);
+        final MaterialEditText etPostNumber = view.findViewById(R.id.etPostNumber);
+        final MaterialTextView tvAddress = view.findViewById(R.id.tvAddress);
+        final MaterialEditText etAddress = view.findViewById(R.id.etAddress);
+        ImageView btnSendTemplate = view.findViewById(R.id.btnSendTemplate);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        btnSendTemplate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(etName.getText().toString().isEmpty()){
+                    etName.setError("Molimo vas unesite ime!");
+                    etName.setFocusable(true);
+                } else if(etNumber.getText().toString().isEmpty()){
+                    etNumber.setError("Molimo vas unesite broj telefona!");
+                    etNumber.setFocusable(true);
+                } else if(etCity.getText().toString().isEmpty()){
+                    etCity.setError("Molimo vas unesite grad i drzavu!");
+                    etCity.setFocusable(true);
+                } else if(etPostNumber.getText().toString().isEmpty()){
+                    etPostNumber.setError("Molimo vas unesite postanski broj!");
+                    etPostNumber.setFocusable(true);
+                } else if(etAddress.getText().toString().isEmpty()){
+                    etAddress.setError("Molimo vas unesite ulicu i broj!");
+                    etAddress.setFocusable(true);
+                } else {
+                    String message = tvName.getText().toString() + "\n     " + etName.getText().toString() + "\n" +
+                                    tvNumber.getText().toString() + "\n     " + etNumber.getText().toString() + "\n" +
+                                    tvCity.getText().toString() + "\n     " + etCity.getText().toString() + "\n" +
+                                    tvPostNumber.getText().toString() + "\n     " + etPostNumber.getText().toString() + "\n" +
+                                    tvAddress.getText().toString() + "\n     " + etAddress.getText().toString();
+
+                    sendMessage(ApplicationClass.currentUser.getUid(), userid, message);
+                    dialog.dismiss();
+                }
+            }
+        });
+    }
 
     private String getFileExtension(Uri uri){
         ContentResolver contentResolver = getContentResolver();
@@ -352,11 +454,36 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
                                 databaseReference2.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        User user = dataSnapshot.getValue(User.class);
+                                        final User user = dataSnapshot.getValue(User.class);
 
-                                        if(notify){
-                                            sendNotification(userid, user.getUsername(), "Vam je poslao sliku!");
-                                        }
+                                        FirebaseDatabase.getInstance().getReference("Mute").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if(!dataSnapshot.child(userid).exists()) {
+                                                    FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid())
+                                                            .child("notifications").addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            if(dataSnapshot.child("message").getValue().equals(true)){
+                                                                if(notify){
+                                                                    sendNotification(userid, user.getUsername(), "Vam je poslao sliku!");
+                                                                }
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
 
                                         notify = false;
                                     }
@@ -396,8 +523,9 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             imageUri = result.getUri();
 
-            Image image = new Image();
-            image.setInfo("" + imageUri);
+            ImageVideo imageVideo = new ImageVideo();
+            imageVideo.setInfo("" + imageUri);
+            imageVideo.setType("image");
 
             sendImage();
         }
@@ -405,41 +533,43 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == CAMERA_REQUEST_CODE){
+            if(grantResults.length > 0) {
+                boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-            /**
-             * Dozvoljen je pristup i onda se uzima slika
-             */
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                CropImage.activity().setAspectRatio(1, 1).start(ChatActivity.this);
-            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
                 /**
-                 * Nije dozvoljen pristup i onda se ponovo trazi dozvola sa objasnjenjem zasto je potrebna
+                 * Dozvoljen je pristup i onda se uzima slika
                  */
-                if(ActivityCompat.shouldShowRequestPermissionRationale(ChatActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Ova dozvola je potrebna kako bi dodali sliku u aplikaciju. Molim vas dozvolite!").setTitle("Zahtev za vaznu dozvolu!");
-
-                    builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(ChatActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                        }
-                    });
-
-                    builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(ChatActivity.this, "Ne moze se dodati!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    builder.show();
+                if (cameraAccepted && storageAccepted) {
+                    CropImage.activity().setAspectRatio(1, 1).start(ChatActivity.this);
                 } else {
-                    Toast.makeText(ChatActivity.this, "Nikad vas vise necemo pitati!", Toast.LENGTH_SHORT).show();
+                    /**
+                     * Nije dozvoljen pristup i onda se objasnjava zasto je potrebna
+                     */
+                    Toast.makeText(ChatActivity.this, "Dozvole za kameru i galeriju su potrebne!", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(ChatActivity.this, "Molimo vas dozvolite pristup, kako bi mogli da ubacite sliku!", Toast.LENGTH_SHORT).show();
+            }
+        } else if(requestCode == AUDIO_REQUEST_CODE){
+            if(grantResults.length > 0) {
+                boolean audioAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                /**
+                 * Dozvoljen je pristup i onda se uzima slika
+                 */
+                if (audioAccepted && storageAccepted) {
+                    //startRecording();
+                } else {
+                    /**
+                     * Nije dozvoljen pristup i onda se objasnjava zasto je potrebna
+                     */
+                    Toast.makeText(ChatActivity.this, "Dozvole za mikrofon i galeriju su potrebne!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(ChatActivity.this, "Molimo vas dozvolite pristup, kako bi mogli da snimite glasovnu poruku!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -489,7 +619,10 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
         hashMap.put("timestamp", timestamp);
         hashMap.put("isseen", false);
 
-        reference.child("Messages").push().setValue(hashMap);
+        String id = reference.child("Messages").push().getKey();
+        hashMap.put("objectId", id);
+
+        reference.child("Messages").child(id).setValue(hashMap);
 
         final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist").child(sender).child(receiver);
         chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -521,24 +654,49 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
             }
         });
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(sender);
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+        FirebaseDatabase.getInstance().getReference("Users").child(sender)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        final User user = dataSnapshot.getValue(User.class);
 
-                if(notify){
-                    sendNotification(receiver, user.getUsername(), message);
-                }
+                        FirebaseDatabase.getInstance().getReference("Mute").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.child(receiver).exists()) {
+                                    FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid())
+                                            .child("notifications").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.child("message").getValue().equals(true)) {
+                                                if (notify) {
+                                                    sendNotification(receiver, user.getUsername(), message);
+                                                }
+                                            }
+                                        }
 
-                notify = false;
-            }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        }
+                                    });
+                                }
+                            }
 
-            }
-        });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        notify = false;
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     /**
@@ -555,7 +713,7 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(ApplicationClass.currentUser.getUid(), username + ": " + message, "Nova poruka", receiver, R.drawable.ic_launcher_background, "message");
+                    Data data = new Data( "" + ApplicationClass.currentUser.getUid(), username + ": " + message, "Nova poruka", "" + receiver, R.drawable.ic_launcher_background, "message");
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -565,12 +723,12 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
                                 senderJsonObj, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Log.d("JSON_RESPONSE", "onResponse: " + response.toString());
+
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("JSON_RESPONSE", "onResponse: " + error.toString());
+
                             }
                         }){
                             @Override
@@ -670,20 +828,6 @@ public class ChatActivity extends AppCompatActivity implements ClothAdapter.Item
             status(timestamp);
             checkTypingStatus("noOne");
         }
-    }
-
-    @Override
-    public void onItemClicked(int index) {
-        int i = 0;
-        for (Cloth cloth : ApplicationClass.mainCloths) {
-            if (ApplicationClass.wish) {
-                if (cloth.getObjectId().equals(ApplicationClass.wishCloths.get(index).getObjectId())) break;
-            }
-            i++;
-        }
-        Intent intent = new Intent(ChatActivity.this, ClothInfo.class);
-        intent.putExtra("index", i);
-        startActivityForResult(intent, 1);
     }
 
     @Override

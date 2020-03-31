@@ -21,13 +21,23 @@
         android:text="username"
         android:textSize="20sp"/>
 
-    <Button
+    <!--<Button
         android:id="@+id/btnFollowing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:text="following"
-        android:textSize="15sp"/>
+        android:textSize="15sp"/>-->
+
+    <ImageView
+        android:id="@+id/ivBlocked"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:textSize="15sp"
+        android:src="@drawable/blocked"
+        android:visibility="gone"/>
 
 </RelativeLayout>

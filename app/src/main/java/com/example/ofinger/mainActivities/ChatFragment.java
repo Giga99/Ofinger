@@ -48,7 +48,9 @@ public class ChatFragment extends Fragment {
 
         messagesList = view.findViewById(R.id.messagesList);
         messagesList.setHasFixedSize(true);
-        messagesList.setLayoutManager(new LinearLayoutManager(ChatFragment.this.getContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(ChatFragment.this.getContext());
+        layoutManager.setStackFromEnd(true);
+        messagesList.setLayoutManager(layoutManager);
 
         usersList = new ArrayList<>();
 

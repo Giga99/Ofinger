@@ -18,7 +18,7 @@ import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.mainActivities.MainActivity;
 import com.example.ofinger.models.Cloth;
-import com.example.ofinger.models.Image;
+import com.example.ofinger.models.ImageVideo;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -58,7 +58,7 @@ public class StartActivity extends AppCompatActivity {
     FirebaseAuth auth;
     DatabaseReference reference, reference2;
     List<Cloth> cloths;
-    List<Image> images;
+    List<ImageVideo> imageVideos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class StartActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference("Cloth");
         reference2 = FirebaseDatabase.getInstance().getReference("Images");
         cloths = new ArrayList<>();
-        images = new ArrayList<>();
+        imageVideos = new ArrayList<>();
 
         /**
          * Logovanje uz pomoc Google
@@ -195,7 +195,7 @@ public class StartActivity extends AppCompatActivity {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(firebaseUser != null && firebaseUser.isEmailVerified()){
+        if(firebaseUser != null && !firebaseUser.isEmailVerified()){
             ApplicationClass.currentUser = firebaseUser;
             ApplicationClass.currentUserReference = FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid());
 

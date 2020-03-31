@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".mainActivities.HomeFragment">
+    tools:context=".mainActivities.HomeFragment"
+    android:id="@+id/fragment_home">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"

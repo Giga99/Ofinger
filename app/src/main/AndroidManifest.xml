@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".ApplicationClass"
@@ -17,7 +18,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".settings.EditEmailActivity"></activity>
+        <activity android:name=".settings.HelpActivity"></activity>
+        <activity android:name=".settings.DeletingAccountActivity" />
+        <activity android:name=".settings.AboutActivity" />
+        <activity android:name=".mainActivities.WishListActivity" />
+        <activity android:name=".navigationActivities.NotificationActivity" />
+        <activity android:name=".settings.EditNotificationsActivity" />
+        <activity android:name=".settings.EditEmailActivity" />
         <activity android:name=".startActivities.EmailVerificationActivity" />
         <activity android:name=".settings.EditProfileActivity" />
         <activity android:name=".settings.EditPassActivity" />

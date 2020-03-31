@@ -13,13 +13,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
@@ -42,6 +45,7 @@ import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
 import com.example.ofinger.adapters.ReviewAdapter;
+import com.example.ofinger.adapters.UserAdapter;
 import com.example.ofinger.messaging.ChatActivity;
 import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Review;
@@ -52,6 +56,7 @@ import com.example.ofinger.notifications.Token;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.database.DataSnapshot;
@@ -60,6 +65,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -80,14 +86,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.app.Activity.RESULT_OK;
 
 public class ProfileFragment extends Fragment {
-    private static final int REQUEST_CODE_ADD = 1;
-    private static final int REQUEST_CODE_TAKE = 2;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    String[] cameraPermissions;
+
+    private String TOPIC_POST_NOTIFICATION;
 
     private CircleImageView ivProfileImageUser;
-    private MaterialTextView tvEmail, tvUsername, header, header2, reviewHeader, tvBio;
+    private MaterialTextView tvEmail, tvUsername, header, header2, reviewHeader, tvBio, numOfCloth, numOfFollowers, numOfReviews;
     private Button btnMessage, btnFollowing;
     private ImageButton ivUserPosts, ivSoldList;
     private RatingBar userOverallRating, userRating;
+    private ImageView ivMore;
+    private LinearLayout listOfFollowers, layoutNumOfReviews;
 
     private MaterialTextView header3;
 
@@ -96,10 +106,16 @@ public class ProfileFragment extends Fragment {
     private ClothAdapter adapter, adapterSold;
     private LinearLayout rateUser;
 
-    RecyclerView userReviewsList;
-    LinearLayoutManager linearLayoutManager;
-    ReviewAdapter adapterReview;
-    List<Review> reviews;
+    private RecyclerView userReviewsList;
+    private LinearLayoutManager linearLayoutManager;
+    private ReviewAdapter adapterReview;
+    private List<Review> reviews;
+
+    private List<User> followers;
+    private LinearLayoutManager layoutManagerFollowers;
+    private UserAdapter followersAdapter;
+
+    private ArrayList<String> followersID;
 
     EditText etReview;
     Button btnReview;
@@ -117,13 +133,16 @@ public class ProfileFragment extends Fragment {
 
     private RequestQueue requestQueue;
 
+    private boolean follow;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         requestQueue = Volley.newRequestQueue(ProfileFragment.this.getActivity().getApplicationContext());
+
+        cameraPermissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         ivProfileImageUser = view.findViewById(R.id.ivProfileImageUser);
         tvEmail = view.findViewById(R.id.tvEmail);
@@ -134,6 +153,7 @@ public class ProfileFragment extends Fragment {
         header2 = view.findViewById(R.id.header2);
         ivUserPosts = view.findViewById(R.id.ivUserPosts);
         ivSoldList = view.findViewById(R.id.ivSoldList);
+        ivMore = view.findViewById(R.id.ivMore);
 
         userOverallRating = view.findViewById(R.id.userOverallRating);
         userRating = view.findViewById(R.id.userRating);
@@ -142,118 +162,42 @@ public class ProfileFragment extends Fragment {
         btnReview = view.findViewById(R.id.btnReview);
         etReview = view.findViewById(R.id.etReview);
         tvBio = view.findViewById(R.id.tvBio);
+        numOfCloth = view.findViewById(R.id.numOfCloth);
+        numOfFollowers = view.findViewById(R.id.numOfFollowers);
+        numOfReviews = view.findViewById(R.id.numOfReviews);
+        listOfFollowers = view.findViewById(R.id.listOfFollowers);
+        layoutNumOfReviews = view.findViewById(R.id.layoutNumOfReviews);
 
         list = view.findViewById(R.id.listProfile);
         list.setHasFixedSize(true);
-        manager = new LinearLayoutManager(getContext());
+        manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
         list.setLayoutManager(manager);
 
-
         listSold = view.findViewById(R.id.listProfileSold);
         listSold.setHasFixedSize(true);
-        managerSold = new LinearLayoutManager(getContext());
+        managerSold = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         listSold.setLayoutManager(managerSold);
+
+        followersID = new ArrayList<>();
 
         storageReference = FirebaseStorage.getInstance().getReference("profileImages");
         reference = FirebaseDatabase.getInstance().getReference("Cloth");
         userCloths = new ArrayList<>();
         soldCloths = new ArrayList<>();
 
-        adapter = new ClothAdapter(getContext(), userCloths);
-        adapterSold = new ClothAdapter(getContext(), soldCloths);
-        list.setAdapter(adapter);
-        listSold.setAdapter(adapterSold);
+        if(!ProfileFragment.this.getActivity().isDestroyed()) {
+            adapter = new ClothAdapter(getContext(), userCloths);
+            adapterSold = new ClothAdapter(getContext(), soldCloths);
+            list.setAdapter(adapter);
+            listSold.setAdapter(adapterSold);
+        }
 
         SharedPreferences prefs = getContext().getSharedPreferences("PREFS", Context.MODE_PRIVATE);
         profileid = prefs.getString("profileid", "none");
 
-        FirebaseDatabase.getInstance().getReference("Users").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(isAdded()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-
-                        if (user.getId().equals(profileid)) {
-                            ApplicationClass.otherUser = user;
-                            tvUsername.setText("Korisnicko ime: " + user.getUsername());
-                            tvEmail.setText("Mejl: " + user.getEmail());
-                            tvBio.setText(user.getBio());
-                            if (user.getImageURL().equals("default")) {
-                                ivProfileImageUser.setImageResource(R.drawable.profimage);
-                            } else {
-                                Glide.with(getContext()).load(user.getImageURL()).into(ivProfileImageUser);
-                            }
-
-                            if (!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
-                                header.setText("Profil Korisnika");
-                                header2.setText("Odeca Korisnika:");
-                                tvEmail.setVisibility(View.GONE);
-                                btnMessage.setVisibility(View.VISIBLE);
-                                btnFollowing.setVisibility(View.VISIBLE);
-                            } else {
-                                rateUser.setVisibility(View.GONE);
-                            }
-
-                            /**
-                             * Formiranje liste korisnickog odela i prodatog odela
-                             */
-                            reference.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    userCloths.clear();
-                                    soldCloths.clear();
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        Cloth cloth = snapshot.getValue(Cloth.class);
-                                        if (cloth.getOwnerID().equals(ApplicationClass.otherUser.getId())) {
-                                            if (cloth.isSold()) soldCloths.add(cloth);
-                                            else userCloths.add(cloth);
-                                        }
-                                    }
-
-                                    if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
-                                        ApplicationClass.userCloths = userCloths;
-                                    ApplicationClass.profileCloth = userCloths;
-                                    ApplicationClass.soldCloths = soldCloths;
-                                    adapter.notifyDataSetChanged();
-                                    adapterSold.notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(ProfileFragment.this.getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            reference2 = FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following");
-                            reference2.addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.child(ApplicationClass.otherUser.getId()).exists()) {
-                                        btnFollowing.setText("Pratite");
-                                    } else {
-                                        btnFollowing.setText("Zapratite");
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        checkUser();
 
         reviews = new ArrayList<>();
         userReviewsList = view.findViewById(R.id.userReviewsList);
@@ -263,34 +207,57 @@ public class ProfileFragment extends Fragment {
         userReviewsList.setAdapter(adapterReview);
         header3 = view.findViewById(R.id.header3);
 
-        /**
-         * Pravljenje liste utisaka
-         */
-        DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsUsers").child(profileid);
-        databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
+        listOfFollowers.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                reviews.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Review review = snapshot.getValue(Review.class);
-                    reviews.add(review);
-                }
+            public void onClick(View v) {
+                View view = LayoutInflater.from(ProfileFragment.this.getContext()).inflate(R.layout.dialog_list_of_followers, null);
 
-                adapterReview.notifyDataSetChanged();
-                calculateUser();
+                ImageView closeList = view.findViewById(R.id.closeList);
+                followers = new ArrayList<>();
+                final RecyclerView listFollowers = view.findViewById(R.id.listFollowers);
+                layoutManagerFollowers = new LinearLayoutManager(ProfileFragment.this.getContext());
+                listFollowers.setLayoutManager(layoutManagerFollowers);
 
-                if(reviews.size() == 0){
-                    header3.setVisibility(View.GONE);
-                    userReviewsList.setVisibility(View.GONE);
-                } else {
-                    header3.setVisibility(View.VISIBLE);
-                    userReviewsList.setVisibility(View.VISIBLE);
-                }
-            }
+                /**
+                 * Pravljenje liste pratioca
+                 */
+                FirebaseDatabase.getInstance().getReference().child("Users")
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                followers.clear();
+                                for(DataSnapshot snapshot1 : dataSnapshot.getChildren()){
+                                    User user1 = snapshot1.getValue(User.class);
+                                    for(String id : followersID){
+                                        if(id.equals(user1.getId())){
+                                            followers.add(user1);
+                                            break;
+                                        }
+                                    }
+                                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                followersAdapter = new UserAdapter(ProfileFragment.this.getContext(), followers);
+                                listFollowers.setAdapter(followersAdapter);
+                            }
 
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileFragment.this.getContext());
+                builder.setView(view);
+
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+
+                closeList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
             }
         });
 
@@ -304,13 +271,42 @@ public class ProfileFragment extends Fragment {
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following").child(ApplicationClass.otherUser.getId()).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.otherUser.getId()).child("followers").child(ApplicationClass.currentUser.getUid()).setValue(true);
 
+                    TOPIC_POST_NOTIFICATION = "POST_" + ApplicationClass.otherUser.getId();
+                    subscribePostNotification();
+
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid());
                     databaseReference.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             User user = dataSnapshot.getValue(User.class);
 
-                            sendNotification(ApplicationClass.otherUser.getId(), user.getUsername());
+                            if(follow) sendNotification(ApplicationClass.otherUser.getId(), user.getUsername());
+
+                            String timestamp = String.valueOf(System.currentTimeMillis());
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("pId", "none");
+                            hashMap.put("timestamp", timestamp);
+                            hashMap.put("sUid", user.getId());
+                            hashMap.put("pUid", profileid);
+                            hashMap.put("notification", user.getUsername() + " vas je zapratio");
+                            hashMap.put("sName", user.getUsername());
+                            hashMap.put("sImage", user.getImageURL());
+                            hashMap.put("type", "follow");
+
+                            String idNotification = FirebaseDatabase
+                                    .getInstance().getReference("Notifications").push().getKey();
+
+                            FirebaseDatabase.getInstance().getReference("Notifications").child(idNotification)
+                                    .setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful())
+                                        Toast.makeText(ProfileFragment.this.getActivity(), "Uspesno poslata notifikacija!", Toast.LENGTH_SHORT).show();
+                                    else
+                                        Toast.makeText(ProfileFragment.this.getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
                         @Override
@@ -327,6 +323,7 @@ public class ProfileFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following").child(ApplicationClass.otherUser.getId()).removeValue();
                             FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.otherUser.getId()).child("followers").child(ApplicationClass.currentUser.getUid()).removeValue();
+                            unsubscribePostNotification();
                         }
                     });
 
@@ -360,31 +357,43 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        /**
-         * Prikaz neprodatog odela
-         */
-        ivUserPosts.setOnClickListener(new View.OnClickListener() {
+        FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                listSold.setVisibility(View.GONE);
-                list.setVisibility(View.VISIBLE);
-                if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Odeca:");
-                else header2.setText("Odeca Korisnika:");
-                ApplicationClass.sold = false;
-            }
-        });
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.child(profileid).exists()){
+                    /**
+                     * Prikaz neprodatog odela
+                     */
+                    ivUserPosts.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            listSold.setVisibility(View.GONE);
+                            list.setVisibility(View.VISIBLE);
+                            if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Odeca:");
+                            else header2.setText("Odeca Korisnika:");
+                            ApplicationClass.sold = false;
+                        }
+                    });
 
-        /**
-         * Prikaz prodatog odela
-         */
-        ivSoldList.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * Prikaz prodatog odela
+                     */
+                    ivSoldList.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            list.setVisibility(View.GONE);
+                            listSold.setVisibility(View.VISIBLE);
+                            if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Prodata Odeca:");
+                            else header2.setText("Prodata Odeca Korisnika:");
+                            ApplicationClass.sold = true;
+                        }
+                    });
+                }
+            }
+
             @Override
-            public void onClick(View v) {
-                list.setVisibility(View.GONE);
-                listSold.setVisibility(View.VISIBLE);
-                if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Prodata Odeca:");
-                else header2.setText("Prodata Odeca Korisnika:");
-                ApplicationClass.sold = true;
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 
@@ -394,10 +403,8 @@ public class ProfileFragment extends Fragment {
         ivProfileImageUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ContextCompat.checkSelfPermission(ProfileFragment.this.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(ProfileFragment.this.getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                } else if (ContextCompat.checkSelfPermission(ProfileFragment.this.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(ProfileFragment.this.getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
+                if(!checkCameraPermission()){
+                    requestCameraPermission();
                 } else {
                     CropImage.activity().setAspectRatio(1, 1)
                             .setCropShape(CropImageView.CropShape.RECTANGLE).start(ProfileFragment.this.getActivity(), ProfileFragment.this);
@@ -426,12 +433,14 @@ public class ProfileFragment extends Fragment {
                 review.setUserId(ApplicationClass.currentUser.getUid());
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsUsers").child(profileid);
                 String id = databaseReference.push().getKey();
+                review.setReviewId(id);
 
                 databaseReference.child(id).setValue(review)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(ProfileFragment.this.getContext(), "Uspesno ocenjeno!", Toast.LENGTH_SHORT).show();
+                                userRating.setRating(0);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -444,7 +453,355 @@ public class ProfileFragment extends Fragment {
 
         calculateOverall();
 
+        /**
+         * Blokiranje ili mute ili report
+         */
+        ivMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PopupMenu popupMenu = new PopupMenu(ProfileFragment.this.getContext(), v);
+                popupMenu.setOnMenuItemClickListener(menuItemClickListener);
+                popupMenu.inflate(R.menu.menu_profile_more);
+                popupMenu.show();
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid());
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.child(profileid).exists()) popupMenu.getMenu().getItem(0).setTitle("Odblokiraj");
+                        else popupMenu.getMenu().getItem(0).setTitle("Blokiraj");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                DatabaseReference databaseReference2 = FirebaseDatabase.getInstance().getReference("Mute").child(ApplicationClass.currentUser.getUid());
+                databaseReference2.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.child(profileid).exists()) popupMenu.getMenu().getItem(2).setTitle("Primaj poruke od korisnika");
+                        else popupMenu.getMenu().getItem(2).setTitle("Ne primaj poruke od korisnika");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
         return view;
+    }
+
+    private boolean checkCameraPermission(){
+        boolean result1 = ContextCompat.checkSelfPermission(ProfileFragment.this.getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result2 = ContextCompat.checkSelfPermission(ProfileFragment.this.getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        return result1 && result2;
+    }
+
+    private void requestCameraPermission(){
+        ActivityCompat.requestPermissions(ProfileFragment.this.getActivity(), cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    private PopupMenu.OnMenuItemClickListener menuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.block:
+                    if(item.getTitle().equals("Blokiraj")){
+                        blockUser();
+                    } else {
+                        unBlockUser();
+                    }
+                    break;
+                case R.id.report:
+                    Toast.makeText(ProfileFragment.this.getContext(), "Report!", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.mute:
+                    if(item.getTitle().equals("Ne primaj poruke od korisnika")){
+                        muteUser();
+                    } else {
+                        unMuteUser();
+                    }
+                    break;
+            }
+
+            return true;
+        }
+    };
+
+    private void unMuteUser() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Mute").child(ApplicationClass.currentUser.getUid());
+        databaseReference.child(profileid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(ProfileFragment.this.getContext(), "Primacete poruke od korisnika!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void muteUser() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Mute").child(ApplicationClass.currentUser.getUid());
+        databaseReference.child(profileid).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(ProfileFragment.this.getContext(), "Necete primati poruke od korisnika!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void unBlockUser() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid());
+        databaseReference.child(profileid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(ProfileFragment.this.getContext(), "Korisnik uspesno odblokiran!", Toast.LENGTH_SHORT).show();
+                checkUser();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void blockUser() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid());
+        databaseReference.child(profileid).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(ProfileFragment.this.getContext(), "Korisnik uspesno blokiran!", Toast.LENGTH_SHORT).show();
+                FirebaseDatabase.getInstance().getReference("Follow").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        userCloths.clear();
+                        soldCloths.clear();
+
+                        if(dataSnapshot.child(ApplicationClass.currentUser.getUid()).child("following").child(profileid).exists())
+                            dataSnapshot.child(ApplicationClass.currentUser.getUid()).child("following").child(profileid).getRef().removeValue();
+
+                        if(dataSnapshot.child(ApplicationClass.currentUser.getUid()).child("followers").child(profileid).exists())
+                            dataSnapshot.child(ApplicationClass.currentUser.getUid()).child("followers").child(profileid).getRef().removeValue();
+
+                        if(dataSnapshot.child(profileid).child("following").child(ApplicationClass.currentUser.getUid()).exists())
+                            dataSnapshot.child(profileid).child("following").child(ApplicationClass.currentUser.getUid()).getRef().removeValue();
+
+                        if(dataSnapshot.child(profileid).child("followers").child(ApplicationClass.currentUser.getUid()).exists())
+                            dataSnapshot.child(profileid).child("followers").child(ApplicationClass.currentUser.getUid()).getRef().removeValue();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void checkUser() {
+        FirebaseDatabase.getInstance().getReference("Users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(isAdded()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        final User user = snapshot.getValue(User.class);
+
+                        if (user.getId().equals(profileid)) {
+                            ApplicationClass.otherUser = user;
+                            tvUsername.setText("Korisnicko ime: " + user.getUsername());
+                            tvEmail.setText("Mejl: " + user.getEmail());
+                            tvBio.setText(user.getBio());
+                            if (user.getImageURL().equals("default")) {
+                                ivProfileImageUser.setImageResource(R.drawable.profimage);
+                            } else {
+                                Glide.with(getContext()).load(user.getImageURL()).into(ivProfileImageUser);
+                            }
+
+                            if (!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
+                                header.setText("Profil Korisnika");
+                                header2.setText("Odeca Korisnika:");
+                                tvEmail.setVisibility(View.GONE);
+                                btnMessage.setVisibility(View.VISIBLE);
+                                btnFollowing.setVisibility(View.VISIBLE);
+                            } else {
+                                ivMore.setVisibility(View.GONE);
+                                rateUser.setVisibility(View.GONE);
+                            }
+
+                            follow = (boolean) snapshot.child("notifications").child("follow").getValue();
+
+                            FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(!dataSnapshot.child(profileid).exists()){
+                                        if(!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
+                                            header2.setText("Odeca Korisnika:");
+                                            btnMessage.setVisibility(View.VISIBLE);
+                                            btnFollowing.setVisibility(View.VISIBLE);
+                                            rateUser.setVisibility(View.VISIBLE);
+                                        }
+
+
+                                        /**
+                                         * Formiranje liste korisnickog odela i prodatog odela
+                                         */
+                                        reference.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                userCloths.clear();
+                                                soldCloths.clear();
+                                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                                    Cloth cloth = snapshot.getValue(Cloth.class);
+                                                    if (cloth.getOwnerID().equals(ApplicationClass.otherUser.getId())) {
+                                                        if (cloth.isSold()) soldCloths.add(cloth);
+                                                        else userCloths.add(cloth);
+                                                    }
+                                                }
+
+                                                if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
+                                                    ApplicationClass.userCloths = userCloths;
+                                                ApplicationClass.profileCloth = userCloths;
+                                                ApplicationClass.soldCloths = soldCloths;
+                                                numOfCloth.setText("" + userCloths.size());
+                                                list.scheduleLayoutAnimation();
+                                                listSold.scheduleLayoutAnimation();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                Toast.makeText(ProfileFragment.this.getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                        reference2 = FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following");
+                                        reference2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                if (dataSnapshot.child(ApplicationClass.otherUser.getId()).exists()) {
+                                                    btnFollowing.setText("Pratite");
+                                                } else {
+                                                    btnFollowing.setText("Zapratite");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                        /**
+                                         * Broj pratioca
+                                         */
+                                        FirebaseDatabase.getInstance().getReference().child("Follow")
+                                                .child(ApplicationClass.otherUser.getId()).child("followers").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                numOfFollowers.setText("" + dataSnapshot.getChildrenCount());
+                                                for(DataSnapshot snapshot1 : dataSnapshot.getChildren()){
+                                                    String id = snapshot1.getKey();
+                                                    followersID.add(id);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+                                        /**
+                                         * Pravljenje liste utisaka
+                                         */
+                                        DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsUsers").child(profileid);
+                                        databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                reviews.clear();
+                                                boolean myReview = false;
+                                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                                    Review review = snapshot.getValue(Review.class);
+                                                    if(review.getUserId().equals(ApplicationClass.currentUser.getUid())) myReview = true;
+                                                    reviews.add(review);
+                                                }
+
+                                                numOfReviews.setText("" + dataSnapshot.getChildrenCount());
+
+                                                if(myReview){
+                                                    etReview.setVisibility(View.GONE);
+                                                    btnReview.setVisibility(View.GONE);
+                                                    userRating.setVisibility(View.GONE);
+                                                    reviewHeader.setText("Hvala na ocenjivanju korisnika!");
+                                                } else {
+                                                    etReview.setVisibility(View.VISIBLE);
+                                                    btnReview.setVisibility(View.VISIBLE);
+                                                    userRating.setVisibility(View.VISIBLE);
+                                                    reviewHeader.setText("Ocenite ovog korisnika:");
+                                                }
+
+                                                adapterReview.notifyDataSetChanged();
+                                                calculateUser();
+
+                                                if(reviews.size() == 0){
+                                                    header3.setVisibility(View.GONE);
+                                                    userReviewsList.setVisibility(View.GONE);
+                                                    layoutNumOfReviews.setVisibility(View.GONE);
+                                                } else {
+                                                    header3.setVisibility(View.VISIBLE);
+                                                    userReviewsList.setVisibility(View.VISIBLE);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    } else {
+                                        header2.setText("Korisnik je blokiran!");
+                                        btnMessage.setVisibility(View.GONE);
+                                        btnFollowing.setVisibility(View.GONE);
+                                        rateUser.setVisibility(View.GONE);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -610,6 +967,42 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * unsubscribe od notifikacija za odecu
+     */
+    private void unsubscribePostNotification() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(TOPIC_POST_NOTIFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Necete dobijati notifikacije o novoj odeci!";
+                        if(!task.isSuccessful()){
+                            msg = task.getException().getMessage();
+                        }
+
+                        Toast.makeText(ProfileFragment.this.getActivity(), msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * subscribe za notifikacije za odecu
+     */
+    private void subscribePostNotification() {
+        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC_POST_NOTIFICATION)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Dobijacete notifikacije o novoj odeci!";
+                        if(!task.isSuccessful()){
+                            msg = task.getException().getMessage();
+                        }
+
+                        Toast.makeText(ProfileFragment.this.getActivity(), msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -626,42 +1019,25 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == CAMERA_REQUEST_CODE){
+            if(grantResults.length > 0) {
+                boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-            /**
-             * Dozvoljen je pristup i onda se uzima slika
-             */
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                CropImage.activity().setAspectRatio(1, 1)
-                        .setCropShape(CropImageView.CropShape.RECTANGLE).start(ProfileFragment.this.getActivity(), ProfileFragment.this);
-            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
                 /**
-                 * Nije dozvoljen pristup i onda se ponovo trazi dozvola sa objasnjenjem zasto je potrebna
+                 * Dozvoljen je pristup i onda se uzima slika
                  */
-                if(ActivityCompat.shouldShowRequestPermissionRationale(ProfileFragment.this.getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                    androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(ProfileFragment.this.getContext());
-                    builder.setMessage("Ova dozvola je potrebna kako bi dodali sliku u aplikaciju. Molim vas dozvolite!").setTitle("Zahtev za vaznu dozvolu!");
-
-                    builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(ProfileFragment.this.getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                        }
-                    });
-
-                    builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(ProfileFragment.this.getContext(), "Ne moze se dodati!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    builder.show();
+                if (cameraAccepted && storageAccepted) {
+                    CropImage.activity().setAspectRatio(1, 1)
+                            .setCropShape(CropImageView.CropShape.RECTANGLE).start(ProfileFragment.this.getActivity(), ProfileFragment.this);
                 } else {
-                    Toast.makeText(ProfileFragment.this.getContext(), "Nikad vas vise necemo pitati!", Toast.LENGTH_SHORT).show();
+                    /**
+                     * Nije dozvoljen pristup i onda se objasnjava zasto je potrebna
+                     */
+                    Toast.makeText(ProfileFragment.this.getContext(), "Dozvole za kameru i galeriju su potrebne!", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(ProfileFragment.this.getContext(), "Molimo vas dozvolite pristup, kako bi mogli da ubacite sliku!", Toast.LENGTH_SHORT).show();
             }
         }
     }

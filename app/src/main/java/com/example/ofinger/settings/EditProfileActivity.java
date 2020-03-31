@@ -3,7 +3,6 @@ package com.example.ofinger.settings;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -46,8 +45,8 @@ import java.util.HashMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfileActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE_ADD = 1;
-    private static final int REQUEST_CODE_TAKE = 2;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    String[] cameraPermissions;
 
     CircleImageView ivProfileImage;
     MaterialEditText etNewUsername, etNewBio;
@@ -70,6 +69,8 @@ public class EditProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         progressDialog = new ProgressDialog(this);
+
+        cameraPermissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         ivProfileImage = findViewById(R.id.ivProfileImage);
         etNewBio = findViewById(R.id.etNewBio);
@@ -101,10 +102,8 @@ public class EditProfileActivity extends AppCompatActivity {
         ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                    ActivityCompat.requestPermissions(EditProfileActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                } else if (ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(EditProfileActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_TAKE);
+                if(!checkCameraPermission()){
+                    requestCameraPermission();
                 } else {
                     CropImage.activity().setAspectRatio(1, 1)
                             .setCropShape(CropImageView.CropShape.RECTANGLE).start(EditProfileActivity.this);
@@ -149,6 +148,15 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    private boolean checkCameraPermission(){
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        boolean result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        return result1 && result2;
+    }
+
+    private void requestCameraPermission(){
+        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
     private String getFileExtension(Uri uri){
@@ -217,42 +225,25 @@ public class EditProfileActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == CAMERA_REQUEST_CODE){
+            if(grantResults.length > 0) {
+                boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
 
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-            /**
-             * Dozvoljen je pristup i onda se uzima slika
-             */
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                CropImage.activity().setAspectRatio(1, 1)
-                        .setCropShape(CropImageView.CropShape.RECTANGLE).start(EditProfileActivity.this);
-            } else if(grantResults[0] == PackageManager.PERMISSION_DENIED){
                 /**
-                 * Nije dozvoljen pristup i onda se ponovo trazi dozvola sa objasnjenjem zasto je potrebna
+                 * Dozvoljen je pristup i onda se uzima slika
                  */
-                if(ActivityCompat.shouldShowRequestPermissionRationale(EditProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                    androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(EditProfileActivity.this);
-                    builder.setMessage("Ova dozvola je potrebna kako bi dodali sliku u aplikaciju. Molim vas dozvolite!").setTitle("Zahtev za vaznu dozvolu!");
-
-                    builder.setPositiveButton("DA", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(EditProfileActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_ADD);
-                        }
-                    });
-
-                    builder.setNegativeButton("NE", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Toast.makeText(EditProfileActivity.this, "Ne moze se dodati!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    builder.show();
+                if (cameraAccepted && storageAccepted) {
+                    CropImage.activity().setAspectRatio(1, 1)
+                            .setCropShape(CropImageView.CropShape.RECTANGLE).start(EditProfileActivity.this);
                 } else {
-                    Toast.makeText(EditProfileActivity.this, "Nikad vas vise necemo pitati!", Toast.LENGTH_SHORT).show();
+                    /**
+                     * Nije dozvoljen pristup i onda se objasnjava zasto je potrebna
+                     */
+                    Toast.makeText(EditProfileActivity.this, "Dozvole za kameru i galeriju su potrebne!", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(EditProfileActivity.this, "Molimo vas dozvolite pristup, kako bi mogli da ubacite sliku!", Toast.LENGTH_SHORT).show();
             }
         }
     }

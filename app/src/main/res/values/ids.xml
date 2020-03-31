@@ -2,4 +2,7 @@
 <resources>
     <item name="sort" type="id" />
     <item name="category" type="id" />
+    <item name="notificationsPost" type="id" />
+    <item name="notificationsMessage" type="id" />
+    <item name="notificationsFollow" type="id" />
 </resources>

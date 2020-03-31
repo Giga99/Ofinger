@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/subcategoryBracelets"
+        android:title="Narukvice"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryWatch"
+        android:title="Satovi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryNecklaces"
+        android:title="Ogrlice"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryRings"
+        android:title="Prstenje"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryEarrings"
+        android:title="Mindjuse"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryGlasses"
+        android:title="Naocare"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryOther"
+        android:title="Ostalo"
+        app:showAsAction="never"/>
+
+</menu>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/subcategoryTshirt"
+        android:title="Majice"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryDresses"
+        android:title="Haljine"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySkirts"
+        android:title="Suknje"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryOveralls"
+        android:title="Kombinezoni"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryTracksuit"
+        android:title="Trenerke"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryJeans"
+        android:title="Dzins"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryPants"
+        android:title="Pantalone"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryBlouses"
+        android:title="Bluze"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryTunics"
+        android:title="Tunike"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryWedding"
+        android:title="Vencanice"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryTights"
+        android:title="Helanke"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryHoodies"
+        android:title="Duksevi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryShorts"
+        android:title="Sorcevi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryJackets"
+        android:title="Jakne"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryShirting"
+        android:title="Kosulje"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySweaters"
+        android:title="Dzemperi"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryCoat"
+        android:title="Kaputi i Mantili"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySports"
+        android:title="Sportska oprema"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategorySuit"
+        android:title="Sakoi i blejzeri"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryVest"
+        android:title="Prsluci"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryUnderwear"
+        android:title="Donji ves i carape"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryTrunks"
+        android:title="Kupaci"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryPajamas"
+        android:title="Spavacice i pidzame"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/subcategoryOther"
+        android:title="Ostalo"
+        app:showAsAction="never"/>
+
+</menu>
