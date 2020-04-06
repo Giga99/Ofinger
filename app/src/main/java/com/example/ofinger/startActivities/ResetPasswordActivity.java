@@ -8,8 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +29,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private TextView tvLoad;
 
     EditText etEmail;
-    Button btnReset;
+    ImageView ivReset, backIcon;
     TextView tvInstruction;
 
     FirebaseAuth firebaseAuth;
@@ -49,12 +49,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
         tvLoad = findViewById(R.id.tvLoad);
 
         etEmail = findViewById(R.id.etEmail);
-        btnReset = findViewById(R.id.btnReset);
-        tvInstruction = findViewById(R.id.tvInstruction);
+        ivReset = findViewById(R.id.ivReset);
+        backIcon = findViewById(R.id.backIcon);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        btnReset.setOnClickListener(new View.OnClickListener() {
+        ivReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showProgress(true);
@@ -87,12 +87,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     /**

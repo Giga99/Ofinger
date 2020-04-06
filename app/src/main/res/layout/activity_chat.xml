@@ -75,28 +75,18 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/ibMore"
-            android:layout_alignParentStart="true"
-            android:background="#fff"
-            android:layout_centerVertical="true"
-            android:src="@drawable/add2"/>
-
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
             android:id="@+id/audioRecord"
-            android:layout_toEndOf="@id/ibMore"
             android:background="#fff"
             android:layout_centerVertical="true"
-            android:src="@drawable/audiorecorder"/>
+            android:src="@drawable/audio"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
+        <EditText
             android:id="@+id/etSend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:fontFamily="@font/regular"
             android:layout_toStartOf="@id/btnSend"
-            android:background="@android:color/transparent"
             android:layout_toEndOf="@id/audioRecord"
             android:hint="Ukucajte poruku..." />
 
@@ -105,7 +95,8 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/ic_action_name" />
+            android:layout_marginTop="4dp"
+            android:background="@drawable/send" />
 
     </RelativeLayout>
 

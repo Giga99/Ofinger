@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,20 +18,18 @@ import com.example.ofinger.R;
 import com.example.ofinger.startActivities.EmailVerificationActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.HashMap;
 
 public class EditEmailActivity extends AppCompatActivity {
-    MaterialEditText newEmail, pass;
-    MaterialButton confirmNewEmail;
+    EditText newEmail, pass;
+    ImageView confirmNewEmail;
 
     ProgressDialog progressDialog;
 

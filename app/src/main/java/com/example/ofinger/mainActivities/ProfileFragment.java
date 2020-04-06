@@ -17,17 +17,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -40,7 +40,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.adapters.ClothAdapter;
@@ -58,7 +57,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,6 +68,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -92,19 +91,15 @@ public class ProfileFragment extends Fragment {
     private String TOPIC_POST_NOTIFICATION;
 
     private CircleImageView ivProfileImageUser;
-    private MaterialTextView tvEmail, tvUsername, header, header2, reviewHeader, tvBio, numOfCloth, numOfFollowers, numOfReviews;
-    private Button btnMessage, btnFollowing;
-    private ImageButton ivUserPosts, ivSoldList;
+    private TextView tvEmail, tvUsername, header, header2, reviewHeader, tvBio, numOfCloth, numOfFollowers, numOfReviews, header3;
     private RatingBar userOverallRating, userRating;
-    private ImageView ivMore;
+    private ImageView ivMore, ivMessage, ivFollowing, ivUserPosts, ivSoldList;
     private LinearLayout listOfFollowers, layoutNumOfReviews;
-
-    private MaterialTextView header3;
 
     private RecyclerView list, listSold;
     private LinearLayoutManager manager, managerSold;
     private ClothAdapter adapter, adapterSold;
-    private LinearLayout rateUser;
+    private ConstraintLayout rateUser, linearLayout3;
 
     private RecyclerView userReviewsList;
     private LinearLayoutManager linearLayoutManager;
@@ -118,7 +113,7 @@ public class ProfileFragment extends Fragment {
     private ArrayList<String> followersID;
 
     EditText etReview;
-    Button btnReview;
+    ImageView ivReview;
 
     private String profileid;
 
@@ -133,7 +128,7 @@ public class ProfileFragment extends Fragment {
 
     private RequestQueue requestQueue;
 
-    private boolean follow;
+    private boolean follow, soldList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -147,8 +142,8 @@ public class ProfileFragment extends Fragment {
         ivProfileImageUser = view.findViewById(R.id.ivProfileImageUser);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvUsername = view.findViewById(R.id.tvUsername);
-        btnFollowing = view.findViewById(R.id.btnFollowing);
-        btnMessage = view.findViewById(R.id.btnMessage);
+        ivFollowing = view.findViewById(R.id.ivFollowing);
+        ivMessage = view.findViewById(R.id.ivMessage);
         header = view.findViewById(R.id.header);
         header2 = view.findViewById(R.id.header2);
         ivUserPosts = view.findViewById(R.id.ivUserPosts);
@@ -159,7 +154,7 @@ public class ProfileFragment extends Fragment {
         userRating = view.findViewById(R.id.userRating);
         rateUser = view.findViewById(R.id.rateUser);
         reviewHeader = view.findViewById(R.id.reviewHeader);
-        btnReview = view.findViewById(R.id.btnReview);
+        ivReview = view.findViewById(R.id.ivReview);
         etReview = view.findViewById(R.id.etReview);
         tvBio = view.findViewById(R.id.tvBio);
         numOfCloth = view.findViewById(R.id.numOfCloth);
@@ -167,6 +162,7 @@ public class ProfileFragment extends Fragment {
         numOfReviews = view.findViewById(R.id.numOfReviews);
         listOfFollowers = view.findViewById(R.id.listOfFollowers);
         layoutNumOfReviews = view.findViewById(R.id.layoutNumOfReviews);
+        linearLayout3 = view.findViewById(R.id.linearLayout3);
 
         list = view.findViewById(R.id.listProfile);
         list.setHasFixedSize(true);
@@ -178,6 +174,8 @@ public class ProfileFragment extends Fragment {
         listSold = view.findViewById(R.id.listProfileSold);
         listSold.setHasFixedSize(true);
         managerSold = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        managerSold.setReverseLayout(true);
+        managerSold.setStackFromEnd(true);
         listSold.setLayoutManager(managerSold);
 
         followersID = new ArrayList<>();
@@ -264,12 +262,14 @@ public class ProfileFragment extends Fragment {
         /**
          * Zapratiti ili otpratiti korisnika
          */
-        btnFollowing.setOnClickListener(new View.OnClickListener() {
+        ivFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(btnFollowing.getText().toString().equals("Zapratite")){
+                if(ivFollowing.getTag().toString().equals("Zaprati")){
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following").child(ApplicationClass.otherUser.getId()).setValue(true);
                     FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.otherUser.getId()).child("followers").child(ApplicationClass.currentUser.getUid()).setValue(true);
+                    ivFollowing.setTag("Pratite");
+                    ivFollowing.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.followingbutton));
 
                     TOPIC_POST_NOTIFICATION = "POST_" + ApplicationClass.otherUser.getId();
                     subscribePostNotification();
@@ -314,7 +314,7 @@ public class ProfileFragment extends Fragment {
 
                         }
                     });
-                } else {
+                } else if(ivFollowing.getTag().toString().equals("Pratite")) {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(ProfileFragment.this.getContext());
                     dialog.setTitle("Jeste sigurni da zelite da otpratite korinsika?");
 
@@ -323,6 +323,8 @@ public class ProfileFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following").child(ApplicationClass.otherUser.getId()).removeValue();
                             FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.otherUser.getId()).child("followers").child(ApplicationClass.currentUser.getUid()).removeValue();
+                            ivFollowing.setTag("Zaprati");
+                            ivFollowing.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.followbutton));
                             unsubscribePostNotification();
                         }
                     });
@@ -342,7 +344,7 @@ public class ProfileFragment extends Fragment {
         /**
          * Odlazak na poruke sa korisnikom ili guest frag
          */
-        btnMessage.setOnClickListener(new View.OnClickListener() {
+        ivMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(ApplicationClass.currentUser.isAnonymous()){
@@ -357,43 +359,37 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        /**
+         * Prikaz neprodatog odela
+         */
+        ivUserPosts.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.child(profileid).exists()){
-                    /**
-                     * Prikaz neprodatog odela
-                     */
-                    ivUserPosts.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            listSold.setVisibility(View.GONE);
-                            list.setVisibility(View.VISIBLE);
-                            if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Odeca:");
-                            else header2.setText("Odeca Korisnika:");
-                            ApplicationClass.sold = false;
-                        }
-                    });
-
-                    /**
-                     * Prikaz prodatog odela
-                     */
-                    ivSoldList.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            list.setVisibility(View.GONE);
-                            listSold.setVisibility(View.VISIBLE);
-                            if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Prodata Odeca:");
-                            else header2.setText("Prodata Odeca Korisnika:");
-                            ApplicationClass.sold = true;
-                        }
-                    });
-                }
+            public void onClick(View v) {
+                listSold.setVisibility(View.GONE);
+                list.setVisibility(View.VISIBLE);
+                if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Odeca:");
+                else header2.setText("Odeca Korisnika:");
+                ApplicationClass.sold = false;
+                soldList = false;
+                ivUserPosts.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.clothlistchecked));
+                ivSoldList.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.soldclothlistunchecked));
             }
+        });
 
+        /**
+         * Prikaz prodatog odela
+         */
+        ivSoldList.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            public void onClick(View v) {
+                list.setVisibility(View.GONE);
+                listSold.setVisibility(View.VISIBLE);
+                if(ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) header2.setText("Vasa Prodata Odeca:");
+                else header2.setText("Prodata Odeca Korisnika:");
+                ApplicationClass.sold = true;
+                soldList = true;
+                ivUserPosts.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.clothlistunchecked));
+                ivSoldList.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.soldclothlistchecked));
             }
         });
 
@@ -424,7 +420,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        btnReview.setOnClickListener(new View.OnClickListener() {
+        ivReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Review review = new Review();
@@ -620,179 +616,197 @@ public class ProfileFragment extends Fragment {
     }
 
     private void checkUser() {
-        FirebaseDatabase.getInstance().getReference("Users").addValueEventListener(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("Users").child(profileid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(isAdded()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        final User user = snapshot.getValue(User.class);
+                    final User user = dataSnapshot.getValue(User.class);
 
-                        if (user.getId().equals(profileid)) {
-                            ApplicationClass.otherUser = user;
-                            tvUsername.setText("Korisnicko ime: " + user.getUsername());
-                            tvEmail.setText("Mejl: " + user.getEmail());
-                            tvBio.setText(user.getBio());
-                            if (user.getImageURL().equals("default")) {
-                                ivProfileImageUser.setImageResource(R.drawable.profimage);
-                            } else {
-                                Glide.with(getContext()).load(user.getImageURL()).into(ivProfileImageUser);
-                            }
+                    ApplicationClass.otherUser = user;
+                    tvUsername.setText(user.getUsername());
+                    tvEmail.setText(user.getEmail());
+                    tvBio.setText(user.getBio());
+                    if (user.getImageURL().equals("default")) {
+                        ivProfileImageUser.setImageResource(R.drawable.profimage);
+                    } else {
+                        Picasso.get().load(user.getImageURL()).into(ivProfileImageUser);
+                    }
 
-                            if (!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
-                                header.setText("Profil Korisnika");
-                                header2.setText("Odeca Korisnika:");
-                                tvEmail.setVisibility(View.GONE);
-                                btnMessage.setVisibility(View.VISIBLE);
-                                btnFollowing.setVisibility(View.VISIBLE);
-                            } else {
-                                ivMore.setVisibility(View.GONE);
-                                rateUser.setVisibility(View.GONE);
-                            }
+                    if (!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
+                        header.setText("Profil Korisnika");
+                        header2.setText("Odeca Korisnika:");
+                        tvEmail.setVisibility(View.GONE);
+                        ivMessage.setVisibility(View.VISIBLE);
+                        ivFollowing.setVisibility(View.VISIBLE);
+                    } else {
+                        ivMore.setVisibility(View.GONE);
+                        rateUser.setVisibility(View.GONE);
+                    }
 
-                            follow = (boolean) snapshot.child("notifications").child("follow").getValue();
+                    follow = (boolean) dataSnapshot.child("notifications").child("follow").getValue();
 
-                            FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(!dataSnapshot.child(profileid).exists()){
-                                        if(!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
-                                            header2.setText("Odeca Korisnika:");
-                                            btnMessage.setVisibility(View.VISIBLE);
-                                            btnFollowing.setVisibility(View.VISIBLE);
-                                            rateUser.setVisibility(View.VISIBLE);
+                    FirebaseDatabase.getInstance().getReference("Block").child(ApplicationClass.currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.child(profileid).exists()) {
+                                if (!ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid())) {
+                                    header2.setText("Odeca Korisnika:");
+                                    ivMessage.setVisibility(View.VISIBLE);
+                                    ivFollowing.setVisibility(View.VISIBLE);
+                                    rateUser.setVisibility(View.VISIBLE);
+                                }
+
+                                if (soldList) {
+                                    if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
+                                        header2.setText("Vasa Prodata Odeca:");
+                                    else header2.setText("Prodata Odeca Korisnika:");
+                                    listSold.setVisibility(View.VISIBLE);
+                                    list.setVisibility(View.GONE);
+                                    ivUserPosts.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.clothlistunchecked));
+                                    ivSoldList.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.soldclothlistchecked));
+                                } else {
+                                    if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
+                                        header2.setText("Vasa Odeca:");
+                                    else header2.setText("Odeca Korisnika:");
+                                    listSold.setVisibility(View.GONE);
+                                    list.setVisibility(View.VISIBLE);
+                                    ivUserPosts.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.clothlistchecked));
+                                    ivSoldList.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.soldclothlistunchecked));
+                                }
+
+                                /**
+                                 * Formiranje liste korisnickog odela i prodatog odela
+                                 */
+                                reference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        userCloths.clear();
+                                        soldCloths.clear();
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            Cloth cloth = snapshot.getValue(Cloth.class);
+                                            if (cloth.getOwnerID().equals(ApplicationClass.otherUser.getId())) {
+                                                if (cloth.isSold()) soldCloths.add(cloth);
+                                                else userCloths.add(cloth);
+                                            }
                                         }
 
-
-                                        /**
-                                         * Formiranje liste korisnickog odela i prodatog odela
-                                         */
-                                        reference.addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                userCloths.clear();
-                                                soldCloths.clear();
-                                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                                    Cloth cloth = snapshot.getValue(Cloth.class);
-                                                    if (cloth.getOwnerID().equals(ApplicationClass.otherUser.getId())) {
-                                                        if (cloth.isSold()) soldCloths.add(cloth);
-                                                        else userCloths.add(cloth);
-                                                    }
-                                                }
-
-                                                if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
-                                                    ApplicationClass.userCloths = userCloths;
-                                                ApplicationClass.profileCloth = userCloths;
-                                                ApplicationClass.soldCloths = soldCloths;
-                                                numOfCloth.setText("" + userCloths.size());
-                                                list.scheduleLayoutAnimation();
-                                                listSold.scheduleLayoutAnimation();
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                Toast.makeText(ProfileFragment.this.getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-
-                                        reference2 = FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following");
-                                        reference2.addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                if (dataSnapshot.child(ApplicationClass.otherUser.getId()).exists()) {
-                                                    btnFollowing.setText("Pratite");
-                                                } else {
-                                                    btnFollowing.setText("Zapratite");
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                            }
-                                        });
-
-                                        /**
-                                         * Broj pratioca
-                                         */
-                                        FirebaseDatabase.getInstance().getReference().child("Follow")
-                                                .child(ApplicationClass.otherUser.getId()).child("followers").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                numOfFollowers.setText("" + dataSnapshot.getChildrenCount());
-                                                for(DataSnapshot snapshot1 : dataSnapshot.getChildren()){
-                                                    String id = snapshot1.getKey();
-                                                    followersID.add(id);
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                            }
-                                        });
-
-                                        /**
-                                         * Pravljenje liste utisaka
-                                         */
-                                        DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsUsers").child(profileid);
-                                        databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                reviews.clear();
-                                                boolean myReview = false;
-                                                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                                    Review review = snapshot.getValue(Review.class);
-                                                    if(review.getUserId().equals(ApplicationClass.currentUser.getUid())) myReview = true;
-                                                    reviews.add(review);
-                                                }
-
-                                                numOfReviews.setText("" + dataSnapshot.getChildrenCount());
-
-                                                if(myReview){
-                                                    etReview.setVisibility(View.GONE);
-                                                    btnReview.setVisibility(View.GONE);
-                                                    userRating.setVisibility(View.GONE);
-                                                    reviewHeader.setText("Hvala na ocenjivanju korisnika!");
-                                                } else {
-                                                    etReview.setVisibility(View.VISIBLE);
-                                                    btnReview.setVisibility(View.VISIBLE);
-                                                    userRating.setVisibility(View.VISIBLE);
-                                                    reviewHeader.setText("Ocenite ovog korisnika:");
-                                                }
-
-                                                adapterReview.notifyDataSetChanged();
-                                                calculateUser();
-
-                                                if(reviews.size() == 0){
-                                                    header3.setVisibility(View.GONE);
-                                                    userReviewsList.setVisibility(View.GONE);
-                                                    layoutNumOfReviews.setVisibility(View.GONE);
-                                                } else {
-                                                    header3.setVisibility(View.VISIBLE);
-                                                    userReviewsList.setVisibility(View.VISIBLE);
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                            }
-                                        });
-                                    } else {
-                                        header2.setText("Korisnik je blokiran!");
-                                        btnMessage.setVisibility(View.GONE);
-                                        btnFollowing.setVisibility(View.GONE);
-                                        rateUser.setVisibility(View.GONE);
+                                        if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
+                                            ApplicationClass.userCloths = userCloths;
+                                        ApplicationClass.profileCloth = userCloths;
+                                        ApplicationClass.soldCloths = soldCloths;
+                                        numOfCloth.setText("" + userCloths.size());
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Toast.makeText(ProfileFragment.this.getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
-                                }
-                            });
+                                reference2 = FirebaseDatabase.getInstance().getReference().child("Follow").child(ApplicationClass.currentUser.getUid()).child("following");
+                                reference2.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.child(ApplicationClass.otherUser.getId()).exists()) {
+                                            ivFollowing.setTag("Pratite");
+                                            ivFollowing.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.followingbutton));
+                                        } else {
+                                            ivFollowing.setTag("Zaprati");
+                                            ivFollowing.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.followbutton));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                /**
+                                 * Broj pratioca
+                                 */
+                                FirebaseDatabase.getInstance().getReference().child("Follow")
+                                        .child(ApplicationClass.otherUser.getId()).child("followers").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        numOfFollowers.setText("" + dataSnapshot.getChildrenCount());
+                                        for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                            String id = snapshot1.getKey();
+                                            followersID.add(id);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                /**
+                                 * Pravljenje liste utisaka
+                                 */
+                                DatabaseReference databaseReferenceReviews = FirebaseDatabase.getInstance().getReference("StarsUsers").child(profileid);
+                                databaseReferenceReviews.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        reviews.clear();
+                                        boolean myReview = false;
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            Review review = snapshot.getValue(Review.class);
+                                            if (review.getUserId().equals(ApplicationClass.currentUser.getUid()))
+                                                myReview = true;
+                                            reviews.add(review);
+                                        }
+
+                                        numOfReviews.setText("" + dataSnapshot.getChildrenCount());
+
+                                        if (myReview) {
+                                            etReview.setVisibility(View.GONE);
+                                            ivReview.setVisibility(View.GONE);
+                                            userRating.setVisibility(View.GONE);
+                                            reviewHeader.setText("Hvala na ocenjivanju korisnika!");
+                                        } else {
+                                            etReview.setVisibility(View.VISIBLE);
+                                            ivReview.setVisibility(View.VISIBLE);
+                                            userRating.setVisibility(View.VISIBLE);
+                                            reviewHeader.setText("Ocenite ovog korisnika:");
+                                        }
+
+                                        adapterReview.notifyDataSetChanged();
+                                        calculateUser();
+
+                                        if (reviews.size() == 0) {
+                                            header3.setVisibility(View.GONE);
+                                            userReviewsList.setVisibility(View.GONE);
+                                            layoutNumOfReviews.setVisibility(View.GONE);
+                                        } else {
+                                            header3.setVisibility(View.VISIBLE);
+                                            userReviewsList.setVisibility(View.VISIBLE);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            } else {
+                                header2.setText("Korisnik je blokiran!");
+                                ivMessage.setVisibility(View.GONE);
+                                ivFollowing.setVisibility(View.GONE);
+                                rateUser.setVisibility(View.GONE);
+                                ivSoldList.setVisibility(View.GONE);
+                                ivUserPosts.setVisibility(View.GONE);
+                                list.setVisibility(View.GONE);
+                                listSold.setVisibility(View.GONE);
+                            }
                         }
-                    }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
             }
@@ -873,12 +887,12 @@ public class ProfileFragment extends Fragment {
 
                     if(review.getUserId().equals(ApplicationClass.currentUser.getUid())){
                         etReview.setVisibility(View.GONE);
-                        btnReview.setVisibility(View.GONE);
+                        ivReview.setVisibility(View.GONE);
                         userRating.setVisibility(View.GONE);
                         reviewHeader.setText("Hvala na ocenjivanju korisnika!");
                     } else {
                         etReview.setVisibility(View.VISIBLE);
-                        btnReview.setVisibility(View.VISIBLE);
+                        ivReview.setVisibility(View.VISIBLE);
                         userRating.setVisibility(View.VISIBLE);
                         reviewHeader.setText("Ocenite ovog korisnika:");
                     }

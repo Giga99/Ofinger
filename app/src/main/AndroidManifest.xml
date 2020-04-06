@@ -21,7 +21,7 @@
         <activity android:name=".settings.HelpActivity"></activity>
         <activity android:name=".settings.DeletingAccountActivity" />
         <activity android:name=".settings.AboutActivity" />
-        <activity android:name=".mainActivities.WishListActivity" />
+        <activity android:name=".navigationActivities.WishListActivity" />
         <activity android:name=".navigationActivities.NotificationActivity" />
         <activity android:name=".settings.EditNotificationsActivity" />
         <activity android:name=".settings.EditEmailActivity" />
@@ -40,7 +40,6 @@
         </service>
 
         <activity android:name=".customDialogs.CustomDialogZoomImage" />
-        <activity android:name=".customDialogs.CustomDialogWish" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
@@ -48,10 +47,14 @@
         <activity android:name=".info.ClothInfo" />
         <activity android:name=".adding.AddingCloth" />
         <activity android:name=".mainActivities.MainActivity" />
-        <activity android:name=".startActivities.ResetPasswordActivity" />
-        <activity android:name=".startActivities.LoginActivity" />
-        <activity android:name=".startActivities.RegisterActivity" />
-        <activity android:name=".startActivities.StartActivity">
+        <activity android:name=".startActivities.ResetPasswordActivity"
+            android:theme="@style/AppTheme.FullScreen"/>
+        <activity android:name=".startActivities.LoginActivity"
+            android:theme="@style/AppTheme.FullScreen"/>
+        <activity android:name=".startActivities.RegisterActivity"
+            android:theme="@style/AppTheme.FullScreen"/>
+        <activity android:name=".startActivities.StartActivity"
+            android:theme="@style/AppTheme.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -18,40 +18,50 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="50dp">
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
+        <EditText
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="Unesite staru sifru"
             android:inputType="textPassword"
-            app:met_floatingLabel="normal"
+            android:background="@drawable/edittextbackground"
+            android:drawableLeft="@drawable/password"
+            android:padding="15dp"
+            android:layout_centerHorizontal="true"
             android:id="@+id/oldPass"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
+        <EditText
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="Unesite novu sifru"
             android:id="@+id/newPass"
             android:layout_below="@+id/oldPass"
             android:inputType="textPassword"
-            app:met_floatingLabel="normal"
+            android:background="@drawable/edittextbackground"
+            android:drawableLeft="@drawable/password"
+            android:padding="15dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
+        <EditText
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="Unesite ponovo novu sifru"
             android:id="@+id/newPassCheck"
             android:layout_below="@id/newPass"
             android:inputType="textPassword"
-            app:met_floatingLabel="normal"
+            android:background="@drawable/edittextbackground"
+            android:drawableLeft="@drawable/password"
+            android:padding="15dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/confirmNewPass"
             android:layout_below="@+id/newPassCheck"
-            android:text="Potvrdi"
+            android:background="@drawable/acceptbutton"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"/>
 
     </RelativeLayout>

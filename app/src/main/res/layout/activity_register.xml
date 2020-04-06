@@ -4,12 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/backgroundlogin"
     tools:context=".startActivities.RegisterActivity">
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/bar_layout"/>
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -19,7 +15,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
-        android:layout_below="@id/toolbar"
         android:visibility="gone"/>
 
     <TextView
@@ -32,97 +27,134 @@
         android:focusable="true"
         android:gravity="center_horizontal"
         android:text="Loading...please wait..."
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:visibility="gone"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar">
-
-        <LinearLayout
+        android:layout_centerVertical="true">
+        
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:id="@+id/login_form"
-            android:layout_marginTop="50dp"
-            android:padding="30dp">
+            android:layout_height="match_parent">
 
-            <TextView
+            <ImageView
+                android:id="@+id/backIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Napravite novi nalog"
-                android:textSize="30sp"
-                android:textStyle="bold"/>
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="-76dp"
+                android:background="@drawable/backicon" />
 
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etUsername"
-                android:layout_marginTop="10dp"
-                app:met_floatingLabel="normal"
-                android:hint="Korisnicko ime"/>
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etEmail"
-                android:inputType="textEmailAddress"
-                android:layout_marginTop="10dp"
-                app:met_floatingLabel="normal"
-                android:hint="Mejl"/>
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etBio"
-                android:inputType="textMultiLine"
-                android:layout_marginTop="10dp"
-                app:met_floatingLabel="normal"
-                android:hint="Biografija"/>
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etPassword"
-                android:inputType="textPassword"
-                android:layout_marginTop="10dp"
-                app:met_floatingLabel="normal"
-                android:hint="Sifra"/>
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etReEnterPassword"
-                android:inputType="textPassword"
-                android:layout_marginTop="10dp"
-                app:met_floatingLabel="normal"
-                android:hint="Ponovo Sifra"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Registruj se"
-                android:id="@+id/btnRegister"
-                android:background="@drawable/buttons"
-                android:layout_marginTop="20dp"
-                android:textColor="#fff"/>
-
-            <TextView
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Imate nalog? Kliknite ovde."
-                android:layout_marginTop="10dp"
-                android:layout_gravity="end"
-                android:clickable="true"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
-                android:id="@+id/tvLog"/>
+                android:background="@drawable/rectanglelogin"
+                android:layout_centerHorizontal="true">
 
-        </LinearLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/login_form"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp">
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/bold"
+                        android:text="Napravite novi nalog"
+                        android:textSize="20sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/etUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/edittextbackground"
+                        android:drawableLeft="@drawable/profile1"
+                        android:hint="Korisnicko ime"
+                        android:padding="15dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/edittextbackground"
+                        android:drawableLeft="@drawable/emailicon"
+                        android:hint="Mejl"
+                        android:inputType="textEmailAddress"
+                        android:padding="15dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etUsername" />
+
+                    <EditText
+                        android:id="@+id/etBio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/edittextbackground"
+                        android:drawableLeft="@drawable/bio1"
+                        android:hint="Biografija"
+                        android:inputType="textMultiLine"
+                        android:padding="15dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/edittextbackground"
+                        android:drawableLeft="@drawable/password"
+                        android:hint="Sifra"
+                        android:inputType="textPassword"
+                        android:padding="15dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etBio" />
+
+                    <EditText
+                        android:id="@+id/etReEnterPassword"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/edittextbackground"
+                        android:drawableLeft="@drawable/password"
+                        android:hint="Ponovo Sifra"
+                        android:inputType="textPassword"
+                        android:padding="15dp"
+                        app:layout_constraintEnd_toStartOf="parent"
+                        app:layout_constraintStart_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/etPassword" />
+
+                    <ImageView
+                        android:id="@+id/ivRegister"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/registerbutton"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etReEnterPassword" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
 
     </ScrollView>
 

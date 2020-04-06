@@ -4,12 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/backgroundlogin"
     tools:context=".startActivities.LoginActivity">
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/bar_layout"/>
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -19,7 +15,6 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="200dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/toolbar"
         android:visibility="gone"/>
 
     <TextView
@@ -32,78 +27,118 @@
         android:layout_below="@id/login_progress"
         android:gravity="center_horizontal"
         android:text="Loading...please wait..."
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:visibility="gone"/>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:padding="30dp"
-        android:id="@+id/login_form"
-        android:layout_below="@id/toolbar">
+        android:layout_height="match_parent"
+        android:id="@+id/login_form">
 
-        <TextView
+        <ImageView
+            android:id="@+id/ivBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logovanje"
-            android:textSize="30sp"
-            android:textStyle="bold"/>
+            android:layout_marginTop="20dp"
+            android:background="@drawable/backicon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.rengwuxian.materialedittext.MaterialEditText
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etEmail"
-            android:inputType="textEmailAddress"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Mejl"/>
+            android:background="@drawable/rectanglelogin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/etPassword"
-            android:inputType="textPassword"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="Sifra"/>
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:fontFamily="@font/regular"
+                android:text="Logovanje"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Uloguj se"
-            android:id="@+id/btnLogin"
-            android:background="@drawable/buttons"
-            android:layout_marginTop="10dp"
-            android:textColor="#fff"/>
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/edittextbackground"
+                android:drawableLeft="@drawable/emailicon"
+                android:hint="Mejl"
+                android:inputType="textEmailAddress"
+                android:padding="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Nemate nalog? Kliknite ovde."
-            android:layout_marginTop="10dp"
-            android:layout_gravity="end"
-            android:clickable="true"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:id="@+id/tvReg"/>
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edittextbackground"
+                android:drawableLeft="@drawable/password"
+                android:hint="Sifra"
+                android:inputType="textPassword"
+                android:padding="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Zaboravljena sifra?"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="end"
-            android:clickable="true"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:id="@+id/tvReset"/>
+            <ImageView
+                android:id="@+id/ivLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/loginbutton2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvReg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:clickable="true"
+                android:fontFamily="@font/regular"
+                android:text="Niste korisnik? Registrujte se"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvReset" />
+
+            <TextView
+                android:id="@+id/tvReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:fontFamily="@font/regular"
+                android:text="Zaboravljena lozinka?"
+                android:textColor="@color/primaryText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivLogin" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>

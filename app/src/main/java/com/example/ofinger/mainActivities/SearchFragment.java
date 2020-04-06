@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -58,7 +58,7 @@ public class SearchFragment extends Fragment {
     private List<String> blockedUsers;
 
     private EditText etSearch;
-    private ImageButton ivSearchCloth, ivSearchUsers;
+    private ImageView ivSearchCloth, ivSearchUsers;
 
     private SpeedDialView speedDial;
 
@@ -108,6 +108,8 @@ public class SearchFragment extends Fragment {
             public void onClick(View v) {
                 searchUsersList.setVisibility(View.GONE);
                 searchClothList.setVisibility(View.VISIBLE);
+                ivSearchCloth.setBackground(getResources().getDrawable(R.drawable.clothlistbuttonchecked));
+                ivSearchUsers.setBackground(getResources().getDrawable(R.drawable.userslistbuttonunchecked));
             }
         });
 
@@ -116,6 +118,8 @@ public class SearchFragment extends Fragment {
             public void onClick(View v) {
                 searchUsersList.setVisibility(View.VISIBLE);
                 searchClothList.setVisibility(View.GONE);
+                ivSearchCloth.setBackground(getResources().getDrawable(R.drawable.clothlistbuttonunchecked));
+                ivSearchUsers.setBackground(getResources().getDrawable(R.drawable.userslistbuttonchecked));
             }
         });
 

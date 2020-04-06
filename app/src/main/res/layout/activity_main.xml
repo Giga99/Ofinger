@@ -22,14 +22,12 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryDark"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark"
-                app:popupTheme="@style/MenuStyle">
+                android:background="@color/colorPrimaryLight">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ivProfileImage"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:src="@drawable/profimage"/>
 
                 <TextView
@@ -37,9 +35,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
+                    android:fontFamily="@font/bold"
+                    android:textSize="15sp"
                     android:text="username"
-                    android:textColor="#fff"
-                    android:textStyle="bold" />
+                    android:textColor="#fff"/>
 
             </androidx.appcompat.widget.Toolbar>
 

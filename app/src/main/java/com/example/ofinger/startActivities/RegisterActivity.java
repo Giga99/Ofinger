@@ -8,13 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.ofinger.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.HashMap;
 
@@ -35,9 +34,8 @@ public class RegisterActivity extends AppCompatActivity {
     private View mLoginFormView;
     private TextView tvLoad;
 
-    MaterialEditText etUsername, etEmail, etPassword, etReEnterPassword, etBio;
-    Button btnRegister;
-    TextView tvLog;
+    EditText etUsername, etEmail, etPassword, etReEnterPassword, etBio;
+    ImageView ivRegister, backIcon;
 
     FirebaseAuth auth;
     DatabaseReference reference;
@@ -47,11 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Registrovanje");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         tvLoad = findViewById(R.id.tvLoad);
@@ -60,23 +53,14 @@ public class RegisterActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         etReEnterPassword = findViewById(R.id.etReEnterPassword);
-        btnRegister = findViewById(R.id.btnRegister);
-        tvLog = findViewById(R.id.tvLog);
+        ivRegister = findViewById(R.id.ivRegister);
+        backIcon = findViewById(R.id.backIcon);
+
         etBio = findViewById(R.id.etBio);
 
         auth = FirebaseAuth.getInstance();
 
-        /**
-         * Odlazak na Login
-         */
-        tvLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-            }
-        });
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+        ivRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /**
@@ -179,12 +163,13 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     /**

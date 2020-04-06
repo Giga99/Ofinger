@@ -17,30 +17,38 @@
         android:orientation="vertical"
         android:layout_margin="20dp">
 
-        <com.google.android.material.textview.MaterialTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Unesite ponovo podatke:"
             android:textSize="20sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/bold"
             android:gravity="center_horizontal"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
+        <EditText
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:id="@+id/etEmail"
             android:inputType="textEmailAddress"
             android:layout_marginTop="20dp"
-            app:met_floatingLabel="normal"
+            android:background="@drawable/edittextbackground"
+            android:drawableLeft="@drawable/emailicon"
+            android:fontFamily="@font/regular"
+            android:padding="15dp"
+            android:layout_gravity="center_horizontal"
             android:hint="Mejl"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:layout_width="match_parent"
+        <EditText
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:id="@+id/etPassword"
             android:inputType="textPassword"
             android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
+            android:background="@drawable/edittextbackground"
+            android:drawableLeft="@drawable/password"
+            android:fontFamily="@font/regular"
+            android:padding="15dp"
+            android:layout_gravity="center_horizontal"
             android:hint="Sifra"/>
 
         <Button
@@ -50,9 +58,11 @@
             android:textSize="15sp"
             android:id="@+id/btnDelete"
             android:layout_marginTop="10dp"
+            android:fontFamily="@font/regular"
             android:layout_gravity="center_horizontal"
             android:backgroundTint="@color/white"
-            android:textColor="@color/red"/>
+            android:textColor="@color/red"
+            android:elevation="25dp"/>
 
     </LinearLayout>
 

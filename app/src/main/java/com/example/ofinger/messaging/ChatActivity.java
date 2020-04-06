@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -93,8 +94,8 @@ public class ChatActivity extends AppCompatActivity {
     List<Message> messages;
     RecyclerView messagesList;
 
-    MaterialEditText etSend;
-    ImageButton btnSend, ibMore, audioRecord;
+    EditText etSend;
+    ImageButton btnSend, audioRecord;
 
     Intent intent;
     String userid;
@@ -143,7 +144,6 @@ public class ChatActivity extends AppCompatActivity {
 
         etSend = findViewById(R.id.etSend);
         btnSend = findViewById(R.id.btnSend);
-        ibMore = findViewById(R.id.ibMore);
         audioRecord = findViewById(R.id.audioRecord);
 
         intent = getIntent();
@@ -161,16 +161,6 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 etSend.setText("");
-            }
-        });
-
-        ibMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(ChatActivity.this, v);
-                popupMenu.setOnMenuItemClickListener(menuItemClickListener);
-                popupMenu.inflate(R.menu.menu_message_more);
-                popupMenu.show();
             }
         });
 
@@ -250,7 +240,7 @@ public class ChatActivity extends AppCompatActivity {
         audioRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ChatActivity.this, "Govorna!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatActivity.this, "Govorna!", Toast.LENGTH_SHORT).show(); //TODO
             }
         });
     }

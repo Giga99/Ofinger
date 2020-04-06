@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 
 public class EditPassActivity extends AppCompatActivity {
     EditText oldPass, newPass, newPassCheck;
-    Button confirmNewPass;
+    ImageView confirmNewPass;
 
     ProgressDialog progressDialog;
 

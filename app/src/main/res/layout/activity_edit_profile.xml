@@ -30,19 +30,23 @@
             android:layout_below="@id/ivProfileImage"
             android:layout_marginTop="40dp">
 
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Korisnicko ime:"
                 android:textSize="17sp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:textColor="@color/primaryText"
+                android:fontFamily="@font/regular"/>
 
-            <com.rengwuxian.materialedittext.MaterialEditText
+            <EditText
                 android:id="@+id/etNewUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
-                android:layout_weight="30"/>
+                android:layout_weight="30"
+                android:textColor="@color/primaryText"
+                android:fontFamily="@font/regular"/>
 
         </LinearLayout>
 
@@ -54,30 +58,33 @@
             android:layout_below="@id/usernameLayout"
             android:layout_marginTop="20dp">
 
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Biografija:"
+                android:fontFamily="@font/regular"
+                android:textColor="@color/primaryText"
                 android:textSize="17sp" />
 
-            <com.rengwuxian.materialedittext.MaterialEditText
+            <EditText
                 android:id="@+id/etNewBio"
                 android:inputType="textMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/regular"
+                android:textColor="@color/primaryText"
                 android:textSize="15sp" />
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
+        <ImageView
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/bioLayout"
             android:layout_marginTop="50dp"
             android:layout_centerHorizontal="true"
-            android:text="Sacuvaj izmene"
-            android:textSize="16sp"/>
+            android:background="@drawable/acceptbutton"/>
 
     </RelativeLayout>
 

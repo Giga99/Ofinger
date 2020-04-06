@@ -1,15 +1,13 @@
 package com.example.ofinger.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,15 +22,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
-import com.example.ofinger.info.ClothInfo;
 import com.example.ofinger.models.Cloth;
+import com.example.ofinger.models.Review;
 import com.example.ofinger.models.User;
 import com.example.ofinger.notifications.Data;
 import com.example.ofinger.notifications.Sender;
 import com.example.ofinger.notifications.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -71,11 +68,10 @@ public class ClothAdapter extends RecyclerView.Adapter<ClothAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tvTimestamp, tvOwnerName, tvPrice, tvClothName;
-        ImageView ivCloth, ivShare;
-        Button ivWish, ivInfo;
+        TextView tvTimestamp, tvOwnerName, tvPrice, tvClothName, numOfWishes, numOfReviews;
+        ImageView ivCloth, ivWish;
         CircleImageView ivUserProfImage;
-        MaterialTextView numOfWishes, numOfReviews;
+        RatingBar ratingBarOverall;
 
         public ViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -85,12 +81,11 @@ public class ClothAdapter extends RecyclerView.Adapter<ClothAdapter.ViewHolder> 
             tvPrice = itemView.findViewById(R.id.tvPrice);
             ivCloth = itemView.findViewById(R.id.ivCloth);
             ivWish = itemView.findViewById(R.id.ivWish);
-            ivInfo = itemView.findViewById(R.id.ivInfo);
             ivUserProfImage = itemView.findViewById(R.id.ivUserProfImage);
             tvClothName = itemView.findViewById(R.id.tvClothName);
             numOfWishes = itemView.findViewById(R.id.numOfWishes);
             numOfReviews = itemView.findViewById(R.id.numOfReviews);
-            ivShare = itemView.findViewById(R.id.ivShare);
+            ratingBarOverall = itemView.findViewById(R.id.ratingBarOverall);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -184,20 +179,7 @@ public class ClothAdapter extends RecyclerView.Adapter<ClothAdapter.ViewHolder> 
             }
         });
 
-        holder.ivInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = 0;
-                while(true){
-                    if(ApplicationClass.mainCloths.get(i).getObjectId().equals(cloths.get(position).getObjectId())) break;
-                    else i++;
-                }
-
-                Intent intent = new Intent(context, ClothInfo.class);
-                intent.putExtra("index", i);
-                context.startActivity(intent);
-            }
-        });
+        calculateOverall(position, holder.ratingBarOverall);
 
         if(cloths.get(position).getOwnerID().equals(ApplicationClass.currentUser.getUid())){
             holder.ivWish.setVisibility(View.GONE);
@@ -265,25 +247,31 @@ public class ClothAdapter extends RecyclerView.Adapter<ClothAdapter.ViewHolder> 
                 }
             });
         }
-
-        holder.ivShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareCloth(name, price, position);
-            }
-        });
     }
 
-    private void shareCloth(String name, String price, int position) {
-        String shareBody = name + "\n" + price;
-        Uri uri = Uri.parse(cloths.get(position).getClothProfile());
+    /**
+     * Racunanje prosecne ocene
+     */
+    private void calculateOverall(int index, final RatingBar ratingBarOverall){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("StarsCloth").child(ApplicationClass.mainCloths.get(index).getObjectId());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                float sum = 0;
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Review review = snapshot.getValue(Review.class);
+                    sum += review.getStars();
+                }
+                sum /= (float) dataSnapshot.getChildrenCount();
 
-        Intent sIntent = new Intent(Intent.ACTION_SEND);
-        sIntent.putExtra(Intent.EXTRA_STREAM, uri); //TODO testiranje
-        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-        sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
-        sIntent.setType("image/*");
-        context.startActivity(Intent.createChooser(sIntent, "Podeli preko"));
+                ratingBarOverall.setRating(sum);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**
@@ -347,18 +335,18 @@ public class ClothAdapter extends RecyclerView.Adapter<ClothAdapter.ViewHolder> 
         return cloths.size();
     }
 
-    private void isWish(final String clothid, final Button button){
+    private void isWish(final String clothid, final ImageView button){
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid());
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(clothid).exists()){
                     Drawable img = context.getResources().getDrawable( R.drawable.wishlist );
-                    button.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+                    button.setBackground(img);
                     button.setTag("wish");
                 } else {
                     Drawable img = context.getResources().getDrawable( R.drawable.notwishlist );
-                    button.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null);
+                    button.setBackground(img);
                     button.setTag("notwish");
                 }
             }

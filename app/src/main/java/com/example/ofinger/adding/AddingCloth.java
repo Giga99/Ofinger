@@ -14,11 +14,9 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -78,13 +77,11 @@ public class AddingCloth extends AppCompatActivity {
 
     EditText etName, etPrice, etDescription;
     TextView tvCategory, tvSubCategory;
-    ImageView ivCategory, ivSubCategory;
-    RelativeLayout expandCategory, expandSubCategory;
+    ImageView ivCategory, ivSubCategory, ivAddImage, ivFinish;
+    ConstraintLayout expandCategory, expandSubCategory;
 
     ViewPager viewpagerImages;
     TabLayout tabLayout;
-
-    Button btnAddImage, btnFinish;
 
     CircleImageView ivProfileImage;
     TextView tvUsername;
@@ -171,8 +168,8 @@ public class AddingCloth extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewpagerImages, true);
 
-        btnAddImage = findViewById(R.id.btnAddImage);
-        btnFinish = findViewById(R.id.btnFinish);
+        ivAddImage = findViewById(R.id.ivAddImage);
+        ivFinish = findViewById(R.id.ivFinish);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -192,7 +189,7 @@ public class AddingCloth extends AppCompatActivity {
         /**
          * Dodavanje slike
          */
-        btnAddImage.setOnClickListener(new View.OnClickListener() {
+        ivAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!checkCameraPermission()){
@@ -206,7 +203,7 @@ public class AddingCloth extends AppCompatActivity {
         /**
          * Dodavanje odece i podesavanje glavne liste odela, korisnicke liste odela i slika
          */
-        btnFinish.setOnClickListener(new View.OnClickListener() {
+        ivFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /**

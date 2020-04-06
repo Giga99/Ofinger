@@ -24,6 +24,7 @@
             android:id="@+id/showMessage"
             android:textSize="18sp"
             android:text="Hello"
+            android:textColor="@color/white"
             android:padding="8dp"
             android:background="@drawable/background_left"/>
 

@@ -12,11 +12,6 @@
         android:title="notwish"/>
 
     <item
-        android:id="@+id/nav_share"
-        android:icon="@drawable/share"
-        android:title=""/>
-
-    <item
         android:id="@+id/nav_profile_owner"
         android:icon="@drawable/profile"
         android:title=""/>

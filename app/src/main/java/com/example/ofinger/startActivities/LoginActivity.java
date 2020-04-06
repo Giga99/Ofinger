@@ -8,14 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
@@ -41,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvLoad;
 
     EditText etMail, etPassword;
-    Button btnLogin;
+    ImageView ivLogin, ivBack;
     TextView tvReset, tvReg;
 
     FirebaseAuth auth;
@@ -54,20 +53,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Logovanje");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         tvLoad = findViewById(R.id.tvLoad);
 
         etMail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
+        ivLogin = findViewById(R.id.ivLogin);
         tvReset = findViewById(R.id.tvReset);
         tvReg = findViewById(R.id.tvReg);
+        ivBack = findViewById(R.id.ivBack);
 
         auth = FirebaseAuth.getInstance();
         reference = FirebaseDatabase.getInstance().getReference("Cloth");
@@ -98,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         /**
          * Logovanje
          */
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        ivLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /**
@@ -164,12 +159,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return super.onSupportNavigateUp();
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     /**

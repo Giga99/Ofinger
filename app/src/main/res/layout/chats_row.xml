@@ -1,87 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/tools"
-    android:layout_margin="10dp"
-    card_view:cardBackgroundColor="@color/white"
-    card_view:cardCornerRadius="5dp"
-    card_view:cardElevation="5dp"
-    card_view:cardUseCompatPadding="false">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgNotSeen"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_below="@id/tvUsername"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="-2dp"
-            android:src="@mipmap/ic_launcher"
-            android:visibility="gone"
-            app:civ_border_color="#A01717"
-            app:civ_border_width="10dp" />
+        android:id="@+id/rowBackground"
+        android:background="@drawable/chatrowseenmessagebackground">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_toEndOf="@id/imgNotSeen"
-            android:src="@drawable/profimage" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/profimage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="35dp"
             android:layout_toEndOf="@+id/profileImage"
-            android:text="username"
-            android:textSize="15sp" />
+            android:fontFamily="@font/bold"
+            android:text=""
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@+id/profileImage"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgOn"
+            android:id="@+id/active"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_below="@id/tvUsername"
-            android:layout_marginStart="-15dp"
-            android:layout_marginTop="17dp"
             android:layout_toEndOf="@id/profileImage"
-            android:src="@mipmap/ic_launcher"
-            android:visibility="gone"
-            app:civ_border_color="#05df29"
-            app:civ_border_width="10dp" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imgOff"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_below="@id/tvUsername"
-            android:layout_marginStart="-15dp"
-            android:layout_marginTop="17dp"
-            android:layout_toEndOf="@id/profileImage"
-            android:src="@mipmap/ic_launcher"
-            android:visibility="gone"
-            app:civ_border_color="#BB1010"
-            app:civ_border_width="10dp" />
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.209"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.623" />
 
         <TextView
             android:id="@+id/tvLastMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tvUsername"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="40dp"
             android:layout_toEndOf="@id/profileImage"
+            android:fontFamily="@font/regular"
             android:maxLines="1"
-            android:textSize="15sp" />
+            android:text=""
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profileImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvUsername" />
 
         <TextView
             android:id="@+id/numOfMess"
@@ -89,8 +71,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="15dp"
-            android:textSize="15sp" />
+            android:layout_marginEnd="50dp"
+            android:fontFamily="@font/regular"
+            android:text=""
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/ivBlocked"
@@ -98,11 +85,14 @@
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:textSize="15sp"
+            android:layout_marginEnd="50dp"
             android:src="@drawable/blocked"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
 

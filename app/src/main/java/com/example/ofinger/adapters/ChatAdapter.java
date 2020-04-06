@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -41,23 +42,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView tvUsername, numOfMess;
-        public CircleImageView profileImage;
-        private CircleImageView imgOn, imgOff, imgNotSeen;
-        private TextView tvLastMsg;
-        ImageView ivBlocked;
+        private TextView tvUsername, numOfMess, tvLastMsg;
+        private CircleImageView profileImage;
+        private CircleImageView active;
+        private ImageView ivBlocked;
+        private ConstraintLayout rowBackground;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvUsername = itemView.findViewById(R.id.tvUsername);
             profileImage = itemView.findViewById(R.id.profileImage);
-            imgOff = itemView.findViewById(R.id.imgOff);
-            imgOn = itemView.findViewById(R.id.imgOn);
+            active = itemView.findViewById(R.id.active);
             tvLastMsg = itemView.findViewById(R.id.tvLastMsg);
             numOfMess = itemView.findViewById(R.id.numOfMess);
-            imgNotSeen = itemView.findViewById(R.id.imgNotSeen);
             ivBlocked = itemView.findViewById(R.id.ivBlocked);
+            rowBackground = itemView.findViewById(R.id.rowBackground);
         }
     }
 
@@ -79,7 +79,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     user.setBlocked(true);
                     holder.ivBlocked.setVisibility(View.VISIBLE);
                     holder.numOfMess.setVisibility(View.GONE);
-                    holder.imgNotSeen.setVisibility(View.GONE);
                 } else {
                     user.setBlocked(false);
 
@@ -91,15 +90,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
                     if(ischat){
                         if(user.getStatus().equals("online")){
-                            holder.imgOn.setVisibility(View.VISIBLE);
-                            holder.imgOff.setVisibility(View.GONE);
+                            holder.active.setBackground(mContext.getDrawable(R.drawable.unactive));
                         } else {
-                            holder.imgOff.setVisibility(View.VISIBLE);
-                            holder.imgOn.setVisibility(View.GONE);
+                            holder.active.setBackground(mContext.getDrawable(R.drawable.active));
                         }
                     } else {
-                        holder.imgOff.setVisibility(View.GONE);
-                        holder.imgOn.setVisibility(View.GONE);
+                        holder.active.setVisibility(View.GONE);
                     }
                 }
             }
@@ -131,10 +127,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     }
 
                     if (num > 0) {
+                        holder.numOfMess.setVisibility(View.VISIBLE);
                         holder.numOfMess.setText("" + num);
-                        holder.imgNotSeen.setVisibility(View.VISIBLE);
+                        holder.rowBackground.setBackground(mContext.getResources().getDrawable(R.drawable.chatrowunseenmessagebackground));
                     } else {
-                        holder.imgNotSeen.setVisibility(View.GONE);
+                        holder.numOfMess.setVisibility(View.GONE);
+                        holder.rowBackground.setBackground(mContext.getResources().getDrawable(R.drawable.chatrowseenmessagebackground));
                     }
                 }
 

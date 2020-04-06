@@ -17,10 +17,11 @@
         android:orientation="vertical"
         android:layout_margin="20dp">
 
-        <com.google.android.material.textview.MaterialTextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Kratak opis aplikacije"
+            android:fontFamily="@font/regular"
             android:textSize="20sp"/>
 
         <Button
@@ -31,6 +32,7 @@
             android:textSize="15sp"
             android:textColor="@color/primaryText"
             android:id="@+id/btnReview"
+            android:fontFamily="@font/regular"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"/>
 
@@ -40,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Izbrisi nalog"
-            android:textStyle="bold"
+            android:fontFamily="@font/bold"
             android:textSize="15sp"
             android:textColor="@color/red"
             android:layout_gravity="center_horizontal"

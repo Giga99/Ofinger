@@ -26,6 +26,7 @@ import com.example.ofinger.models.Cloth;
 import com.example.ofinger.models.Message;
 import com.example.ofinger.models.User;
 import com.example.ofinger.navigationActivities.NotificationActivity;
+import com.example.ofinger.navigationActivities.WishListActivity;
 import com.example.ofinger.notifications.Token;
 import com.example.ofinger.settings.SettingsActivity;
 import com.example.ofinger.startActivities.StartActivity;
@@ -102,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
                                 }
                             });
                         } else {
+                            String timestamp = String.valueOf(System.currentTimeMillis());
+                            status(timestamp);
+                            checkTypingStatus("noOne");
                             FirebaseAuth.getInstance().signOut();
                             startActivity(new Intent(MainActivity.this, StartActivity.class));
                             MainActivity.this.finish();
@@ -288,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
                         selectedFragment = new GuestFragment();
                         break;
                     } else {
-                        selectedFragment = null;
                         startActivity(new Intent(MainActivity.this, AddingCloth.class));
                         break;
                     }

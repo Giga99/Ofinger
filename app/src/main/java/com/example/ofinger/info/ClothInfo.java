@@ -6,12 +6,10 @@ import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,7 +50,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -62,7 +59,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
-import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,15 +77,15 @@ public class ClothInfo extends AppCompatActivity {
     private View mLoginFormView;
     private TextView tvLoad;
 
-    TextView tvClothName, tvOwnerName, tvClothDescription, tvPrice, reviewHeader;
+    TextView tvClothName, tvOwnerName, tvClothDescription, tvPrice, reviewHeader, tvSubCategory;
     ImageView ivEdit, ivDelete, ivSold, ivNotSold;
-    MaterialEditText etClothName, etClothDescription, etPrice;
-    Button btnSubmit, btnReview;
+    EditText etClothName, etClothDescription, etPrice;
+    ImageView ivSubmit, ivReview;
     LinearLayout editField, userRating;
     RatingBar ratingBarUser, ratingBarOverall;
     EditText etReview;
 
-    MaterialTextView header3;
+    TextView header3;
 
     BottomNavigationView bottomNavigationView;
 
@@ -168,6 +164,7 @@ public class ClothInfo extends AppCompatActivity {
         tvOwnerName = findViewById(R.id.tvOwnerName);
         tvClothDescription = findViewById(R.id.tvClothDescription);
         tvPrice = findViewById(R.id.tvPrice);
+        tvSubCategory = findViewById(R.id.tvSubCategory);
 
         ivEdit = findViewById(R.id.ivEdit);
         ivDelete = findViewById(R.id.ivDelete);
@@ -186,12 +183,12 @@ public class ClothInfo extends AppCompatActivity {
         ratingBarOverall = findViewById(R.id.ratingBarOverall);
         reviewHeader = findViewById(R.id.reviewHeader);
 
-        btnReview = findViewById(R.id.btnReview);
+        ivReview = findViewById(R.id.ivReview);
         etReview = findViewById(R.id.etReview);
 
         editField = findViewById(R.id.editField);
 
-        btnSubmit = findViewById(R.id.btnSubmit);
+        ivSubmit = findViewById(R.id.ivSubmit);
 
         editField.setVisibility(View.GONE);
 
@@ -201,6 +198,7 @@ public class ClothInfo extends AppCompatActivity {
 
         tvClothName.setText(ApplicationClass.mainCloths.get(INDEX).getName());
         tvOwnerName.setText(ApplicationClass.mainCloths.get(INDEX).getOwnerUsername());
+        tvSubCategory.setText(ApplicationClass.mainCloths.get(INDEX).getOwnerUsername());
 
         NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("sr_Latn_RS", "RS"));
         String price = format.format(ApplicationClass.mainCloths.get(INDEX).getPrice());
@@ -338,7 +336,7 @@ public class ClothInfo extends AppCompatActivity {
         /**
          * Prihvatanja da se promeni odelo
          */
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        ivSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /**
@@ -483,7 +481,7 @@ public class ClothInfo extends AppCompatActivity {
         /**
          * Ocenjivanje
          */
-        btnReview.setOnClickListener(new View.OnClickListener() {
+        ivReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showProgress(true);
@@ -600,12 +598,12 @@ public class ClothInfo extends AppCompatActivity {
 
                 if(myReview){
                     etReview.setVisibility(View.GONE);
-                    btnReview.setVisibility(View.GONE);
+                    ivReview.setVisibility(View.GONE);
                     userRating.setVisibility(View.GONE);
                     reviewHeader.setText("Hvala na ocenjivanju korisnika!");
                 } else {
                     etReview.setVisibility(View.VISIBLE);
-                    btnReview.setVisibility(View.VISIBLE);
+                    ivReview.setVisibility(View.VISIBLE);
                     userRating.setVisibility(View.VISIBLE);
                     reviewHeader.setText("Ocenite ovog korisnika:");
                 }
@@ -664,12 +662,12 @@ public class ClothInfo extends AppCompatActivity {
 
                     if(review.getUserId().equals(ApplicationClass.currentUser.getUid())){
                         etReview.setVisibility(View.GONE);
-                        btnReview.setVisibility(View.GONE);
+                        ivReview.setVisibility(View.GONE);
                         ratingBarUser.setVisibility(View.GONE);
                         reviewHeader.setText("Hvala na ocenjivanju odece!");
                     } else {
                         etReview.setVisibility(View.VISIBLE);
-                        btnReview.setVisibility(View.VISIBLE);
+                        ivReview.setVisibility(View.VISIBLE);
                         ratingBarUser.setVisibility(View.VISIBLE);
                         reviewHeader.setText("Ocenite ovo odelo:");
                     }
@@ -792,14 +790,6 @@ public class ClothInfo extends AppCompatActivity {
                         FirebaseDatabase.getInstance().getReference("Wishes").child(ApplicationClass.currentUser.getUid()).child(ApplicationClass.mainCloths.get(INDEX).getObjectId()).setValue(true);
                     }
                     break;
-
-                case R.id.nav_share:
-                    String name = tvClothName.getText().toString().trim();
-                    String price = tvPrice.getText().toString().trim();
-
-                    shareCloth(name, price);
-
-                    break;
             }
             return true;
         }
@@ -859,18 +849,6 @@ public class ClothInfo extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void shareCloth(String name, String price) {
-        String shareBody = name + "\n" + price;
-        Uri uri = Uri.parse(ApplicationClass.imageVideosClothInfo.get(0).getInfo()); //TODO mora da se promeni kad dodje video
-
-        Intent sIntent = new Intent(Intent.ACTION_SEND);
-        sIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-        sIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
-        sIntent.setType("image/png");
-        startActivity(Intent.createChooser(sIntent, "Podeli preko"));
     }
 
     private void checkTypingStatus (String typing){

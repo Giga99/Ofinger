@@ -18,8 +18,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.example.ofinger.ApplicationClass;
 import com.example.ofinger.R;
 import com.example.ofinger.mainActivities.ProfileFragment;
@@ -36,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +62,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_user_search, parent, false);
 
-        requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        //requestQueue = Volley.newRequestQueue(context.getApplicationContext());
 
         return new UserAdapter.ViewHolder(view);
     }
@@ -76,7 +75,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         if (user.getImageURL().equals("default")) {
             holder.ivProfileImage.setImageResource(R.drawable.profimage);
         } else {
-            Glide.with(context).load(user.getImageURL()).into(holder.ivProfileImage);
+            Picasso.get().load(user.getImageURL()).into(holder.ivProfileImage);
         }
 
         /*DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Follow")

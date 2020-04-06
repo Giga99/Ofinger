@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +50,8 @@ public class StartActivity extends AppCompatActivity {
     private View mLoginFormView;
     private TextView tvLoad;
 
-    Button btnLogin, btnRegister;
-    TextView tvGuest;
+    ImageView btnLogin;
+    TextView tvGuest, tvRegister;
     SignInButton btnGoogleSignIn;
 
     FirebaseUser firebaseUser;
@@ -72,7 +72,7 @@ public class StartActivity extends AppCompatActivity {
         tvLoad = findViewById(R.id.tvLoad);
 
         btnLogin = findViewById(R.id.btnLogin);
-        btnRegister = findViewById(R.id.btnRegister);
+        tvRegister = findViewById(R.id.tvRegister);
         tvGuest = findViewById(R.id.tvGuest);
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
 
@@ -113,7 +113,7 @@ public class StartActivity extends AppCompatActivity {
         /**
          * Strana za registrovanje
          */
-        btnRegister.setOnClickListener(new View.OnClickListener() {
+        tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(StartActivity.this, RegisterActivity.class));
@@ -259,7 +259,7 @@ public class StartActivity extends AppCompatActivity {
 
                             DatabaseReference reference2 = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
 
-                            HashMap<String, String> hashMap = new HashMap<>();
+                            HashMap<String, Object> hashMap = new HashMap<>();
                             hashMap.put("id", firebaseUser.getUid());
                             String username = "" + firebaseUser.getEmail().replaceAll("@gmail.com", "");
                             hashMap.put("username", username);
@@ -269,6 +269,13 @@ public class StartActivity extends AppCompatActivity {
                             hashMap.put("status", "offline");
                             hashMap.put("typingTo", "noOne");
                             hashMap.put("searchName", username.toLowerCase());
+
+                            HashMap<String, Object> hashMap2 = new HashMap<>();
+                            hashMap2.put("message", false);
+                            hashMap2.put("follow", false);
+                            hashMap2.put("wish", false);
+
+                            hashMap.put("notifications", hashMap2);
 
                             reference2.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

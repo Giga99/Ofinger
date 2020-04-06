@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="Notifikacije novih poruka"
+            android:fontFamily="@font/regular"
             android:textSize="17sp"
             android:id="@id/notificationsMessage"/>
 
@@ -29,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:fontFamily="@font/regular"
             android:text="Notifikacije novih pracenja"
             android:textSize="17sp"
             android:id="@id/notificationsFollow"/>
@@ -37,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:fontFamily="@font/regular"
             android:text="Notifikacije novih dodavanja u korpu"
             android:textSize="17sp"
             android:id="@+id/notificationsWish"/>
