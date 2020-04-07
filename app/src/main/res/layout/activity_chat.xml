@@ -75,10 +75,10 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/audioRecord"
-            android:background="#fff"
-            android:layout_centerVertical="true"
-            android:src="@drawable/audio"/>
+            android:id="@+id/more"
+            android:src="@drawable/messagemore"
+            android:background="@color/white"
+            android:layout_centerVertical="true"/>
 
         <EditText
             android:id="@+id/etSend"
@@ -87,7 +87,7 @@
             android:layout_centerVertical="true"
             android:fontFamily="@font/regular"
             android:layout_toStartOf="@id/btnSend"
-            android:layout_toEndOf="@id/audioRecord"
+            android:layout_toEndOf="@id/more"
             android:hint="Ukucajte poruku..." />
 
         <ImageButton

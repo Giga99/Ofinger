@@ -150,26 +150,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/etPrice" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/linearLayout5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="5dp"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/etDescription">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <RelativeLayout
                     android:id="@+id/expandCategory"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:elevation="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp"
+                    android:elevation="20dp">
 
                     <TextView
                         android:id="@+id/tvCategory"
@@ -178,12 +178,10 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
+                        android:layout_alignParentStart="true"
                         android:text="Kategorija"
                         android:textSize="20sp"
-                        android:fontFamily="@font/regular"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:fontFamily="@font/regular"/>
 
                     <ImageView
                         android:id="@+id/ivCategory"
@@ -192,27 +190,18 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="40dp"
                         android:clickable="true"
-                        android:src="@drawable/expandmore"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tvCategory"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/expandmore"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </RelativeLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <RelativeLayout
                     android:id="@+id/expandSubCategory"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
                     android:elevation="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/expandCategory"
-                    app:layout_constraintTop_toTopOf="parent">
+                    android:layout_margin="5dp">
 
                     <TextView
                         android:id="@+id/tvSubCategory"
@@ -224,9 +213,7 @@
                         android:text="Potkategorija"
                         android:textSize="20sp"
                         android:fontFamily="@font/regular"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_alignParentStart="true"/>
 
                     <ImageView
                         android:id="@+id/ivSubCategory"
@@ -235,14 +222,12 @@
                         android:layout_marginStart="40dp"
                         android:clickable="true"
                         android:src="@drawable/expandmore"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tvSubCategory"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </RelativeLayout>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

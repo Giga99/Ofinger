@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -46,7 +46,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         private CircleImageView profileImage;
         private CircleImageView active;
         private ImageView ivBlocked;
-        private ConstraintLayout rowBackground;
+        private CardView rowBackground;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,10 +129,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
                     if (num > 0) {
                         holder.numOfMess.setVisibility(View.VISIBLE);
                         holder.numOfMess.setText("" + num);
-                        holder.rowBackground.setBackground(mContext.getResources().getDrawable(R.drawable.chatrowunseenmessagebackground));
+                        holder.rowBackground.setBackground(mContext.getDrawable(R.drawable.unseenmessage));
                     } else {
                         holder.numOfMess.setVisibility(View.GONE);
-                        holder.rowBackground.setBackground(mContext.getResources().getDrawable(R.drawable.chatrowseenmessagebackground));
+                        holder.rowBackground.setBackground(mContext.getDrawable(R.drawable.seenmessage));
                     }
                 }
 

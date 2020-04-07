@@ -339,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         } else if(selectedFragment.getClass().equals(ProfileFragment.class)){
             for(Cloth cloth : ApplicationClass.mainCloths){
                 if(!ApplicationClass.sold && cloth.getObjectId().equals(ApplicationClass.profileCloth.get(index).getObjectId())) break;
-                else if (cloth.getObjectId().equals(ApplicationClass.soldCloths.get(index).getObjectId())) break;
+                else if (ApplicationClass.sold && cloth.getObjectId().equals(ApplicationClass.soldCloths.get(index).getObjectId())) break;
                 i++;
             }
         }

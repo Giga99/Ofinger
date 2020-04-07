@@ -17,8 +17,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".settings.HelpActivity"></activity>
+        android:theme="@style/AppTheme.FullScreen">
+        <activity android:name=".settings.HelpActivity"/>
         <activity android:name=".settings.DeletingAccountActivity" />
         <activity android:name=".settings.AboutActivity" />
         <activity android:name=".navigationActivities.WishListActivity" />

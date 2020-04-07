@@ -99,7 +99,7 @@ public class ProfileFragment extends Fragment {
     private RecyclerView list, listSold;
     private LinearLayoutManager manager, managerSold;
     private ClothAdapter adapter, adapterSold;
-    private ConstraintLayout rateUser, linearLayout3;
+    private ConstraintLayout rateUser;
 
     private RecyclerView userReviewsList;
     private LinearLayoutManager linearLayoutManager;
@@ -162,7 +162,6 @@ public class ProfileFragment extends Fragment {
         numOfReviews = view.findViewById(R.id.numOfReviews);
         listOfFollowers = view.findViewById(R.id.listOfFollowers);
         layoutNumOfReviews = view.findViewById(R.id.layoutNumOfReviews);
-        linearLayout3 = view.findViewById(R.id.linearLayout3);
 
         list = view.findViewById(R.id.listProfile);
         list.setHasFixedSize(true);
@@ -371,8 +370,8 @@ public class ProfileFragment extends Fragment {
                 else header2.setText("Odeca Korisnika:");
                 ApplicationClass.sold = false;
                 soldList = false;
-                ivUserPosts.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.clothlistchecked));
-                ivSoldList.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.soldclothlistunchecked));
+                ivUserPosts.setBackground(ProfileFragment.this.getActivity().getDrawable(R.drawable.clothlistchecked));
+                ivSoldList.setBackground(ProfileFragment.this.getActivity().getDrawable(R.drawable.soldlistunchecked));
             }
         });
 
@@ -388,8 +387,8 @@ public class ProfileFragment extends Fragment {
                 else header2.setText("Prodata Odeca Korisnika:");
                 ApplicationClass.sold = true;
                 soldList = true;
-                ivUserPosts.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.clothlistunchecked));
-                ivSoldList.setBackground(ProfileFragment.this.getContext().getResources().getDrawable(R.drawable.soldclothlistchecked));
+                ivUserPosts.setBackground(ProfileFragment.this.getActivity().getDrawable(R.drawable.clothlistunchecked));
+                ivSoldList.setBackground(ProfileFragment.this.getActivity().getDrawable(R.drawable.soldlistchecked));
             }
         });
 
@@ -515,7 +514,7 @@ public class ProfileFragment extends Fragment {
                     }
                     break;
                 case R.id.report:
-                    Toast.makeText(ProfileFragment.this.getContext(), "Report!", Toast.LENGTH_SHORT).show();
+                    reportUser();
                     break;
                 case R.id.mute:
                     if(item.getTitle().equals("Ne primaj poruke od korisnika")){
@@ -529,6 +528,10 @@ public class ProfileFragment extends Fragment {
             return true;
         }
     };
+
+    private void reportUser() {
+
+    }
 
     private void unMuteUser() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Mute").child(ApplicationClass.currentUser.getUid());
@@ -656,14 +659,14 @@ public class ProfileFragment extends Fragment {
                                     rateUser.setVisibility(View.VISIBLE);
                                 }
 
-                                if (soldList) {
+                                /*if (soldList) {
                                     if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
                                         header2.setText("Vasa Prodata Odeca:");
                                     else header2.setText("Prodata Odeca Korisnika:");
                                     listSold.setVisibility(View.VISIBLE);
                                     list.setVisibility(View.GONE);
                                     ivUserPosts.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.clothlistunchecked));
-                                    ivSoldList.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.soldclothlistchecked));
+                                    ivSoldList.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.soldlistchecked));
                                 } else {
                                     if (ApplicationClass.otherUser.getId().equals(ApplicationClass.currentUser.getUid()))
                                         header2.setText("Vasa Odeca:");
@@ -671,8 +674,8 @@ public class ProfileFragment extends Fragment {
                                     listSold.setVisibility(View.GONE);
                                     list.setVisibility(View.VISIBLE);
                                     ivUserPosts.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.clothlistchecked));
-                                    ivSoldList.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.soldclothlistunchecked));
-                                }
+                                    ivSoldList.setBackground(ProfileFragment.this.getContext().getDrawable(R.drawable.soldlistunchecked));
+                                }*/
 
                                 /**
                                  * Formiranje liste korisnickog odela i prodatog odela

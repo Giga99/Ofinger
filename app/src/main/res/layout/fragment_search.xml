@@ -9,8 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bar"
-        android:background="?android:attr/windowBackground">
+        android:id="@+id/bar">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
@@ -43,13 +42,13 @@
         android:id="@+id/buttonChoice"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
-        android:padding="10dp">
+        android:layout_marginBottom="10dp">
 
         <ImageView
             android:id="@+id/ivSearchCloth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="50dp"
             android:background="@drawable/clothlistbuttonchecked"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -59,10 +58,12 @@
             android:id="@+id/ivSearchUsers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/userslistbuttonunchecked"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivSearchCloth"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

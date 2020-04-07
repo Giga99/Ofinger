@@ -19,7 +19,7 @@
         android:layout_marginTop="50dp">
 
         <EditText
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="Unesite staru sifru"
             android:inputType="textPassword"
@@ -30,7 +30,7 @@
             android:id="@+id/oldPass"/>
 
         <EditText
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="Unesite novu sifru"
             android:id="@+id/newPass"
@@ -43,7 +43,7 @@
             android:layout_marginTop="10dp"/>
 
         <EditText
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:hint="Unesite ponovo novu sifru"
             android:id="@+id/newPassCheck"

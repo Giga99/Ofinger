@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -71,7 +70,6 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -83,8 +81,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int VIDEO_REQUEST_CODE = 200;
-    private static final int AUDIO_REQUEST_CODE = 300;
+    private static final int AUDIO_REQUEST_CODE = 200;
     String[] cameraPermissions, audioPermissions;
 
     CircleImageView ivProfileImageToolbar;
@@ -95,7 +92,7 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView messagesList;
 
     EditText etSend;
-    ImageButton btnSend, audioRecord;
+    ImageButton btnSend, messagemore;
 
     Intent intent;
     String userid;
@@ -112,7 +109,7 @@ public class ChatActivity extends AppCompatActivity {
     StorageTask uploadTask;
     StorageReference storageReference;
 
-    private MediaRecorder mediaRecorder;
+    private PopupMenu popupMenuMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +141,8 @@ public class ChatActivity extends AppCompatActivity {
 
         etSend = findViewById(R.id.etSend);
         btnSend = findViewById(R.id.btnSend);
-        audioRecord = findViewById(R.id.audioRecord);
+        messagemore = findViewById(R.id.more);
+
 
         intent = getIntent();
         userid = intent.getStringExtra("userId");
@@ -237,34 +235,27 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        audioRecord.setOnClickListener(new View.OnClickListener() {
+        messagemore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ChatActivity.this, "Govorna!", Toast.LENGTH_SHORT).show(); //TODO
+                popupMenuMessage = new PopupMenu(ChatActivity.this, v);
+                popupMenuMessage.setOnMenuItemClickListener(menuItemClickListenerCategory);
+                popupMenuMessage.inflate(R.menu.menu_message_more);
+                popupMenuMessage.show();
             }
         });
     }
 
-    private PopupMenu.OnMenuItemClickListener menuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+    private PopupMenu.OnMenuItemClickListener menuItemClickListenerCategory = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.messageImage:
-                    if(!checkCameraPermission()){
-                        requestCameraPermission();
-                    } else {
-                        notify = true;
-                        CropImage.activity().setAspectRatio(1, 1).start(ChatActivity.this);
-                    }
-                    break;
-                case R.id.messageVideo:
-                    Toast.makeText(ChatActivity.this, "Video!", Toast.LENGTH_SHORT).show();
+                    if(!checkCameraPermission()) requestCameraPermission();
+                    else CropImage.activity().setAspectRatio(1, 1).start(ChatActivity.this);
                     break;
                 case R.id.messageTemplate:
                     sendTemplate();
-                    break;
-                case R.id.messageLocation:
-                    Toast.makeText(ChatActivity.this, "Lokacija!", Toast.LENGTH_SHORT).show();
                     break;
             }
 
@@ -282,39 +273,6 @@ public class ChatActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
-    private boolean checkAudioPermission(){
-        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        boolean result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        return result1 && result2;
-    }
-
-    private void requestAudioPermission(){
-        ActivityCompat.requestPermissions(this, audioPermissions, AUDIO_REQUEST_CODE);
-    }
-
-    private void stopRecording() {
-        if(mediaRecorder != null){
-            mediaRecorder.stop();
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
-    }
-
-    private void startRecording() {
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        //mediaRecorder.setOutputFile(outputPath);
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-
-        mediaRecorder.start();
-    }
 
     private void sendTemplate() {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_send_message_template, null);

@@ -8,18 +8,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/messageVideo"
-        android:title="Video"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/messageTemplate"
         android:title="Sablon za posiljku"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/messageLocation"
-        android:title="Lokacija"
         app:showAsAction="never"/>
 
 </menu>
