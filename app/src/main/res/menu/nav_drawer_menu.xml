@@ -8,11 +8,6 @@
             android:icon="@drawable/wishlist"
             android:title="Korpa"/>
 
-        <item
-            android:id="@+id/notificationsList"
-            android:icon="@drawable/notifications"
-            android:title="Notifikacije"/>
-
     </group>
 
     <group android:id="@+id/group4">

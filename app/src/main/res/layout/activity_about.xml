@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.AboutActivity">
+    tools:context="aplikacija.apl.ofinger.settings.AboutActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Kratak opis aplikacije"
+            android:text="Ofinger je aplikacija za kupovinu i prodaju odece i nakita. Ako zelite da doprinesete i pomognete ovoj aplikaciji kontaktirajte nas na ofingerdeveloperteam@gmail.com"
             android:fontFamily="@font/regular"
             android:textSize="20sp"/>
 
@@ -49,5 +49,15 @@
             android:layout_marginTop="10dp"/>
 
     </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/mainAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-9195192915023247/4109345529" />
 
 </RelativeLayout>

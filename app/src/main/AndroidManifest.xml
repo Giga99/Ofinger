@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ofinger">
+    package="aplikacija.apl.ofinger">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -8,30 +8,27 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:name=".ApplicationClass"
+        android:name="aplikacija.apl.ofinger.ApplicationClass"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.FullScreen">
-        <activity android:name=".settings.HelpActivity"/>
-        <activity android:name=".settings.DeletingAccountActivity" />
-        <activity android:name=".settings.AboutActivity" />
-        <activity android:name=".navigationActivities.WishListActivity" />
-        <activity android:name=".navigationActivities.NotificationActivity" />
-        <activity android:name=".settings.EditNotificationsActivity" />
-        <activity android:name=".settings.EditEmailActivity" />
-        <activity android:name=".startActivities.EmailVerificationActivity" />
-        <activity android:name=".settings.EditProfileActivity" />
-        <activity android:name=".settings.EditPassActivity" />
-        <activity android:name=".settings.SettingsActivity" />
+        <activity android:name="aplikacija.apl.ofinger.settings.HelpActivity"/>
+        <activity android:name="aplikacija.apl.ofinger.settings.DeletingAccountActivity" />
+        <activity android:name="aplikacija.apl.ofinger.settings.AboutActivity" />
+        <activity android:name="aplikacija.apl.ofinger.navigationActivities.WishListActivity" />
+        <activity android:name="aplikacija.apl.ofinger.settings.EditEmailActivity" />
+        <activity android:name="aplikacija.apl.ofinger.startActivities.EmailVerificationActivity" />
+        <activity android:name="aplikacija.apl.ofinger.settings.EditProfileActivity" />
+        <activity android:name="aplikacija.apl.ofinger.settings.EditPassActivity" />
+        <activity android:name="aplikacija.apl.ofinger.settings.SettingsActivity" />
 
         <service
-            android:name=".notifications.NotificationService"
+            android:name="aplikacija.apl.ofinger.notifications.NotificationService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -39,21 +36,21 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".customDialogs.CustomDialogZoomImage" />
+
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".messaging.ChatActivity" />
-        <activity android:name=".info.ClothInfo" />
-        <activity android:name=".adding.AddingCloth" />
-        <activity android:name=".mainActivities.MainActivity" />
-        <activity android:name=".startActivities.ResetPasswordActivity"
+        <activity android:name="aplikacija.apl.ofinger.messaging.ChatActivity" />
+        <activity android:name="aplikacija.apl.ofinger.info.ClothInfo" />
+        <activity android:name="aplikacija.apl.ofinger.adding.AddingCloth" />
+        <activity android:name="aplikacija.apl.ofinger.mainActivities.MainActivity" />
+        <activity android:name="aplikacija.apl.ofinger.startActivities.ResetPasswordActivity"
             android:theme="@style/AppTheme.FullScreen"/>
-        <activity android:name=".startActivities.LoginActivity"
+        <activity android:name="aplikacija.apl.ofinger.startActivities.LoginActivity"
             android:theme="@style/AppTheme.FullScreen"/>
-        <activity android:name=".startActivities.RegisterActivity"
+        <activity android:name="aplikacija.apl.ofinger.startActivities.RegisterActivity"
             android:theme="@style/AppTheme.FullScreen"/>
-        <activity android:name=".startActivities.StartActivity"
+        <activity android:name="aplikacija.apl.ofinger.startActivities.StartActivity"
             android:theme="@style/AppTheme.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -84,6 +81,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9195192915023247~5261757046"/>
     </application>
 
 </manifest>

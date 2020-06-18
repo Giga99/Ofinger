@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundlogin"
-    tools:context=".startActivities.LoginActivity">
+    tools:context="aplikacija.apl.ofinger.startActivities.LoginActivity">
 
     <ProgressBar
         android:id="@+id/login_progress"

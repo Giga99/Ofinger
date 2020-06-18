@@ -12,7 +12,7 @@
         android:layout_marginTop="20dp"
         android:text="Napisite vas utisak o aplikaciji"
         android:textSize="20sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/bold"
         android:gravity="center_horizontal"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
@@ -20,16 +20,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/etText"
         android:inputType="textMultiLine"
+        android:fontFamily="@font/regular"
         android:layout_margin="20dp"
         android:textSize="18sp"/>
 
-    <Button
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/sendbutton"
         android:id="@+id/btnSubmit"
         android:layout_gravity="center_horizontal"
-        android:text="Posalji"
-        android:layout_margin="10dp"
-        android:textSize="16sp"/>
+        android:layout_margin="10dp"/>
 
 </LinearLayout>

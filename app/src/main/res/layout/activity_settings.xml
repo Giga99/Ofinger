@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.SettingsActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="aplikacija.apl.ofinger.settings.SettingsActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -89,31 +90,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:clickable="true"
-            android:id="@+id/editNotifications"
-            android:layout_below="@id/editPassword"
-            android:layout_marginTop="20dp">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/notifications"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Promenite notifikacije"
-                android:layout_marginStart="10dp"
-                android:textSize="20sp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:clickable="true"
             android:id="@+id/help"
-            android:layout_below="@id/editNotifications"
+            android:layout_below="@id/editPassword"
             android:layout_marginTop="20dp">
 
             <ImageView
@@ -152,6 +130,16 @@
                 android:textSize="20sp"/>
 
         </LinearLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/mainAd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-9195192915023247/2413120470" />
 
     </RelativeLayout>
 

@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.EditProfileActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="aplikacija.apl.ofinger.settings.EditProfileActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -87,5 +88,15 @@
             android:background="@drawable/acceptbutton"/>
 
     </RelativeLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/mainAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-9195192915023247/8056329390" />
 
 </RelativeLayout>

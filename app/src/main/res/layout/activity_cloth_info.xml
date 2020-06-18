@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".info.ClothInfo">
+    tools:context="aplikacija.apl.ofinger.info.ClothInfo">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
-                android:text="username"
+                android:text=""
                 android:textColor="#fff"
                 android:fontFamily="@font/bold"/>
 
@@ -85,7 +85,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginRight="10dp"
                 android:gravity="center_horizontal"
-                android:text="TextView"
+                android:text=""
                 android:textSize="24sp"
                 android:fontFamily="@font/bold"/>
 
@@ -98,22 +98,9 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:clickable="true"
-                android:text="TextView"
+                android:text=""
                 android:textSize="18sp"
                 android:fontFamily="@font/bold"/>
-
-            <TextView
-                android:id="@+id/tvSubCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tvClothName"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="35dp"
-                android:fontFamily="@font/regular"
-                android:inputType="textMultiLine"
-                android:text="TextView" />
 
             <TextView
                 android:id="@+id/tvClothDescription"
@@ -124,18 +111,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:inputType="textMultiLine"
-                android:text="TextView"
-                android:fontFamily="@font/regular"/>
-
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tvClothDescription"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="13dp"
-                android:text="TextView"
+                android:text=""
                 android:fontFamily="@font/regular"/>
 
             <RatingBar
@@ -147,6 +123,17 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp" />
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvClothDescription"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:text=""
+                android:fontFamily="@font/regular"/>
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewpagerImages"
@@ -162,9 +149,11 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tabLayout"
                 android:layout_below="@id/viewpagerImages"
+                android:layout_marginTop="-50dp"
                 app:tabBackground="@drawable/tab_selector"
                 app:tabGravity="center"
                 app:tabIndicatorHeight="0dp"
+                android:background="#00FFFFFF"
                 app:tabMaxWidth="10dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="20dp"/>
@@ -173,7 +162,7 @@
                 android:id="@+id/layoutBottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tabLayout"
+                android:layout_below="@id/viewpagerImages"
                 android:layout_margin="10dp"
                 android:orientation="vertical">
 
@@ -183,7 +172,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/reviewHeader"
@@ -235,7 +225,8 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:clickable="true"
-                        app:srcCompat="@drawable/soldlist" />
+                        app:srcCompat="@drawable/soldlist"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/ivUncheckedSold"
@@ -243,7 +234,8 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:clickable="true"
-                        app:srcCompat="@drawable/uncheckedsold" />
+                        app:srcCompat="@drawable/uncheckedsold"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/ivEdit"
@@ -251,7 +243,8 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:clickable="true"
-                        app:srcCompat="@drawable/edit" />
+                        app:srcCompat="@drawable/edit"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/ivDelete"
@@ -259,7 +252,8 @@
                         android:layout_height="40dp"
                         android:layout_weight="1"
                         android:clickable="true"
-                        app:srcCompat="@drawable/delete" />
+                        app:srcCompat="@drawable/delete"
+                        android:visibility="gone"/>
 
                 </LinearLayout>
 
@@ -270,7 +264,8 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="30dp"
                     android:layout_marginRight="10dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <EditText
                         android:id="@+id/etClothName"
@@ -344,7 +339,8 @@
         android:layout_alignParentBottom="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/white">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -353,7 +349,18 @@
             android:background="?android:attr/windowBackground"
             app:itemIconTint="@color/selector"
             app:labelVisibilityMode="unlabeled"
-            app:menu="@menu/bottom_navigation_cloth_info" />
+            app:menu="@menu/bottom_navigation_cloth_info"
+            android:visibility="gone"/>
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/mainAd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-9195192915023247/4451044739"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

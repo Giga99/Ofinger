@@ -8,7 +8,7 @@
     android:padding="30dp"
     android:gravity="center_horizontal"
     android:layout_marginTop="50dp"
-    tools:context=".startActivities.EmailVerificationActivity">
+    tools:context="aplikacija.apl.ofinger.startActivities.EmailVerificationActivity">
 
     <TextView
         android:id="@+id/tvInfo"

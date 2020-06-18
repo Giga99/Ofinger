@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".navigationActivities.WishListActivity">
+    tools:context="aplikacija.apl.ofinger.navigationActivities.WishListActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -12,11 +12,21 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:id="@+id/wishList"/>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/mainAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-9195192915023247/9324097469" />
 
 </RelativeLayout>

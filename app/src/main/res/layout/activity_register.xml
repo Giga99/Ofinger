@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundlogin"
-    tools:context=".startActivities.RegisterActivity">
+    tools:context="aplikacija.apl.ofinger.startActivities.RegisterActivity">
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -47,6 +47,7 @@
         android:layout_centerVertical="true">
         
         <RelativeLayout
+            android:layout_marginTop="30dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -152,7 +153,36 @@
                         android:background="@drawable/registerbutton"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/etReEnterPassword" />
+                        app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toStartOf="@+id/ivRegister"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etReEnterPassword">
+
+                        <TextView
+                            android:id="@+id/terms"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:lines="2"
+                            android:text="Procitao sam i slazem se sa Uslovima Koriscenja"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/regular"
+                            android:layout_toEndOf="@id/checkBox"
+                            android:layout_centerVertical="true"/>
+
+                        <CheckBox
+                            android:id="@+id/checkBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_centerVertical="true"/>
+
+                    </RelativeLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

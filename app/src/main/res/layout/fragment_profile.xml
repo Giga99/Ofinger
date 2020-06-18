@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mainActivities.ProfileFragment">
+    tools:context="aplikacija.apl.ofinger.mainActivities.ProfileFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/bold"
-                    android:text="Vas Profil"
+                    android:text=""
                     android:textSize="30sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.859"
                     app:layout_constraintStart_toEndOf="@+id/header"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -112,7 +113,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/regular"
-                                android:text="Broj odece" />
+                                android:text="Broj artikala" />
 
                         </LinearLayout>
 
@@ -159,7 +160,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginBottom="10dp"
                         android:fontFamily="@font/regular"
-                        android:text="Username"
+                        android:text=""
                         android:textSize="16sp" />
 
                     <TextView
@@ -169,7 +170,8 @@
                         android:layout_marginStart="5dp"
                         android:fontFamily="@font/regular"
                         android:textSize="16sp"
-                        android:text="Email" />
+                        android:text=""
+                        android:visibility="gone"/>
 
                     <RatingBar
                         android:id="@+id/userOverallRating"
@@ -195,7 +197,7 @@
                         android:id="@+id/ivMessage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/messagebutton"
+                        android:src="@drawable/messagebutton"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -206,7 +208,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:background="@drawable/followbutton"
+                        android:src="@drawable/followbutton"
                         android:tag="Zaprati"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -227,7 +229,7 @@
                 android:layout_marginEnd="10dp"
                 android:fontFamily="@font/regular"
                 android:inputType="textMultiLine"
-                android:text="Bio"
+                android:text=""
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -243,40 +245,35 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvBio">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:id="@+id/constraintLayout4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
-                        android:id="@+id/ivUserPosts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="40dp"
-                        android:clickable="true"
-                        android:background="@drawable/clothlistchecked"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0" />
+                        android:layout_weight="1"
+                        android:id="@+id/showNotSold"
+                        android:src="@drawable/clothlistchecked"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="20dp"/>
 
                     <ImageView
-                        android:id="@+id/ivSoldList"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="40dp"
-                        android:layout_marginEnd="40dp"
-                        android:clickable="true"
-                        android:background="@drawable/soldlistunchecked"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/ivUserPosts"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_weight="1"
+                        android:id="@+id/showSold"
+                        android:src="@drawable/soldlistunchecked"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginStart="20dp"/>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/header2"
@@ -285,7 +282,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/bold"
-                    android:text="Vasa Odeca:"
+                    android:text=""
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -303,7 +300,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listProfileSold"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -319,7 +316,8 @@
                 android:layout_margin="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/reviewHeader"

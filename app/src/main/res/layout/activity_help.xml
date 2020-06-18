@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.HelpActivity">
+    tools:context="aplikacija.apl.ofinger.settings.HelpActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -25,7 +25,7 @@
             android:textColor="@color/primaryText"
             android:fontFamily="@font/regular"
             android:textSize="15sp"
-            android:gravity="start"
+            android:gravity="start|center_vertical"
             android:backgroundTint="@color/white"
             android:drawableEnd="@drawable/feedback"/>
 
@@ -36,12 +36,22 @@
             android:text="Kontaktirajte podrsku"
             android:textColor="@color/primaryText"
             android:textSize="15sp"
-            android:gravity="start"
+            android:gravity="start|center_vertical"
             android:fontFamily="@font/regular"
             android:backgroundTint="@color/white"
             android:drawableEnd="@drawable/support"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/mainAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-9195192915023247/5039283813" />
 
 </RelativeLayout>

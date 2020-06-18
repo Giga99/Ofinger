@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvUsername"
-                    android:text="Username"
+                    android:text=""
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/primaryText"/>
@@ -46,14 +46,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvNotification"
-                    android:text="Notification"
+                    android:text=""
                     android:textColor="@color/primaryText"/>
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvTime"
-                    android:text="Time"
+                    android:text=""
                     android:textColor="@color/primaryText"/>
 
             </LinearLayout>

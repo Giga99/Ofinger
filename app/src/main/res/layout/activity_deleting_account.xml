@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.DeletingAccountActivity">
+    tools:context="aplikacija.apl.ofinger.settings.DeletingAccountActivity">
 
     <include
         android:id="@+id/toolbar"
@@ -65,5 +65,15 @@
             android:elevation="25dp"/>
 
     </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/mainAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-9195192915023247/8007146364" />
 
 </RelativeLayout>

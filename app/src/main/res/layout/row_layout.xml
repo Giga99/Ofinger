@@ -44,7 +44,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_toEndOf="@id/ivUserProfImage"
-                    android:text="TextView"
+                    android:text=""
                     android:textSize="18sp"
                     android:textStyle="bold"
                     card_view:layout_constraintStart_toEndOf="@+id/ivUserProfImage"
@@ -68,7 +68,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@id/ivUserProfImage"
-                    android:text="TextView"
+                    android:text=""
                     card_view:layout_constraintStart_toEndOf="@+id/ivUserProfImage"
                     card_view:layout_constraintTop_toBottomOf="@+id/tvOwnerName" />
 
@@ -82,7 +82,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/bold"
-                android:text="name"
+                android:text=""
                 android:textSize="20sp"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/ivCloth" />
@@ -105,7 +105,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/regular"
-                android:text="price"
+                android:text=""
                 android:textSize="17sp"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/tvClothName" />
@@ -115,13 +115,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:layout_marginEnd="50dp"
                 android:drawableLeft="@drawable/wishlist"
                 android:fontFamily="@font/regular"
                 android:text="0"
                 android:textSize="20sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintHorizontal_bias="0.75"
-                card_view:layout_constraintStart_toEndOf="@+id/tvClothName"
                 card_view:layout_constraintTop_toBottomOf="@+id/ivCloth" />
 
             <TextView
@@ -129,14 +128,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="50dp"
                 android:drawableLeft="@drawable/review"
-
                 android:fontFamily="@font/regular"
                 android:text="0"
                 android:textSize="20sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintHorizontal_bias="0.78"
-                card_view:layout_constraintStart_toEndOf="@+id/tvPrice"
                 card_view:layout_constraintTop_toBottomOf="@+id/numOfWishes" />
 
             <RatingBar

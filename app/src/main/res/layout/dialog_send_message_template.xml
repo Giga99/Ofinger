@@ -4,132 +4,145 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textview.MaterialTextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sablon za posiljku"
-        android:textSize="20sp"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"/>
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="15dp">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ime i Prezime:"
-            android:textSize="18sp"/>
-
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/etName"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginStart="10dp"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sablon za posiljku"
+                android:textSize="20sp"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="15dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Broj telefona:"
-            android:textSize="18sp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ime i Prezime:"
+                    android:textSize="18sp"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/etNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginStart="10dp"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"/>
 
-    </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="15dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvCity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Grad i Drzava:"
-            android:textSize="18sp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Broj telefona:"
+                    android:textSize="18sp"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/etCity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginStart="10dp"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/etNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"/>
 
-    </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="15dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvPostNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Postanski broj:"
-            android:textSize="18sp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grad i Drzava:"
+                    android:textSize="18sp"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/etPostNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginStart="10dp"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/etCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"/>
 
-    </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="15dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="15dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvAddress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ulica i broj:"
-            android:textSize="18sp"/>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvPostNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Postanski broj:"
+                    android:textSize="18sp"/>
 
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/etAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginStart="10dp"/>
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/etPostNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"/>
 
-    </LinearLayout>
+            </LinearLayout>
 
-    <ImageView
-        android:id="@+id/btnSendTemplate"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_action_name"
-        android:layout_gravity="end"
-        android:background="@color/white"
-        android:layout_marginEnd="10dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="15dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ulica i broj:"
+                    android:textSize="18sp"/>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/etAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginStart="10dp"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btnSendTemplate"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/send"
+                android:layout_gravity="end"
+                android:background="@color/white"
+                android:layout_marginEnd="10dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

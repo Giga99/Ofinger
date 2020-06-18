@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/background"
-    tools:context=".startActivities.StartActivity">
+    android:background="@drawable/background2"
+    tools:context="aplikacija.apl.ofinger.startActivities.StartActivity">
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -34,11 +34,11 @@
         android:visibility="gone"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
-        android:padding="30dp"
-        android:id="@+id/login_form">
+        android:padding="30dp">
 
         <TextView
             android:id="@+id/textView5"
@@ -62,15 +62,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btnGoogleSignIn"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
         <TextView
             android:id="@+id/tvGuest"

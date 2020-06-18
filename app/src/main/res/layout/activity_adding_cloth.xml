@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    tools:context=".adding.AddingCloth">
+    tools:context="aplikacija.apl.ofinger.adding.AddingCloth">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
-                android:text="username"
+                android:text=""
                 android:textColor="#fff"
                 android:textStyle="bold" />
 
@@ -298,6 +298,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/mainAd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                app:adSize="BANNER"
+                app:adUnitId="ca-app-pub-9195192915023247/8226638216"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivFinish" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
