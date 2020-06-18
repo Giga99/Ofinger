@@ -1,4 +1,2 @@
 # Ofinger
-Aplikacija za prodaju odece
-
-Odradjen veliki deo posla.
+Aplikacija za kupovinu i prodaju odece i nakita.
