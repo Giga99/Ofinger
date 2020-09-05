@@ -1,0 +1,23 @@
+
+¤
+java:S1186‘"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8²–ÑÚ­.
+m
+java:S1192Ë"JDefine a constant instead of duplicating this literal "profileid" 3 times.(¦·“°ıÿÿÿÿ8 œÿÙ­.
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(û÷˜õ
+m
+java:S3776@"RRefactor this method to reduce its Cognitive Complexity from 34 to the 15 allowed.(¨Œşÿÿÿÿ
+¤
+java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8³‹ïÚ­.
+\
+java:S1192g"FDefine a constant instead of duplicating this literal "noOne" 4 times.(èÍ»®
+¤
+java:S1186ï"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8«“ÒÚ­.
+S
+java:S1874Ü"0Remove this use of "getToken"; it is deprecated.(‰Œêşÿÿÿÿ8 œÿÙ­.
+o
+java:S3776é"RRefactor this method to reduce its Cognitive Complexity from 21 to the 15 allowed.(ÃÚ¨8„…Ú­.
+¤
+java:S1186»"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8ÀÑïÚ­.
+]	java:S1103"<This class has 9 parents which is greater than 5 authorized.(Ôšùÿÿÿÿ8¿¢ÄµÄ.
+N
+java:S1874˜"0Remove this use of "getColor"; it is deprecated.(Ìöœ8¿¢ÄµÄ.

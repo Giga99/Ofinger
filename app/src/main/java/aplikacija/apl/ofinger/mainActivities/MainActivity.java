@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,13 +53,12 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
     private BottomNavigationView bottomNavigationView;
     private Fragment selectedFragment = null;
 
-    private CircleImageView ivProfileImage, navHeaderProfileImage;
+    private CircleImageView ivProfileImage;
+    private CircleImageView navHeaderProfileImage;
     private TextView tvUsername;
 
-    DatabaseReference reference;
-    List<Cloth> userCloths;
-
-    //boolean firstLogin;
+    private static List<Cloth> cloths;
+    private static List<Cloth> userCloths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
                             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         }
                         break;
+                    default:
+                        break;
                 }
                 return true;
             }
@@ -128,6 +128,10 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
         tvUsername = findViewById(R.id.tvUsername);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        mainClothList();
+        userClothList();
+        initialize();
 
         /**
          * Brojanje neprocitanih poruka
@@ -155,9 +159,6 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
 
             }
         });
-
-        reference = FirebaseDatabase.getInstance().getReference("Cloth");
-        userCloths = new ArrayList<>();
 
         /**
          * Ispisivanje imena u zavisnosti da li je gost ili ne
@@ -189,33 +190,6 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
             });
         }
 
-        /**
-         * Referenca na sve korisnike
-         */
-        ApplicationClass.allUsers = FirebaseDatabase.getInstance().getReference("Users");
-
-        /**
-         * Pravljenje liste korisnicke odece
-         */
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Cloth cloth = snapshot.getValue(Cloth.class);
-                    if(cloth.getOwnerID().equals(ApplicationClass.currentUser.getUid()) && !cloth.isSold()){
-                        userCloths.add(cloth);
-                    }
-                }
-
-                ApplicationClass.userCloths = userCloths;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
         /**
@@ -244,6 +218,62 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
          * Apdejtovanje Tokena
          */
         updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
+
+    private static void userClothList() {
+        userCloths = new ArrayList<>();
+        FirebaseDatabase.getInstance().getReference("Cloth").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Cloth cloth = snapshot.getValue(Cloth.class);
+                    if(cloth.getOwnerID().equals(ApplicationClass.currentUser.getUid()) && !cloth.isSold()){
+                        userCloths.add(cloth);
+                    }
+                }
+
+                ApplicationClass.userCloths = userCloths;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private static void initialize() {
+        ApplicationClass.allUsers = FirebaseDatabase.getInstance().getReference("Users");
+        ApplicationClass.currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        ApplicationClass.currentUserReference = FirebaseDatabase.getInstance().getReference("Users").child(ApplicationClass.currentUser.getUid());
+    }
+
+    /**
+     * Pravljenje liste odece
+     */
+    private static void mainClothList() {
+        cloths = new ArrayList<>();
+        FirebaseDatabase.getInstance().getReference("Cloth").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                cloths.clear();
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Cloth cloth = snapshot.getValue(Cloth.class);
+                    cloths.add(cloth);
+                }
+
+                ApplicationClass.mainCloths = cloths;
+            }
+
+            /**
+             * Dodacu kasnije
+             * @param databaseError
+             */
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void updateToken(String t){
@@ -312,6 +342,8 @@ public class MainActivity extends AppCompatActivity implements ClothAdapter.Item
                         selectedFragment = new ProfileFragment();
                         break;
                     }
+                default:
+                    break;
             }
 
             if(selectedFragment != null){

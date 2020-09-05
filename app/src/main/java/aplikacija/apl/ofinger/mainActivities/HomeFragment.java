@@ -112,6 +112,8 @@ public class HomeFragment extends Fragment {
                     case R.id.category:
                         chooseCategory();
                         break;
+                    default:
+                        break;
                 }
                 return true;
             }

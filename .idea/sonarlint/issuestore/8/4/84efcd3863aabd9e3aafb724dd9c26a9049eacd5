@@ -1,0 +1,101 @@
+
+
+java:S1104("fMake adapterClothInfoImageVideo a static final constant or non-public and provide accessors if needed.(Ò€£Øıÿÿÿÿ
+K
+java:S1444"0Make this "public static mainCloths" field final(Í•òˆúÿÿÿÿ
+x
+java:S1104"]Make currentImageVideo a static final constant or non-public and provide accessors if needed.(´òüÿÿÿÿ
+m
+java:S1104"WMake searchCloth a static final constant or non-public and provide accessors if needed.(©ºÕÑ
+v
+java:S1104"`Make imageVideosClothInfo a static final constant or non-public and provide accessors if needed.(¾áÖÛ
+r
+java:S1104"WMake currentUser a static final constant or non-public and provide accessors if needed.(ßĞ¸æûÿÿÿÿ
+[
+java:S1444("@Make this "public static adapterClothInfoImageVideo" field final(Ò€£Øıÿÿÿÿ
+L
+java:S1444"1Make this "public static currentUser" field final(ßĞ¸æûÿÿÿÿ
+v
+java:S1104&"[Make subCategoryList a static final constant or non-public and provide accessors if needed.(ûÚüÿÿÿÿÿ
+r
+java:S1104""\Make currentUserCloth a static final constant or non-public and provide accessors if needed.(ƒò€¾
+j
+java:S1104#"UMake lastImage a static final constant or non-public and provide accessors if needed.(˜ *
+n
+java:S1104"XMake profileCloth a static final constant or non-public and provide accessors if needed.(§ÍİÃ
+j
+java:S1104 "TMake position a static final constant or non-public and provide accessors if needed.(ƒıÂé
+j
+java:S1104"TMake allUsers a static final constant or non-public and provide accessors if needed.(õ‹Ñ
+x
+java:S1104"bMake imageVideosAddingCloth a static final constant or non-public and provide accessors if needed.(ÈåË¶
+H
+java:S1444%"2Make this "public static categoryList" field final(´¼¯¼
+P
+java:S1444":Make this "public static imageVideosClothInfo" field final(¾áÖÛ
+k
+java:S1104$"PMake sold a static final constant or non-public and provide accessors if needed.(Øèºßúÿÿÿÿ
+]
+java:S1444)"BMake this "public static adapterAddingClothImageVideo" field final(îÏÎˆùÿÿÿÿ
+q
+java:S1104"VMake mainCloths a static final constant or non-public and provide accessors if needed.(Í•òˆúÿÿÿÿ
+k
+java:S1104"VMake soldCloths a static final constant or non-public and provide accessors if needed.(‡øåq
+L
+java:S1444""6Make this "public static currentUserCloth" field final(ƒò€¾
+l
+java:S1104"VMake wishCloths a static final constant or non-public and provide accessors if needed.(†Îì§
+k
+java:S1104"UMake otherUser a static final constant or non-public and provide accessors if needed.(¤–›Œ
+E
+java:S1444!"*Make this "public static urls" field final(­İ“–ıÿÿÿÿ
+ƒ
+java:S1104)"hMake adapterAddingClothImageVideo a static final constant or non-public and provide accessors if needed.(îÏÎˆùÿÿÿÿ
+R
+java:S1444"<Make this "public static imageVideosAddingCloth" field final(ÈåË¶
+n
+java:S1104%"XMake categoryList a static final constant or non-public and provide accessors if needed.(´¼¯¼
+F
+java:S1444"0Make this "public static wishCloths" field final(†Îì§
+8
+java:S2386&"Make this member "protected".(ûÚüÿÿÿÿÿ
+
+java:S1104'"dMake currentActivityZoomImage a static final constant or non-public and provide accessors if needed.(ß£ıŸüÿÿÿÿ
+k
+java:S1104!"PMake urls a static final constant or non-public and provide accessors if needed.(­İ“–ıÿÿÿÿ
+G
+java:S1444"1Make this "public static searchCloth" field final(©ºÕÑ
+R
+java:S1444"7Make this "public static currentImageVideo" field final(´òüÿÿÿÿ
+D
+java:S1444".Make this "public static allUsers" field final(õ‹Ñ
+E
+java:S1444"/Make this "public static otherUser" field final(¤–›Œ
+J
+java:S1444"4Make this "public static followingCloth" field final(Ğô‡„
+D
+java:S1444#"/Make this "public static lastImage" field final(˜ *
+Y
+java:S1444'">Make this "public static currentActivityZoomImage" field final(ß£ıŸüÿÿÿÿ
+H
+java:S1444"2Make this "public static profileCloth" field final(§ÍİÃ
+D
+java:S1444 ".Make this "public static position" field final(ƒıÂé
+q
+java:S1104"VMake userCloths a static final constant or non-public and provide accessors if needed.(’ “‰úÿÿÿÿ
+E
+java:S1444"0Make this "public static soldCloths" field final(‡øåq
+P
+java:S1444&"5Make this "public static subCategoryList" field final(ûÚüÿÿÿÿÿ
+3
+java:S2386%"Make this member "protected".(´¼¯¼
+K
+java:S1444"0Make this "public static userCloths" field final(’ “‰úÿÿÿÿ
+E
+java:S1444$"*Make this "public static sold" field final(Øèºßúÿÿÿÿ
+p
+java:S1104"ZMake followingCloth a static final constant or non-public and provide accessors if needed.(Ğô‡„
+\
+java:S1444":Make this "public static currentUserReference" field final(ºö·éıÿÿÿÿ8¡°ÉÙ­.
+‚
+java:S1104"`Make currentUserReference a static final constant or non-public and provide accessors if needed.(ºö·éıÿÿÿÿ8¡°ÉÙ­.

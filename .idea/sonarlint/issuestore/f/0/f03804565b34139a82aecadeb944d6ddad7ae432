@@ -1,0 +1,170 @@
+
+n
+java:S1192Ä"KDefine a constant instead of duplicating this literal "womanShoes" 6 times.(ç©Ùñúÿÿÿÿ8ÿ‰‘Ú­.
+m
+java:S1192"JDefine a constant instead of duplicating this literal "Bracelets" 3 times.(Æ®Çöøÿÿÿÿ8·¶‘Ú­.
+b
+java:S1192ë"KDefine a constant instead of duplicating this literal "womanJeans" 3 times.(¹ÈŠ
+c
+java:S1192Û"LDefine a constant instead of duplicating this literal "manShirting" 3 times.(Úïæä
+d
+java:S1192ß"HDefine a constant instead of duplicating this literal "manSuit" 3 times.(Ã’òñüÿÿÿÿ
+i
+java:S1192ü"MDefine a constant instead of duplicating this literal "womanPajamas" 3 times.(é›¢ôşÿÿÿÿ
+i
+java:S1192Õ"MDefine a constant instead of duplicating this literal "manTracksuit" 3 times.(·ß‚àøÿÿÿÿ
+c
+java:S1192÷"LDefine a constant instead of duplicating this literal "womanSports" 3 times.(—ÅÔı
+b
+java:S1192î"LDefine a constant instead of duplicating this literal "womanTunics" 3 times.(½©–-
+d
+java:S1192í"MDefine a constant instead of duplicating this literal "womanBlouses" 3 times.(ÛÍ„–
+h
+java:S1192ğ"LDefine a constant instead of duplicating this literal "womanTights" 3 times.(Ì»æÿÿÿÿÿ
+f
+java:S1192"IDefine a constant instead of duplicating this literal "manBoots" 3 times.(şàÒ8·¶‘Ú­.
+d
+java:S1192à"HDefine a constant instead of duplicating this literal "manVest" 3 times.(ÃÛÉ¸ÿÿÿÿÿ
+d
+java:S1192²	"FDefine a constant instead of duplicating this literal "noOne" 3 times.(èÍ»®8ÏÍ‘Ú­.
+a
+java:S1155Ê">Use isEmpty() to check whether the collection is empty or not.(Òî§ıÿÿÿÿ8ÏÍ‘Ú­.
+a
+java:S1155Ê">Use isEmpty() to check whether the collection is empty or not.(Òî§ıÿÿÿÿ8ÏÍ‘Ú­.
+c
+java:S1192û"LDefine a constant instead of duplicating this literal "womanTrunks" 3 times.(İÆ”¼
+e
+java:S1192Ö"IDefine a constant instead of duplicating this literal "manJeans" 3 times.(Úƒß¢úÿÿÿÿ
+f
+java:S1192ø"JDefine a constant instead of duplicating this literal "womanSuit" 3 times.(ˆÛÍºşÿÿÿÿ
+b
+java:S1192‘"FDefine a constant instead of duplicating this literal "Rings" 3 times.(—”ÚŒøÿÿÿÿ
+i
+java:S1192ï"MDefine a constant instead of duplicating this literal "womanWedding" 3 times.(ë®ãôıÿÿÿÿ
+p
+java:S3776Ò"SRefactor this method to reduce its Cognitive Complexity from 352 to the 15 allowed.(®Şíh8ÏÍ‘Ú­.
+q
+java:S3776ª"SRefactor this method to reduce its Cognitive Complexity from 104 to the 15 allowed.(¢ûö8ÏÍ‘Ú­.
+i
+java:S1192ñ"MDefine a constant instead of duplicating this literal "womanHoodies" 3 times.(Íêºœşÿÿÿÿ
+i
+java:S1192”"FDefine a constant instead of duplicating this literal "Other" 3 times.(Œ—ó‰úÿÿÿÿ8ÏÍ‘Ú­.
+c
+java:S1192è"LDefine a constant instead of duplicating this literal "womanSkirts" 3 times.(Ó­
+k
+java:S1192ú"ODefine a constant instead of duplicating this literal "womanUnderwear" 3 times.(€¦„ûüÿÿÿÿ
+A
+java:S1659>"+Declare "ivSearchUsers" on a separate line.(Ó®•
+i
+java:S1192ˆ"KDefine a constant instead of duplicating this literal "womanBoots" 3 times.(ÜñÊ†8·¶‘Ú­.
+o
+java:S1192‹"LDefine a constant instead of duplicating this literal "womanBallet" 3 times.(‘åéÅşÿÿÿÿ8ÏÍ‘Ú­.
+i
+java:S1192í"FDefine a constant instead of duplicating this literal "Cloth" 4 times.(•ŸÔ®øÿÿÿÿ8ÏÍ‘Ú­.
+e
+java:S1192’"IDefine a constant instead of duplicating this literal "Earrings" 3 times.(ƒ¾½ùÿÿÿÿ
+\
+java:S1155¼">Use isEmpty() to check whether the collection is empty or not.(˜áİÌ8ÏÍ‘Ú­.
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(û÷˜õ
+c
+java:S1192Ü"LDefine a constant instead of duplicating this literal "manSweaters" 3 times.(ÃìÌ
+T
+java:S2696é"6Make the enclosing method "static" or remove this set.( šÜÏ8ÏÍ‘Ú­.
+T
+java:S2696 "6Make the enclosing method "static" or remove this set.( šÜÏ8ÎìœÚ­.
+o
+java:S1192ÿ"LDefine a constant instead of duplicating this literal "manSneakers" 3 times.(§éÕŒşÿÿÿÿ8ÏÍ‘Ú­.
+l
+java:S1192×"IDefine a constant instead of duplicating this literal "manPants" 3 times.(ÙùŒÂùÿÿÿÿ8ÏÍ‘Ú­.
+i
+java:S1192ƒ"KDefine a constant instead of duplicating this literal "manSandals" 3 times.(§ä¦ò8ÏÍ‘Ú­.
+n
+java:S1192ı"KDefine a constant instead of duplicating this literal "womanOther" 6 times.(ÑîÑüùÿÿÿÿ8ÏÍ‘Ú­.
+a
+java:S1192ù"JDefine a constant instead of duplicating this literal "womanVest" 3 times.(Åğ¶İ
+¤
+java:S1186æ"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8Å áÚ­.
+g
+java:S1192¿"IDefine a constant instead of duplicating this literal "manShoes" 6 times.(îØÌ8ÿ‰‘Ú­.
+¤
+java:S1186¤"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8ÎìœÚ­.
+\
+java:S1155ö">Use isEmpty() to check whether the collection is empty or not.(˜áİÌ8ÎìœÚ­.
+i
+java:S1192ó"MDefine a constant instead of duplicating this literal "womanJackets" 3 times.(àË·Ùøÿÿÿÿ
+h
+java:S1192ò"LDefine a constant instead of duplicating this literal "womanShorts" 3 times.(¶¥†ıÿÿÿÿ
+j
+java:S1192õ"NDefine a constant instead of duplicating this literal "womanSweaters" 3 times.(Ò¹•«ıÿÿÿÿ
+i
+java:S1192º"KDefine a constant instead of duplicating this literal "womanCloth" 3 times.(ŒÒœ8ÏÍ‘Ú­.
+u
+java:S3776ì"RRefactor this method to reduce its Cognitive Complexity from 81 to the 15 allowed.(ÆûÛ•úÿÿÿÿ8ÎìœÚ­.
+f
+java:S1192ö"JDefine a constant instead of duplicating this literal "womanCoat" 3 times.(úô¸¹úÿÿÿÿ
+g
+java:S1192µ"IDefine a constant instead of duplicating this literal "manCloth" 3 times.(™±á8ÏÍ‘Ú­.
+g
+java:S1192ä"IDefine a constant instead of duplicating this literal "manOther" 6 times.(¥¨‚ß8ÏÍ‘Ú­.
+l
+java:S1192†"NDefine a constant instead of duplicating this literal "womanSneakers" 3 times.(ÎèÜ†8ÏÍ‘Ú­.
+\
+java:S1155ö">Use isEmpty() to check whether the collection is empty or not.(˜áİÌ8ÎìœÚ­.
+j
+java:S1192‰"NDefine a constant instead of duplicating this literal "womanSlippers" 3 times.(ÊÃÉúÿÿÿÿ
+e
+java:S1192ô"NDefine a constant instead of duplicating this literal "womanShirting" 3 times.(Ù£Í
+_
+java:S1192İ"HDefine a constant instead of duplicating this literal "manCoat" 3 times.(±™Ö¬
+j
+java:S1192É"LDefine a constant instead of duplicating this literal "accessories" 3 times.(´‚¹±8ÏÍ‘Ú­.
+c
+java:S1192‚"LDefine a constant instead of duplicating this literal "manSlippers" 3 times.(öÓ…
+a
+java:S1192Ş"JDefine a constant instead of duplicating this literal "manSports" 3 times.(©ëÑ™
+c
+java:S1192Š"MDefine a constant instead of duplicating this literal "womanSandals" 3 times.(‹Ü™M
+a
+java:S1192â"JDefine a constant instead of duplicating this literal "manTrunks" 3 times.(Šâ—€
+g
+java:S1192ì"KDefine a constant instead of duplicating this literal "womanPants" 3 times.(°‹Äøşÿÿÿÿ
+h
+java:S1192Ô"JDefine a constant instead of duplicating this literal "manTshirt" 3 times.(‚•…¶8·¶‘Ú­.
+d
+java:S1192ç"MDefine a constant instead of duplicating this literal "womanDresses" 3 times.(âîŸî
+d
+java:S1192é"NDefine a constant instead of duplicating this literal "womanOveralls" 3 times.(‚ÅÅ
+m
+java:S1192Ù"JDefine a constant instead of duplicating this literal "manShorts" 3 times.(››Şñøÿÿÿÿ8·¶‘Ú­.
+i
+java:S1192á"MDefine a constant instead of duplicating this literal "manUnderwear" 3 times.(ë÷…íûÿÿÿÿ
+g
+java:S1192Ú"KDefine a constant instead of duplicating this literal "manJackets" 3 times.(ÛŒ˜üÿÿÿÿ
+a
+java:S1192ã"KDefine a constant instead of duplicating this literal "manPajamas" 3 times.(şÓ¹0
+o
+java:S1192æ"LDefine a constant instead of duplicating this literal "womanTshirt" 3 times.(¦Ë„ôûÿÿÿÿ8·¶‘Ú­.
+\
+java:S1155¼">Use isEmpty() to check whether the collection is empty or not.(˜áİÌ8ÏÍ‘Ú­.
+a
+java:S1192"JDefine a constant instead of duplicating this literal "Necklaces" 3 times.(»åµ
+_
+java:S1192“"HDefine a constant instead of duplicating this literal "Glasses" 3 times.(Ò§ìÀ
+e
+java:S1192ê"ODefine a constant instead of duplicating this literal "womanTracksuit" 3 times.(¬‚µ_
+¤
+java:S1186î"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8ôóÚÚ­.
+b
+java:S1192"FDefine a constant instead of duplicating this literal "Watch" 3 times.(»îÂØúÿÿÿÿ
+¤
+java:S1186„	"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8ù™âÚ­.
+¤
+java:S1186›	"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ8ÙµÂÚ­.
+P
+java:S1874m"3Remove this use of "getDrawable"; it is deprecated.(¡é¨‹8ú ÄµÄ.
+P
+java:S1874n"3Remove this use of "getDrawable"; it is deprecated.(ÅŸá“8ú ÄµÄ.
+U
+java:S1874w"3Remove this use of "getDrawable"; it is deprecated.(”±î‚øÿÿÿÿ8ú ÄµÄ.
+U
+java:S1874x"3Remove this use of "getDrawable"; it is deprecated.(öîÏúıÿÿÿÿ8ú ÄµÄ.

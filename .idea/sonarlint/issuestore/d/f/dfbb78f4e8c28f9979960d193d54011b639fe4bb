@@ -1,0 +1,72 @@
+
+C
+java:S1659K"(Declare "ivAddImage" on a separate line.(—¼¿éúÿÿÿÿ
+J
+java:S3740^"/Provide the parametrized type for this generic.(ôûŒìşÿÿÿÿ
+=	java:S131ø""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+U
+java:S1155İ">Use isEmpty() to check whether the collection is empty or not.(åÄöÁ
+R
+java:S2696“"6Make the enclosing method "static" or remove this set.(×—„‰ùÿÿÿÿ
+R
+java:S2696¨"6Make the enclosing method "static" or remove this set.(Éí¥­ÿÿÿÿÿ
+=	java:S131ª""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+Y
+java:S1874›"6Remove this use of "ProgressDialog"; it is deprecated.(°ÕÈøÿÿÿÿ8øµØ±Ä.
+F
+java:S1659J"+Declare "tvSubCategory" on a separate line.(ñÎ’üüÿÿÿÿ
+h
+java:S3776i"RRefactor this method to reduce its Cognitive Complexity from 44 to the 15 allowed.(ÉüÊ·
+M
+java:S2696ƒ"6Make the enclosing method "static" or remove this set.(â÷â
+R
+java:S2696©"6Make the enclosing method "static" or remove this set.(–ÙÇôıÿÿÿÿ
+]
+java:S1192"FDefine a constant instead of duplicating this literal "noOne" 3 times.(èÍ»®
+=
+java:S1659V"(Declare "reference3" on a separate line.(‰ÓÎ%
+A
+java:S1659K"&Declare "ivFinish" on a separate line.(—¼¿éúÿÿÿÿ
+[
+java:S1192}"FDefine a constant instead of duplicating this literal "Cloth" 3 times.(†Éõ4
+M
+java:S2696«"6Make the enclosing method "static" or remove this set.(òıÜ
+J
+java:S1659L"/Declare "expandSubCategory" on a separate line.(–€Â„úÿÿÿÿ
+A
+java:S1659X"&Declare "allCloth" on a separate line.(»ÙÆèûÿÿÿÿ
+U
+java:S1874œ"2Remove this use of "setMessage"; it is deprecated.(Ğ´Ëïûÿÿÿÿ8øµØ±Ä.
+R
+java:S2696İ"6Make the enclosing method "static" or remove this set.(íÑúæıÿÿÿÿ
+K
+java:S2696u"6Make the enclosing method "static" or remove this set.(âìÚC
+F
+java:S1659K"+Declare "ivSubCategory" on a separate line.(—¼¿éúÿÿÿÿ
+K
+java:S3740£"/Provide the parametrized type for this generic.(éÂàÑÿÿÿÿÿ
+M
+java:S1659c"2Declare "popupMenuSubcategory" on a separate line.(ï›¡Şıÿÿÿÿ
+?
+java:S1659d")Declare "subcategory" on a separate line.(ˆÕé
+=	java:S131Õ""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+=	java:S131ë""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+b
+java:S1192ß"KDefine a constant instead of duplicating this literal "womanShoes" 3 times.(±
+;
+java:S1659I"%Declare "etPrice" on a separate line.(ï–¼†
+A
+java:S1659I"+Declare "etDescription" on a separate line.(ï–¼†
+`
+java:S1192Ü"IDefine a constant instead of duplicating this literal "manShoes" 3 times.(ıº·ğ
+L
+java:S2696{"6Make the enclosing method "static" or remove this set.(ö‚Ì·
+Y
+java:S1874›"6Remove this use of "ProgressDialog"; it is deprecated.(°ÕÈøÿÿÿÿ8øµØ±Ä.
+X	java:S110A"<This class has 9 parents which is greater than 5 authorized.(÷¥˜÷8øµØ±Ä.
+=	java:S131•""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+
+java:S1186 "€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Ğ÷‘Şÿÿÿÿÿ
+B
+java:S1659T",Declare "nameImageVideo" on a separate line.(ˆ­ß
+=	java:S131É""Add a default case to this switch.(øå´¡ÿÿÿÿÿ

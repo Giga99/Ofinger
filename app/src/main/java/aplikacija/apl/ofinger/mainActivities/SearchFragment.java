@@ -125,7 +125,7 @@ public class SearchFragment extends Fragment {
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -135,7 +135,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                throw new UnsupportedOperationException();
             }
         });
 
@@ -143,7 +143,7 @@ public class SearchFragment extends Fragment {
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                throw new UnsupportedOperationException();
             }
 
             @Override
@@ -153,7 +153,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                throw new UnsupportedOperationException();
             }
         });
 
@@ -193,6 +193,8 @@ public class SearchFragment extends Fragment {
                         break;
                     case R.id.category:
                         chooseCategory();
+                        break;
+                    default:
                         break;
                 }
                 return true;
@@ -1020,12 +1022,10 @@ public class SearchFragment extends Fragment {
                                     }
                                 }
 
-                                if(!blocked) {
-                                    if(cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
-                                }
+                                if(!blocked && cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
                             }
                         }
-                    } else if(ApplicationClass.subCategoryList.size() > 0 && ApplicationClass.categoryList.size() > 0){
+                    } else if(!ApplicationClass.subCategoryList.isEmpty() && !ApplicationClass.categoryList.isEmpty()){
                         for(String category : ApplicationClass.subCategoryList) {
                             if (category.equals(cloth.getSubcategory())) {
                                 boolean blocked = false;
@@ -1036,9 +1036,7 @@ public class SearchFragment extends Fragment {
                                     }
                                 }
 
-                                if(!blocked) {
-                                    if(cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
-                                }
+                                if(!blocked && cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
                             }
                         }
                     } else {
@@ -1050,9 +1048,7 @@ public class SearchFragment extends Fragment {
                             }
                         }
 
-                        if(!blocked) {
-                            if(cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
-                        }
+                        if(!blocked && cloth.getSearchName().contains(s.toLowerCase())) cloths.add(cloth);
                     }
                 }
 
@@ -1136,7 +1132,7 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //Toast.makeText(SearchFragment.this.getContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+
             }
         });
     }
